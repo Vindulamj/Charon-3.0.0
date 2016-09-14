@@ -28,4 +28,10 @@ public class SCIMDefinitions {
     public static enum Uniqueness {
         NONE, SERVER, GLOBAL
     }
+
+    /*SCIM resource types that a referenceType attribute that may be referenced*/
+    public static enum ReferenceType {
+        USER, GROUP, EXTERNAL, URI
+    }
+
 }
