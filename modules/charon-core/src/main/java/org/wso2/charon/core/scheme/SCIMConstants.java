@@ -256,6 +256,30 @@ public class SCIMConstants {
         public static final String TYPE_DESC="A label indicating the type of resource, e.g., 'User' or 'Group'.";
     }
 
+    public static class EnterpriseUserSchemaConstants {
+
+        public static final String EMPLOYEE_NUMBER="employeeNumber";
+        public static final String COST_CENTER="costCenter";
+        public static final String ORGANIZATION ="organization";
+        public static final String DIVISION="division";
+        public static final String DEPARTMENT="department";
+        public static final String MANAGER="manager";
+        public static final String DISPLAY_NAME="displayName";
+
+        public static final String EMPLOYEE_NUMBER_DESC="Numeric or alphanumeric identifier assigned to a person, typically based on order of hire or " +
+                "association with an organization.";
+        public static final String COST_CENTER_DESC="Identifies the name of a cost center.";
+        public static final String ORGANIZATION_DESC="Identifies the name of an organization.";
+        public static final String DIVISION_DESC="Identifies the name of a division.";
+        public static final String DEPARTMENT_DESC="Identifies the name of a department.";
+        public static final String MANAGER_TYPE_DESC="The User's manager.  A complex type that\n" +
+                "optionally allows service providers to represent organizational\n" +
+                "hierarchy by referencing the 'id' attribute of another User.";
+        public static final String VALUE_DESC="Identifies the name of a cost center.";
+        public static final String $REF_DESC="The URI of the SCIM resource representing the User's manager.  REQUIRED.";
+        public static final String DISPLAY_NAME_DESC="The displayName of the User's manager.OPTIONAL and READ-ONLY.";
+    }
+
     /*Resource names as defined in SCIM Schema spec*/
     public static final String USER = "User";
     public static final String GROUP = "Group";

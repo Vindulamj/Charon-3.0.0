@@ -677,6 +677,84 @@ public class SCIMSchemaDefinitions {
     }
 
 
+    private static class SCIMEnterpriseUserSchemaDefinition{
+
+        /*********** SCIM defined Enterprise User attribute schemas ****************************/
+
+        /* sub-attribute schemas of the attributes defined in SCIM Enterprise User schema. */
+
+        //sub attributes of manager attribute
+
+        //Identifies the name of a cost center.
+        public static final SCIMAttributeSchema VALUE=
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.CommonSchemaConstants.VALUE,
+                        SCIMDefinitions.DataType.STRING,false,SCIMConstants.EnterpriseUserSchemaConstants.VALUE_DESC,
+                        false,false, SCIMDefinitions.Mutability.IMMUTABLE,SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE,null,null,null);
+
+        //The URI of the SCIM resource representing the User's manager.  REQUIRED.
+        public static final SCIMAttributeSchema $REF=
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.CommonSchemaConstants.$REF,
+                        SCIMDefinitions.DataType.REFERENCE,false,SCIMConstants.EnterpriseUserSchemaConstants.$REF_DESC,
+                        false,false, SCIMDefinitions.Mutability.IMMUTABLE,SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE,null,null,null);
+
+        //The displayName of the User's manager.OPTIONAL and READ-ONLY.
+        public static final SCIMAttributeSchema DISPLAY_NAME=
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.EnterpriseUserSchemaConstants.DISPLAY_NAME,
+                        SCIMDefinitions.DataType.STRING,false,SCIMConstants.EnterpriseUserSchemaConstants.DISPLAY_NAME_DESC,
+                        false,false, SCIMDefinitions.Mutability.IMMUTABLE,SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE,null,null,null);
+
+    /*------------------------------------------------------------------------------------------------------*/
+
+                /* attribute schemas of the attributes defined in Enterprise User schema. */
+
+        //Numeric or alphanumeric identifier assigned to a person, typically based on order of hire or association with an organization.
+        public static final SCIMAttributeSchema EMPLOYEE_NUMBER=
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.EnterpriseUserSchemaConstants.EMPLOYEE_NUMBER,
+                        SCIMDefinitions.DataType.STRING,false,SCIMConstants.EnterpriseUserSchemaConstants.EMPLOYEE_NUMBER_DESC,
+                        false,false, SCIMDefinitions.Mutability.READ_WRITE,SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE,null,null,null);
+
+        //Identifies the name of a cost center.
+        public static final SCIMAttributeSchema COST_CENTER=
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.EnterpriseUserSchemaConstants.COST_CENTER,
+                        SCIMDefinitions.DataType.STRING,false,SCIMConstants.EnterpriseUserSchemaConstants.COST_CENTER_DESC,
+                        false,false, SCIMDefinitions.Mutability.READ_WRITE,SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE,null,null,null);
+
+        //Identifies the name of an organization.
+        public static final SCIMAttributeSchema ORGANIZATION=
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.EnterpriseUserSchemaConstants.ORGANIZATION,
+                        SCIMDefinitions.DataType.STRING,false,SCIMConstants.EnterpriseUserSchemaConstants.ORGANIZATION_DESC,
+                        false,false, SCIMDefinitions.Mutability.READ_WRITE,SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE,null,null,null);
+
+        //Identifies the name of a division.
+        public static final SCIMAttributeSchema DIVISION=
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.EnterpriseUserSchemaConstants.DIVISION,
+                        SCIMDefinitions.DataType.STRING,false,SCIMConstants.EnterpriseUserSchemaConstants.DIVISION_DESC,
+                        false,false, SCIMDefinitions.Mutability.READ_WRITE,SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE,null,null,null);
+
+        //Identifies the name of a department.
+        public static final SCIMAttributeSchema DEPARTMENT=
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.EnterpriseUserSchemaConstants.DEPARTMENT,
+                        SCIMDefinitions.DataType.STRING,false,SCIMConstants.EnterpriseUserSchemaConstants.DEPARTMENT_DESC,
+                        false,false, SCIMDefinitions.Mutability.READ_WRITE,SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE,null,null,null);
+
+        //The User's manager.
+        public static final SCIMAttributeSchema MANAGER=
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.EnterpriseUserSchemaConstants.DEPARTMENT,
+                        SCIMDefinitions.DataType.STRING,false,SCIMConstants.EnterpriseUserSchemaConstants.DEPARTMENT_DESC,
+                        false,false, SCIMDefinitions.Mutability.READ_WRITE,SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE,null,null,new ArrayList<SCIMAttributeSchema>(Arrays.asList(
+                                SCIMEnterpriseUserSchemaDefinition.VALUE, SCIMEnterpriseUserSchemaDefinition.$REF,
+                                SCIMEnterpriseUserSchemaDefinition.DISPLAY_NAME)));
+    }
+
     /**
      * **********SCIM defined User Resource Schema****************************
      */
@@ -712,6 +790,17 @@ public class SCIMSchemaDefinitions {
      */
 
     public static final SCIMResourceTypeSchema SCIM_GROUP_SCHEMA =
+            SCIMResourceTypeSchema.createSCIMResourceSchema(
+                    SCIMConstants.GROUP_CORE_SCHEMA_URI,
+                    ID,EXTERNAL_ID,META,
+                    SCIMGroupSchemaDefinition.DISPLAY_NAME,
+                    SCIMGroupSchemaDefinition.MEMBERS);
+
+    /**
+     * **********SCIM defined EnterpriseUser Resource Schema****************************
+     */
+
+    public static final SCIMResourceTypeSchema SCIM_EnterpriseUser_SCHEMA =
             SCIMResourceTypeSchema.createSCIMResourceSchema(
                     SCIMConstants.GROUP_CORE_SCHEMA_URI,
                     ID,EXTERNAL_ID,META,
