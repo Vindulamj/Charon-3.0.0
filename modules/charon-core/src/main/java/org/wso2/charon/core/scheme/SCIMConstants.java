@@ -238,7 +238,7 @@ public class SCIMConstants {
 
     /*Constants found in group schema.*/
 
-    public static class GroupchemaConstants {
+    public static class GroupSchemaConstants {
 
         public static final String DISPLAY_NAME="displayName";
         public static final String MEMBERS="members";
@@ -278,6 +278,19 @@ public class SCIMConstants {
         public static final String VALUE_DESC="Identifies the name of a cost center.";
         public static final String $REF_DESC="The URI of the SCIM resource representing the User's manager.  REQUIRED.";
         public static final String DISPLAY_NAME_DESC="The displayName of the User's manager.OPTIONAL and READ-ONLY.";
+    }
+
+     /*Constants found in ServiceProviderConfig schema.*/
+
+    public static class ServiceProviderConfigSchemaConstants {
+
+        public static final String DOCUMENTATION_URI="documentationUri";
+
+
+        /*******Attributes descriptions of the attributes found in Group Schema***************/
+
+        public static final String DISPLAY_NAME_DESC="A human-readable name for the Group. REQUIRED.";
+
     }
 
     /*Resource names as defined in SCIM Schema spec*/

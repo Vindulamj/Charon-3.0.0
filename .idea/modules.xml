@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/charon-parent.iml" filepath="$PROJECT_DIR$/charon-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/modules/charon-core/org.wso2.charon.core.iml" filepath="$PROJECT_DIR$/modules/charon-core/org.wso2.charon.core.iml" />
+    </modules>
+  </component>
+</project>
