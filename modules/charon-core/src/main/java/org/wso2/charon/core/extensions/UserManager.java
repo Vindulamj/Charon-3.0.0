@@ -1,7 +1,14 @@
 package org.wso2.charon.core.extensions;
 
+import org.wso2.charon.core.exceptions.CharonException;
+import org.wso2.charon.core.exceptions.ConflictException;
+import org.wso2.charon.core.objects.User;
+
 /**
  * Created by vindula on 9/19/16.
  */
-public class UserManager {
+public interface UserManager {
+
+    public User createUser(User user, boolean isBulkUserAdd) throws CharonException, ConflictException;
+
 }

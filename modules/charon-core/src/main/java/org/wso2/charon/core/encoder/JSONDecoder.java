@@ -59,26 +59,27 @@ public class JSONDecoder{
                         continue;
                     }
                     //if the corresponding json value object is String, it is a SimpleAttribute.
-                    scimObject.setAttribute(buildSimpleAttribute(attributeSchema, attributeValObj));
+                    scimObject.setAttribute(buildSimpleAttribute(attributeSchema, attributeValObj),resourceSchema);
 
                 } else if(attributeValObj instanceof Integer) {
                     //if the corresponding json value object is integer, it is a SimpleAttribute.
-                    scimObject.setAttribute(buildSimpleAttribute(attributeSchema, Integer.toString((Integer)attributeValObj)));
+                    scimObject.setAttribute(buildSimpleAttribute(attributeSchema, Integer.toString((Integer)attributeValObj)),
+                            resourceSchema);
 
                 } else if (attributeValObj instanceof Boolean) {
                     //if the corresponding json value object is boolean, it is a SimpleAttribute.
                     scimObject.setAttribute(buildSimpleAttribute(attributeSchema,
-                            String.valueOf(attributeValObj)));
+                            String.valueOf(attributeValObj)), resourceSchema);
 
                 } else if (attributeValObj instanceof JSONArray) {
                     //if the corresponding json value object is JSONArray, it is a MultiValuedAttribute.
                     scimObject.setAttribute(
-                            buildMultiValuedAttribute(attributeSchema, (JSONArray) attributeValObj));
+                            buildMultiValuedAttribute(attributeSchema, (JSONArray) attributeValObj), resourceSchema);
 
                 } else if (attributeValObj instanceof JSONObject) {
                     //if the corresponding json value object is JSONObject, it is a ComplexAttribute.
                     scimObject.setAttribute(buildComplexAttribute(attributeSchema,
-                            (JSONObject) attributeValObj));
+                            (JSONObject) attributeValObj), resourceSchema);
                 }
             }
             return scimObject;

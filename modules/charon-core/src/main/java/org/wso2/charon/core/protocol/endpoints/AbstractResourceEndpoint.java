@@ -22,6 +22,9 @@ public abstract class AbstractResourceEndpoint implements ResourceEndpoint {
 
     private JSONDecoder decoder;
 
+    //Keeps  a map of endpoint urls of the exposed resources.
+    private static Map<String, String> endpointURLMap;
+
     /**
      * Returns the encoder given the encoding format.
      *
@@ -76,4 +79,12 @@ public abstract class AbstractResourceEndpoint implements ResourceEndpoint {
     public void setEncoder(JSONEncoder encoder) { this.encoder = encoder; }
 
     public void setDecoder(JSONDecoder decoder) { this.decoder = decoder; }
+
+    public static String getResourceEndpointURL(String resource) {
+        if (endpointURLMap != null && endpointURLMap.size() != 0) {
+            return endpointURLMap.get(resource);
+        } else {
+            return null;
+        }
+    }
 }

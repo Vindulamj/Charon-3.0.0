@@ -1,5 +1,6 @@
 package org.wso2.charon.core.objects;
 
+import org.wso2.charon.core.attributes.Attribute;
 import org.wso2.charon.core.exceptions.NotFoundException;
 
 import java.util.List;
@@ -13,6 +14,12 @@ import java.util.Map;
 
 public interface SCIMObject {
 
+    public Attribute getAttribute(String attributeName) throws NotFoundException;
 
+    public void deleteAttribute(String attributeName) throws NotFoundException;
+
+    public List<String> getSchemaList();
+
+    public Map<String, Attribute> getAttributeList();
 
 }

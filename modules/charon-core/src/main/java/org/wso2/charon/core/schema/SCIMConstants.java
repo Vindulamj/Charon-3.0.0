@@ -23,6 +23,7 @@ public class SCIMConstants {
 
     /*Resource endpoints relative to the base SCIM URL*/
     public static final String USER_ENDPOINT = "/Users";
+    public static final String GROUP_ENDPOINT = "/Groups";
 
     //HTTP Headers used in SCIM request/response other than auth headers.
     public static final String LOCATION_HEADER = "Location";

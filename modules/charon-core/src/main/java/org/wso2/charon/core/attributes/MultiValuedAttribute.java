@@ -1,6 +1,8 @@
 package org.wso2.charon.core.attributes;
 
 
+import org.wso2.charon.core.exceptions.CharonException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,5 +38,11 @@ public class MultiValuedAttribute extends AbstractAttribute{
     public void setAttributeValues(List<Attribute> attributeValues) {
         this.attributeValues = attributeValues;
     }
+
+    @Override
+    public Attribute getSubAttribute(String attributeName) throws CharonException {
+        throw new CharonException("Error: getSubAttribute method not supported by MultiValuedAttribute.");
+    }
+
 
 }

@@ -1,11 +1,7 @@
 package org.wso2.charon.core.attributes;
 
 import org.wso2.charon.core.exceptions.CharonException;
-import org.wso2.charon.core.schema.SCIMAttributeSchema;
 import org.wso2.charon.core.schema.SCIMDefinitions;
-
-import java.util.ArrayList;
-import java.util.Map;
 
 
 public abstract class AbstractAttribute implements Attribute {
@@ -85,9 +81,7 @@ public abstract class AbstractAttribute implements Attribute {
         this.mutability = mutability;
     }
 
-    public SCIMDefinitions.Returned getReturned() {
-        return returned;
-    }
+    public SCIMDefinitions.Returned getReturned() { return returned; }
 
     public void setReturned(SCIMDefinitions.Returned returned) {
         this.returned = returned;
@@ -100,4 +94,5 @@ public abstract class AbstractAttribute implements Attribute {
     public void setUniqueness(SCIMDefinitions.Uniqueness uniqueness) {
         this.uniqueness = uniqueness;
     }
+
 }

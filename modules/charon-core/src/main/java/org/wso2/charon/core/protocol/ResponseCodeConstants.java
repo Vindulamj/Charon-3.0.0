@@ -11,6 +11,8 @@ public class ResponseCodeConstants {
     public static final String STATUS = "status";
     public static final String DESCRIPTION = "description";
 
+    public static final int CODE_CREATED = 201;
+
     public static final int CODE_TEMPORARY_REDIRECT = 307;
     public static final String DESC_TEMPORARY_REDIRECT = "The client is directed to repeat the same HTTP request at the " +
             "location identified. The client SHOULD NOT use the location provided in the response as a permanent reference to the " +

@@ -1,12 +1,13 @@
 package org.wso2.charon.core.protocol.endpoints;
 
 
+import jdk.nashorn.internal.runtime.regexp.joni.exception.InternalException;
 import org.wso2.charon.core.encoder.JSONDecoder;
 import org.wso2.charon.core.encoder.JSONEncoder;
 import org.wso2.charon.core.exceptions.BadRequestException;
 import org.wso2.charon.core.exceptions.CharonException;
+import org.wso2.charon.core.exceptions.ConflictException;
 import org.wso2.charon.core.exceptions.FormatNotSupportedException;
-import org.wso2.charon.core.extensions.Storage;
 import org.wso2.charon.core.extensions.UserManager;
 import org.wso2.charon.core.objects.User;
 import org.wso2.charon.core.protocol.ResponseCodeConstants;
@@ -16,6 +17,11 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
 import org.wso2.charon.core.schema.SCIMResourceSchemaManager;
 import org.wso2.charon.core.schema.SCIMResourceTypeSchema;
+import org.wso2.charon.core.schema.ServerSideValidator;
+import org.wso2.charon.core.utils.CopyUtil;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -35,7 +41,8 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
         return null;
     }
 
-    public SCIMResponse create(String scimObjectString, String inputFormat, String outputFormat, UserManager userManager) {
+
+    public SCIMResponse create(String scimObjectString, String inputFormat, String outputFormat, UserManager userManager, boolean isBulkUserAdd)  {
 
         JSONEncoder encoder =null;
         try {
@@ -49,6 +56,37 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
 
             //decode the SCIM User object, encoded in the submitted payload.
             User user = (User) decoder.decodeResource(scimObjectString, schema, new User());
+
+            //validate the created user
+            ServerSideValidator.validateCreatedSCIMObject(user, schema);
+
+            /*handover the SCIM User object to the user storage provided by the SP.
+            need to send back the newly created user in the response payload*/
+            User createdUser = userManager.createUser(user, isBulkUserAdd);
+
+            //encode the newly created SCIM user object and add id attribute to Location header.
+            String encodedUser;
+            Map<String, String> httpHeaders = new HashMap<String, String>();
+            if (createdUser != null) {
+                //create a deep copy of the user object since we are going to change it.
+                User copiedUser = (User) CopyUtil.deepCopy(createdUser);
+
+                //need to remove password before returning
+                ServerSideValidator.removePasswordOnReturn(copiedUser);
+                encodedUser = encoder.encodeSCIMObject(copiedUser);
+                //add location header
+                httpHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(
+                        SCIMConstants.USER_ENDPOINT) + "/" + createdUser.getId());
+                httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, outputFormat);
+
+            } else {
+                //TODO:log the error
+                String error = "Newly created User resource is null.";
+                throw new InternalException(error);
+            }
+
+            //put the URI of the User object in the response header parameter.
+            return new SCIMResponse(ResponseCodeConstants.CODE_CREATED, encodedUser, httpHeaders);
 
         } catch (FormatNotSupportedException e) {
             logger.error("Format not found exception.", e);
@@ -64,12 +102,14 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (BadRequestException e) {
             e.printStackTrace();
+        } catch (ConflictException e) {
+            e.printStackTrace();
         }
         //TODO:Return
         return new SCIMResponse(-1,null,null);
     }
 
-    public SCIMResponse delete(String id, Storage storage, String outputFormat) {
+    public SCIMResponse delete(String id, String outputFormat) {
         return null;
     }
 

@@ -83,7 +83,7 @@ public class SCIMSchemaDefinitions {
                     new ArrayList<SCIMAttributeSchema>(Arrays.asList(RESOURCE_TYPE, CREATED, LAST_MODIFIED, LOCATION, VERSION)));
 
 
-    private static class SCIMUserSchemaDefinition {
+    public static class SCIMUserSchemaDefinition {
 
         /*********** SCIM defined user attribute schemas****************************/
 
@@ -626,7 +626,7 @@ public class SCIMSchemaDefinitions {
 
     }
 
-    private static class SCIMGroupSchemaDefinition {
+    public static class SCIMGroupSchemaDefinition {
 
         /*********** SCIM defined group attribute schemas ****************************/
 

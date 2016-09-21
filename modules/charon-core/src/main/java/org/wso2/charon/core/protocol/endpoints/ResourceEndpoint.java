@@ -17,7 +17,6 @@
 */
 package org.wso2.charon.core.protocol.endpoints;
 
-import org.wso2.charon.core.extensions.Storage;
 import org.wso2.charon.core.extensions.UserManager;
 import org.wso2.charon.core.protocol.SCIMResponse;
 
@@ -50,17 +49,16 @@ public interface ResourceEndpoint {
      *         in the response Location header.}
      */
     public SCIMResponse create(String scimObjectString, String inputFormat, String outputFormat,
-                               UserManager userManager);
+                               UserManager userManager, boolean isBulkUserAdd);
 
     /**
      * Method of the ResourceEndpoint that is mapped to HTTP Delete method..
      *
      * @param id
-     * @param storage
      * @param outputFormat - required to encode exceptions if any
      * @return
      */
-    public SCIMResponse delete(String id, Storage storage, String outputFormat);
+    public SCIMResponse delete(String id, String outputFormat);
 
     /**
      * Method that maps to HTTP GET with URL query parameter: "attributes=attributeName"

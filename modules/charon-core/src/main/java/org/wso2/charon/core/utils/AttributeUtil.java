@@ -62,6 +62,17 @@ public class AttributeUtil {
         return complexString;
     }
 
+    /**
+     * SCIM spec requires date time to be adhered to XML Schema Datatypes Specification
+     *
+     * @param date
+     */
+    public static String formatDateTime(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        String formattedDate = sdf.format(date);
+        return formattedDate;
+    }
+
 
 
 }
