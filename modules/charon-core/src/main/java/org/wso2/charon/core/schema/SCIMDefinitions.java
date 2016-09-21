@@ -1,4 +1,4 @@
-package org.wso2.charon.core.scheme;
+package org.wso2.charon.core.schema;
 
 /**
  * this defines the pre-defined values specified in https://tools.ietf.org/html/rfc7643

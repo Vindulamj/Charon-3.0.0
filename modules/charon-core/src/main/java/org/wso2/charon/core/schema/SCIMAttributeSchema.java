@@ -1,8 +1,7 @@
-package org.wso2.charon.core.scheme;
+package org.wso2.charon.core.schema;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This defines the attributes schema as in SCIM Spec.

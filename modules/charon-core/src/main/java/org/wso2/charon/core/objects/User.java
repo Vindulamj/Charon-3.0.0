@@ -1,7 +1,7 @@
 package org.wso2.charon.core.objects;
 
 /**
- * Created by vindula on 9/19/16.
+ * Represents the User object which is a collection of attributes defined by SCIM User-schema.
  */
 public class User extends AbstractSCIMObject {
 }

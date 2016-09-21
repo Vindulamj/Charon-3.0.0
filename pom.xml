@@ -20,4 +20,23 @@
         <module>modules/charon-core</module>
     </modules>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>${json.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>${commons.logging.version}</version>
+        </dependency>
+    </dependencies>
+
+    <properties>
+        <json.version>20160810</json.version>
+        <commons.logging.version>1.2</commons.logging.version>
+    </properties>
+
+
 </project>

@@ -1,4 +1,4 @@
-package org.wso2.charon.core.scheme;
+package org.wso2.charon.core.schema;
 
 import java.util.ArrayList;
 
@@ -13,7 +13,7 @@ public interface ResourceTypeSchema {
 
     public void setSchemas(String schemas);
 
-    public ArrayList<AttributeSchema> getAttributes();
+    public ArrayList<AttributeSchema> getAttributesList();
 
     public void setAttributes(ArrayList attributes);
 

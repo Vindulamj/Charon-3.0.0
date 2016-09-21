@@ -1,8 +1,9 @@
 package org.wso2.charon.core.attributes;
 
-/**
- * Interface to represent Attribute defined in SCIM schema spec.
- */
+import org.wso2.charon.core.exceptions.CharonException;
+
+import java.util.Map;
+
 
 public interface Attribute {
 

@@ -1,7 +1,7 @@
-package org.wso2.charon.core.scheme;
+package org.wso2.charon.core.schema;
 
 /**
- * This defines the constants which can be found in SCIM 2.0 core scheme
+ * This defines the constants which can be found in SCIM 2.0 core schema
  * can be found at : https://tools.ietf.org/html/rfc7643
  */
 public class SCIMConstants {
@@ -12,12 +12,23 @@ public class SCIMConstants {
 
     /*Data formats*/
     public static final String JSON = "json";
-    public static final String XML = "xml";
 
     public static final String APPLICATION_JSON = "application/json";
-    public static final String APPLICATION_XML = "application/xml";
 
     public static final String dateTimeFormat = "yyyy-MM-dd'T'HH:mm:ss";
+
+    /*Resource names as defined in SCIM Schema spec*/
+    public static final String USER = "User";
+    public static final String GROUP = "Group";
+
+    /*Resource endpoints relative to the base SCIM URL*/
+    public static final String USER_ENDPOINT = "/Users";
+
+    //HTTP Headers used in SCIM request/response other than auth headers.
+    public static final String LOCATION_HEADER = "Location";
+    public static final String CONTENT_TYPE_HEADER = "Content-Type";
+    public static final String ACCEPT_HEADER = "Accept";
+
 
     /*Constants found in core-common schema.*/
 
@@ -293,17 +304,22 @@ public class SCIMConstants {
 
     }
 
-    /*Resource names as defined in SCIM Schema spec*/
-    public static final String USER = "User";
-    public static final String GROUP = "Group";
 
-    /*Resource endpoints relative to the base SCIM URL*/
-    public static final String USER_ENDPOINT = "/Users";
+    public static String identifyFormat(String format) {
+        if (format.contains(APPLICATION_JSON)) {
+            return SCIMConstants.JSON;
+        }
+        else {
+            return null;
+        }
+    }
 
-    //HTTP Headers used in SCIM request/response other than auth headers.
-    public static final String LOCATION_HEADER = "Location";
-    public static final String CONTENT_TYPE_HEADER = "Content-Type";
-    public static final String ACCEPT_HEADER = "Accept";
-
+    public static String identifyContentType(String contentType) {
+        if (contentType.equals(JSON)) {
+            return APPLICATION_JSON;
+        } else {
+            return null;
+        }
+    }
 
 }

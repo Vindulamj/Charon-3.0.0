@@ -1,7 +1,6 @@
-package org.wso2.charon.core.scheme;
+package org.wso2.charon.core.schema;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This declares the SCIM resources schema as specified in SCIM spec.
@@ -13,7 +12,7 @@ public class SCIMResourceTypeSchema implements ResourceTypeSchema {
     //e.g.: for 'User' - urn:ietf:params:scim:schemas:core:2.0:User
     private String schemas;
 
-    private List<AttributeSchema> attributes = new ArrayList<AttributeSchema>();
+    private ArrayList<AttributeSchema> attributes = new ArrayList<AttributeSchema>();
 
     private SCIMResourceTypeSchema(String schemas, AttributeSchema[] attributeSchemas) {
         this.schemas=schemas;
@@ -31,12 +30,12 @@ public class SCIMResourceTypeSchema implements ResourceTypeSchema {
     }
 
 
-    public String getSchemas() { return null; }
+    public String getSchemas() { return schemas; }
 
     public void setSchemas(String schemas) { this.schemas=schemas; }
 
-    public ArrayList<AttributeSchema> getAttributes() {
-        return null;
+    public ArrayList<AttributeSchema> getAttributesList() {
+        return attributes;
     }
 
     public void setAttributes(ArrayList attributes) { this.attributes=attributes; }

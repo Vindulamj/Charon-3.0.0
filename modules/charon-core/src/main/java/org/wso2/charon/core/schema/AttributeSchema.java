@@ -1,4 +1,4 @@
-package org.wso2.charon.core.scheme;
+package org.wso2.charon.core.schema;
 
 /*
 This interface defines the common schema base for SCIM attributes and SCIM sub attributes.

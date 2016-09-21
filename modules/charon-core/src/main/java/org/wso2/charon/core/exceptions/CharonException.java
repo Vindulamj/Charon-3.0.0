@@ -26,4 +26,5 @@ public class CharonException extends AbstractCharonException {
     public CharonException(String message) {
         super(message);
     }
+
 }

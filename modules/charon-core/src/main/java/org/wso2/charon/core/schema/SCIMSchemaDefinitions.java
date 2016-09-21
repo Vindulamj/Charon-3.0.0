@@ -1,4 +1,4 @@
-package org.wso2.charon.core.scheme;
+package org.wso2.charon.core.schema;
 
 import java.util.ArrayList;
 import java.util.Arrays;
