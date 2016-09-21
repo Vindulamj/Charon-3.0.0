@@ -30,7 +30,7 @@ public class AttributeUtil {
             case REFERENCE:
                 return parseReference(attributeStringValue);
             case COMPLEX:
-                return new Byte(attributeStringValue);
+                return parseComplex(attributeStringValue);
 
         }
         throw new CharonException("Error in converting string value to attribute type: " + dataType);

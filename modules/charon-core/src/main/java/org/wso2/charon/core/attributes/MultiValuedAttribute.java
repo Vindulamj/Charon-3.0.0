@@ -16,4 +16,25 @@ public class MultiValuedAttribute extends AbstractAttribute{
         this.name = attributeName;
         this.attributeValues = attributeValues;
     }
+
+    public MultiValuedAttribute(String attributeName) {
+        this.name=attributeName;
+    }
+
+    public List<String> getStringAttributeValues() {
+        return stringAttributeValues;
+    }
+
+    public void setStringAttributeValues(List<String> stringAttributeValues) {
+        this.stringAttributeValues = stringAttributeValues;
+    }
+
+    public List<Attribute> getAttributeValues() {
+        return attributeValues;
+    }
+
+    public void setAttributeValues(List<Attribute> attributeValues) {
+        this.attributeValues = attributeValues;
+    }
+
 }
