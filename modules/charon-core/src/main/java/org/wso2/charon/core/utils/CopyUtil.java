@@ -13,6 +13,7 @@ public class CopyUtil {
         ObjectInputStream objInputStream;
         Object newObject = null;
         try {
+
             //create byte array output stream
             ByteArrayOutputStream byteArrayOutPutStream = new ByteArrayOutputStream();
             //create object output stream using above
@@ -27,10 +28,10 @@ public class CopyUtil {
             objInputStream = new ObjectInputStream(byteArrayInputStream);
             newObject = objInputStream.readObject();
 
-        } catch (IOException e) {
-            throw new CharonException("Error in serializing while creating a deep copy of the object");
-        } catch (ClassNotFoundException e) {
+        }  catch (ClassNotFoundException e) {
             throw new CharonException("Error in de-serializing while creating a deep copy of the object");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return newObject;
     }

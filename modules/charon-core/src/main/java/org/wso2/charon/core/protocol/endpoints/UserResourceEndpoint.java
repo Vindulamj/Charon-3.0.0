@@ -2,6 +2,9 @@ package org.wso2.charon.core.protocol.endpoints;
 
 
 import jdk.nashorn.internal.runtime.regexp.joni.exception.InternalException;
+import org.wso2.charon.core.attributes.ComplexAttribute;
+import org.wso2.charon.core.attributes.MultiValuedAttribute;
+import org.wso2.charon.core.attributes.SimpleAttribute;
 import org.wso2.charon.core.encoder.JSONDecoder;
 import org.wso2.charon.core.encoder.JSONEncoder;
 import org.wso2.charon.core.exceptions.BadRequestException;
@@ -33,7 +36,7 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
 
     private Log logger;
 
-    public UserResourceEndpoint(Log logger) {
+    public UserResourceEndpoint() {
         logger = LogFactory.getLog(UserResourceEndpoint.class);
     }
 
@@ -67,10 +70,10 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             //encode the newly created SCIM user object and add id attribute to Location header.
             String encodedUser;
             Map<String, String> httpHeaders = new HashMap<String, String>();
+
             if (createdUser != null) {
                 //create a deep copy of the user object since we are going to change it.
-                User copiedUser = (User) CopyUtil.deepCopy(createdUser);
-
+                User copiedUser = userManager.createUser(user, isBulkUserAdd);
                 //need to remove password before returning
                 ServerSideValidator.removePasswordOnReturn(copiedUser);
                 encodedUser = encoder.encodeSCIMObject(copiedUser);
@@ -80,13 +83,14 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
                 httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, outputFormat);
 
             } else {
-                //TODO:log the error
                 String error = "Newly created User resource is null.";
+                logger.error(error);
                 throw new InternalException(error);
             }
 
             //put the URI of the User object in the response header parameter.
-            return new SCIMResponse(ResponseCodeConstants.CODE_CREATED, encodedUser, httpHeaders);
+            SCIMResponse res=new SCIMResponse(ResponseCodeConstants.CODE_CREATED, encodedUser, httpHeaders);
+            System.out.println(res.getResponseMessage());
 
         } catch (FormatNotSupportedException e) {
             logger.error("Format not found exception.", e);
@@ -101,9 +105,9 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (BadRequestException e) {
-            e.printStackTrace();
+            return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (ConflictException e) {
-            e.printStackTrace();
+            return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         }
         //TODO:Return
         return new SCIMResponse(-1,null,null);

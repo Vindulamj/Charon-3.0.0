@@ -26,6 +26,11 @@ public class SCIMResponse {
 
     protected int responseStatus;
     protected String responseMessage;
+
+    public String getResponseMessage() {
+        return responseMessage;
+    }
+
     //If there are any HTTP header parameters to be set in response other than response code,
     protected Map<String, String> headerParamMap;
 
@@ -41,4 +46,6 @@ public class SCIMResponse {
         this.responseMessage = responseMessage;
         this.headerParamMap = headerMap;
     }
+
+
 }
