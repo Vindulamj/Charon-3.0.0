@@ -1,13 +1,9 @@
 package org.wso2.charon.core.protocol.endpoints;
 
 
-import jdk.nashorn.internal.runtime.regexp.joni.exception.InternalException;
 import org.wso2.charon.core.encoder.JSONDecoder;
 import org.wso2.charon.core.encoder.JSONEncoder;
-import org.wso2.charon.core.exceptions.BadRequestException;
-import org.wso2.charon.core.exceptions.CharonException;
-import org.wso2.charon.core.exceptions.ConflictException;
-import org.wso2.charon.core.exceptions.FormatNotSupportedException;
+import org.wso2.charon.core.exceptions.*;
 import org.wso2.charon.core.extensions.UserManager;
 import org.wso2.charon.core.objects.User;
 import org.wso2.charon.core.protocol.ResponseCodeConstants;
@@ -28,6 +24,7 @@ import java.util.Map;
  * Any SCIM service provider can call this API perform relevant CRUD operations on USER ,
  * based on the HTTP requests received by SCIM Client.
  */
+
 public class UserResourceManager extends AbstractResourceManager {
 
     private Log logger;
@@ -41,7 +38,7 @@ public class UserResourceManager extends AbstractResourceManager {
     }
 
 
-    public SCIMResponse create(String scimObjectString, String outputFormat, UserManager userManager)  {
+    public SCIMResponse create(String scimObjectString, UserManager userManager)  {
 
         JSONEncoder encoder =null;
         try {
@@ -65,7 +62,7 @@ public class UserResourceManager extends AbstractResourceManager {
 
             //encode the newly created SCIM user object and add id attribute to Location header.
             String encodedUser;
-            Map<String, String> httpHeaders = new HashMap<String, String>();
+            Map<String, String> ResponseHeaders = new HashMap<String, String>();
 
             if (createdUser != null) {
                 //create a deep copy of the user object since we are going to change it.
@@ -74,26 +71,22 @@ public class UserResourceManager extends AbstractResourceManager {
                 ServerSideValidator.removePasswordOnReturn(copiedUser);
                 encodedUser = encoder.encodeSCIMObject(copiedUser);
                 //add location header
-                httpHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(
+                ResponseHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(
                         SCIMConstants.USER_ENDPOINT) + "/" + createdUser.getId());
-                httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, outputFormat);
+                ResponseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
 
             } else {
                 String error = "Newly created User resource is null.";
-                logger.error(error);
-                throw new InternalException(error);
+                throw new InternalErrorException(error);
             }
 
             //put the URI of the User object in the response header parameter.
-            SCIMResponse res=new SCIMResponse(ResponseCodeConstants.CODE_CREATED, encodedUser, httpHeaders);
-            System.out.println(res.getResponseMessage());
+            return new SCIMResponse(ResponseCodeConstants.CODE_CREATED, encodedUser, ResponseHeaders);
 
         } catch (FormatNotSupportedException e) {
-            logger.error("Format not found exception.", e);
             //if the submitted format not supported, encode exception and set it in the response.
             return AbstractResourceManager.encodeSCIMException(encoder, e);
         } catch (CharonException e) {
-            logger.error("Internal server error while creating new resource.", e);
             //we have charon exceptions also, instead of having only internal server error exceptions,
             //because inside API code throws CharonException.
             if (e.getStatus() == -1) {
@@ -104,9 +97,9 @@ public class UserResourceManager extends AbstractResourceManager {
             return AbstractResourceManager.encodeSCIMException(encoder, e);
         } catch (ConflictException e) {
             return AbstractResourceManager.encodeSCIMException(encoder, e);
+        } catch (InternalErrorException e) {
+            return AbstractResourceManager.encodeSCIMException(encoder, e);
         }
-        //TODO:Return
-        return new SCIMResponse(-1,null,null);
     }
 
     public SCIMResponse delete(String id, String outputFormat) {

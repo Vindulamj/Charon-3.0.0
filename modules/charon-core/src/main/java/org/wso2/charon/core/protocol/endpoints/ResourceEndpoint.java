@@ -39,7 +39,6 @@ public interface ResourceEndpoint {
      * Method of resource endpoint which is mapped to HTTP POST request.
      *
      * @param scimObjectString - Payload of HTTP request, which contains the SCIM object.
-     * @param outputFormat     - format mentioned in HTTP Accept header.
      * @param userManager
      * @return SCIMResponse -
      *         From Spec: {Since the server is free to alter and/or ignore POSTed content,
@@ -47,7 +46,7 @@ public interface ResourceEndpoint {
      *         client and server views of the new Resource. When a Resource is created, its URI must be returned
      *         in the response Location header.}
      */
-    public SCIMResponse create(String scimObjectString, String outputFormat, UserManager userManager);
+    public SCIMResponse create(String scimObjectString, UserManager userManager);
 
     /**
      * Method of the ResourceEndpoint that is mapped to HTTP Delete method..

@@ -28,7 +28,6 @@ public class SCIMConstants {
     //HTTP Headers used in SCIM request/response other than auth headers.
     public static final String LOCATION_HEADER = "Location";
     public static final String CONTENT_TYPE_HEADER = "Content-Type";
-    public static final String ACCEPT_HEADER = "Accept";
 
 
     /*Constants found in core-common schema.*/

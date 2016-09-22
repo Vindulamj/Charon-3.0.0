@@ -12,7 +12,6 @@ import org.wso2.charon.core.protocol.ResponseCodeConstants;
  */
 public class AbstractCharonException extends Exception {
 
-
     //Error responses are identified using the following "schema" URI
     protected String schemas;
 
