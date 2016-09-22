@@ -1,7 +1,6 @@
 package org.wso2.charon.core.attributes;
 
 import org.wso2.charon.core.exceptions.CharonException;
-import org.wso2.charon.core.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.schema.SCIMDefinitions;
 
 public class SimpleAttribute extends AbstractAttribute {

@@ -9,6 +9,6 @@ import org.wso2.charon.core.objects.User;
  */
 public interface UserManager {
 
-    public User createUser(User user, boolean isBulkUserAdd) throws CharonException, ConflictException;
+    public User createUser(User user) throws CharonException, ConflictException;
 
 }

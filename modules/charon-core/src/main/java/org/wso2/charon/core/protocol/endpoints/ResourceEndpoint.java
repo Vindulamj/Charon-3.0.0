@@ -39,7 +39,6 @@ public interface ResourceEndpoint {
      * Method of resource endpoint which is mapped to HTTP POST request.
      *
      * @param scimObjectString - Payload of HTTP request, which contains the SCIM object.
-     * @param inputFormat      - format mentioned in HTTP Content-Type header.
      * @param outputFormat     - format mentioned in HTTP Accept header.
      * @param userManager
      * @return SCIMResponse -
@@ -48,8 +47,7 @@ public interface ResourceEndpoint {
      *         client and server views of the new Resource. When a Resource is created, its URI must be returned
      *         in the response Location header.}
      */
-    public SCIMResponse create(String scimObjectString, String inputFormat, String outputFormat,
-                               UserManager userManager, boolean isBulkUserAdd);
+    public SCIMResponse create(String scimObjectString, String outputFormat, UserManager userManager);
 
     /**
      * Method of the ResourceEndpoint that is mapped to HTTP Delete method..

@@ -3,8 +3,6 @@ package org.wso2.charon.core.attributes;
 import org.wso2.charon.core.exceptions.CharonException;
 import org.wso2.charon.core.schema.SCIMDefinitions;
 
-import java.util.Map;
-
 /**
  * Interface to represent Attribute defined in SCIM schema spec.
  */

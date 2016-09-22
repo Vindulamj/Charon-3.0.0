@@ -15,7 +15,6 @@ import org.wso2.charon.core.objects.SCIMObject;
 import org.wso2.charon.core.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.schema.SCIMConstants;
 import org.wso2.charon.core.schema.SCIMDefinitions;
-import org.wso2.charon.core.schema.SCIMSchemaDefinitions;
 import org.wso2.charon.core.utils.AttributeUtil;
 
 import java.util.Date;

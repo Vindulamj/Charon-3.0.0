@@ -16,7 +16,7 @@ import java.util.Map;
  * operations. And and entry point for CharonManager implementations to pass handlers to the
  * implementations of extension points.
  */
-public abstract class AbstractResourceEndpoint implements ResourceEndpoint {
+public abstract class AbstractResourceManager implements ResourceEndpoint {
 
     private JSONEncoder encoder;
 
@@ -28,16 +28,10 @@ public abstract class AbstractResourceEndpoint implements ResourceEndpoint {
     /**
      * Returns the encoder given the encoding format.
      *
-     * @param format
      * @return
      * @throws FormatNotSupportedException
      */
-    public JSONEncoder getEncoder(String format) throws FormatNotSupportedException, CharonException {
-        //if the requested format not supported, return an error.
-        if (format == null) {
-            //Error is logged by the caller.
-            throw new FormatNotSupportedException();
-        }
+    public JSONEncoder getEncoder() throws FormatNotSupportedException, CharonException {
         if(encoder == null) {
             //if the encoder is not set, throw a charon exception
             String error="Encoder is not set";
@@ -49,17 +43,12 @@ public abstract class AbstractResourceEndpoint implements ResourceEndpoint {
     /**
      * Returns the decoder given the decoding format.
      *
-     * @param format
+     *
      * @return
      * @throws FormatNotSupportedException
      */
-    public JSONDecoder getDecoder(String format) throws FormatNotSupportedException, CharonException {
+    public JSONDecoder getDecoder() throws FormatNotSupportedException, CharonException {
 
-        //if the requested format not supported, return an error.
-        if (format == null) {
-            //Error is logged by the caller.
-            throw new FormatNotSupportedException();
-        }
         if(decoder == null) {
             //if the decoder is not set, throw a charon exception
             String error="Decoder is not set";

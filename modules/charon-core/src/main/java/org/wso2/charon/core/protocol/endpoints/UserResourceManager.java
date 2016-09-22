@@ -2,9 +2,6 @@ package org.wso2.charon.core.protocol.endpoints;
 
 
 import jdk.nashorn.internal.runtime.regexp.joni.exception.InternalException;
-import org.wso2.charon.core.attributes.ComplexAttribute;
-import org.wso2.charon.core.attributes.MultiValuedAttribute;
-import org.wso2.charon.core.attributes.SimpleAttribute;
 import org.wso2.charon.core.encoder.JSONDecoder;
 import org.wso2.charon.core.encoder.JSONEncoder;
 import org.wso2.charon.core.exceptions.BadRequestException;
@@ -26,18 +23,17 @@ import org.wso2.charon.core.utils.CopyUtil;
 import java.util.HashMap;
 import java.util.Map;
 
-
 /**
  * REST API exposed by Charon-Core to perform operations on UserResource.
  * Any SCIM service provider can call this API perform relevant CRUD operations on USER ,
  * based on the HTTP requests received by SCIM Client.
  */
-public class UserResourceEndpoint extends AbstractResourceEndpoint {
+public class UserResourceManager extends AbstractResourceManager {
 
     private Log logger;
 
-    public UserResourceEndpoint() {
-        logger = LogFactory.getLog(UserResourceEndpoint.class);
+    public UserResourceManager() {
+        logger = LogFactory.getLog(UserResourceManager.class);
     }
 
     public SCIMResponse get(String id, String format, UserManager userManager) {
@@ -45,15 +41,15 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
     }
 
 
-    public SCIMResponse create(String scimObjectString, String inputFormat, String outputFormat, UserManager userManager, boolean isBulkUserAdd)  {
+    public SCIMResponse create(String scimObjectString, String outputFormat, UserManager userManager)  {
 
         JSONEncoder encoder =null;
         try {
             //obtain the encoder matching the requested output format.
-            encoder = getEncoder(SCIMConstants.identifyFormat(outputFormat));
+            encoder = getEncoder();
 
             //obtain the decoder matching the submitted format.
-            JSONDecoder decoder = getDecoder(SCIMConstants.identifyFormat(inputFormat));
+            JSONDecoder decoder = getDecoder();
 
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
 
@@ -65,7 +61,7 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
 
             /*handover the SCIM User object to the user storage provided by the SP.
             need to send back the newly created user in the response payload*/
-            User createdUser = userManager.createUser(user, isBulkUserAdd);
+            User createdUser = userManager.createUser(user);
 
             //encode the newly created SCIM user object and add id attribute to Location header.
             String encodedUser;
@@ -73,7 +69,7 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
 
             if (createdUser != null) {
                 //create a deep copy of the user object since we are going to change it.
-                User copiedUser = userManager.createUser(user, isBulkUserAdd);
+                User copiedUser = (User) CopyUtil.deepCopy(createdUser);
                 //need to remove password before returning
                 ServerSideValidator.removePasswordOnReturn(copiedUser);
                 encodedUser = encoder.encodeSCIMObject(copiedUser);
@@ -95,7 +91,7 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
         } catch (FormatNotSupportedException e) {
             logger.error("Format not found exception.", e);
             //if the submitted format not supported, encode exception and set it in the response.
-            return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
+            return AbstractResourceManager.encodeSCIMException(encoder, e);
         } catch (CharonException e) {
             logger.error("Internal server error while creating new resource.", e);
             //we have charon exceptions also, instead of having only internal server error exceptions,
@@ -103,11 +99,11 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             if (e.getStatus() == -1) {
                 e.setStatus(ResponseCodeConstants.CODE_INTERNAL_ERROR);
             }
-            return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
+            return AbstractResourceManager.encodeSCIMException(encoder, e);
         } catch (BadRequestException e) {
-            return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
+            return AbstractResourceManager.encodeSCIMException(encoder, e);
         } catch (ConflictException e) {
-            return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
+            return AbstractResourceManager.encodeSCIMException(encoder, e);
         }
         //TODO:Return
         return new SCIMResponse(-1,null,null);

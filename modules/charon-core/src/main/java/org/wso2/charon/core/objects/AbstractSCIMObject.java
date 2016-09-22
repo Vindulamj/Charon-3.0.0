@@ -7,7 +7,6 @@ import org.wso2.charon.core.attributes.SimpleAttribute;
 import org.wso2.charon.core.exceptions.BadRequestException;
 import org.wso2.charon.core.exceptions.CharonException;
 import org.wso2.charon.core.exceptions.NotFoundException;
-import org.wso2.charon.core.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.schema.ResourceTypeSchema;
 import org.wso2.charon.core.schema.SCIMConstants;
 import org.wso2.charon.core.schema.SCIMSchemaDefinitions;

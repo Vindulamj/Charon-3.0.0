@@ -1,19 +1,13 @@
 package org.wso2.charon.core.schema;
 
-import org.wso2.charon.core.attributes.AbstractAttribute;
-import org.wso2.charon.core.attributes.Attribute;
-import org.wso2.charon.core.attributes.ComplexAttribute;
-import org.wso2.charon.core.attributes.MultiValuedAttribute;
 import org.wso2.charon.core.exceptions.BadRequestException;
 import org.wso2.charon.core.exceptions.CharonException;
 import org.wso2.charon.core.objects.AbstractSCIMObject;
 import org.wso2.charon.core.objects.User;
-import org.wso2.charon.core.protocol.endpoints.AbstractResourceEndpoint;
+import org.wso2.charon.core.protocol.endpoints.AbstractResourceManager;
 import org.wso2.charon.core.utils.AttributeUtil;
 
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 public class ServerSideValidator extends AbstractValidator{
@@ -33,11 +27,11 @@ public class ServerSideValidator extends AbstractValidator{
         scimObject.setLastModified(AttributeUtil.parseDateTime(AttributeUtil.formatDateTime(date)));
         //set location
         if (SCIMConstants.USER_CORE_SCHEMA_URI.equals(resourceSchema.getSchemas())) {
-            String location = createLocationHeader(AbstractResourceEndpoint.getResourceEndpointURL(
+            String location = createLocationHeader(AbstractResourceManager.getResourceEndpointURL(
                     SCIMConstants.USER_ENDPOINT), scimObject.getId());
             scimObject.setLocation(location);
         } else if (SCIMConstants.GROUP.equals(resourceSchema.getSchemas())) {
-            String location = createLocationHeader(AbstractResourceEndpoint.getResourceEndpointURL(
+            String location = createLocationHeader(AbstractResourceManager.getResourceEndpointURL(
                     SCIMConstants.GROUP_ENDPOINT), scimObject.getId());
             scimObject.setLocation(location);
         }
