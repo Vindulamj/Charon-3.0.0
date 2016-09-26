@@ -7,11 +7,21 @@ import org.wso2.charon.core.schema.AttributeSchema;
 import org.wso2.charon.core.schema.SCIMDefinitions;
 
 
+import java.net.URI;
 import java.net.URL;
 import java.util.Date;
-
+/**
+ * Default implementation of AttributeFactory according to SCIM Schema spec.
+ */
 public class DefaultAttributeFactory {
 
+    /**
+     * Returns the defined type of attribute with the user defined value included and necessary attribute characteristics set
+     *
+     * @param attributeSchema - Attribute schema
+     * @param attribute - attribute
+     * @return Attribute
+     */
     public static Attribute createAttribute(AttributeSchema attributeSchema,
                                             AbstractAttribute attribute) throws CharonException, BadRequestException {
 
@@ -22,7 +32,6 @@ public class DefaultAttributeFactory {
         attribute.setMultiValued(attributeSchema.getMultiValued());
         attribute.setDescription(attributeSchema.getDescription());
         attribute.setUniqueness(attributeSchema.getUniqueness());
-        attribute.setType(attributeSchema.getType());
 
         //Default attribute factory knows about SCIMAttribute schema
         try{
@@ -30,10 +39,9 @@ public class DefaultAttributeFactory {
             if (attribute instanceof SimpleAttribute) {
                 return createSimpleAttribute(attributeSchema, (SimpleAttribute) attribute);
             }
-            if (attribute instanceof MultiValuedAttribute) {
-                return createMultiValuedAttribute(attributeSchema, (MultiValuedAttribute) attribute);
+            else{
+                attribute.setType(attributeSchema.getType());
             }
-            //validate the created attribute against the schema.
             return attribute;
         }
         catch(CharonException e){
@@ -46,39 +54,28 @@ public class DefaultAttributeFactory {
         }
     }
 
-    /*
+    /**
      * Once identified that constructing attribute is a simple attribute & related attribute schema is a
      * SCIMAttributeSchema, perform attribute construction operations specific to Simple Attribute.
      *
      * @param attributeSchema
      * @param simpleAttribute
-     * @return
+     * @return SimpleAttribute
+     * @throws CharonException
+     * @throws BadRequestException
      */
     protected static SimpleAttribute createSimpleAttribute(AttributeSchema attributeSchema,
                                                            SimpleAttribute simpleAttribute) throws CharonException, BadRequestException {
         if (simpleAttribute.getValue() != null) {
             if (isAttributeDataTypeValid(simpleAttribute.getValue(), attributeSchema.getType())) {
-
                 simpleAttribute.setType(attributeSchema.getType());
                 return simpleAttribute;
             }
+            else{
+                throw new BadRequestException(ResponseCodeConstants.INVALID_VALUE);
+            }
         }
         return simpleAttribute;
-    }
-
-    /**
-     * Once identified that constructing attribute as a multivalued attribute, perform specific operations
-     * in creating a multi valued attribute. Such as canonicalization, and validating primary is not
-     * repeated etc.
-     *
-     * @param attributeSchema
-     * @param multiValuedAttribute
-     * @return
-     * @throws CharonException
-     */
-    protected static MultiValuedAttribute createMultiValuedAttribute(
-            AttributeSchema attributeSchema, MultiValuedAttribute multiValuedAttribute) throws CharonException {
-        return multiValuedAttribute;
     }
 
     /**
@@ -87,12 +84,11 @@ public class DefaultAttributeFactory {
      *
      * @param attributeValue
      * @param attributeDataType
-     * @return
+     * @return boolean
      * @throws BadRequestException
      */
     protected static boolean isAttributeDataTypeValid(Object attributeValue,
-                                                      SCIMDefinitions.DataType attributeDataType)
-            throws BadRequestException {
+                                                      SCIMDefinitions.DataType attributeDataType) throws BadRequestException {
         switch (attributeDataType) {
             case STRING:
                 return attributeValue instanceof String;
@@ -107,7 +103,7 @@ public class DefaultAttributeFactory {
             case BINARY:
                 return attributeValue instanceof Byte[];
             case REFERENCE:
-                return attributeValue instanceof URL;
+                return attributeValue instanceof URI;
             case COMPLEX:
                 return attributeValue instanceof String;
 

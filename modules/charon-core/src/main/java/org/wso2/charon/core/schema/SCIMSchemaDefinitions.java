@@ -2,6 +2,7 @@ package org.wso2.charon.core.schema;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * This class contains the schema definitions in
@@ -543,7 +544,7 @@ public class SCIMSchemaDefinitions {
         //The User's cleartext password.
         public static final SCIMAttributeSchema PASSWORD =
                 SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.UserSchemaConstants.PASSWORD,
-                        SCIMDefinitions.DataType.BOOLEAN, false, SCIMConstants.UserSchemaConstants.PASSWORD_DESC, false, false,
+                        SCIMDefinitions.DataType.STRING, false, SCIMConstants.UserSchemaConstants.PASSWORD_DESC, false, false,
                         SCIMDefinitions.Mutability.WRITE_ONLY, SCIMDefinitions.Returned.NEVER,
                         SCIMDefinitions.Uniqueness.NONE, null, null, null);
 
@@ -769,7 +770,7 @@ public class SCIMSchemaDefinitions {
 
         public static final SCIMResourceTypeSchema SCIM_USER_SCHEMA =
                 SCIMResourceTypeSchema.createSCIMResourceSchema(
-                        SCIMConstants.USER_CORE_SCHEMA_URI,
+                        new ArrayList<String>(Arrays.asList(SCIMConstants.USER_CORE_SCHEMA_URI)),
                         ID, EXTERNAL_ID, META,
                         SCIMUserSchemaDefinition.USERNAME,
                         SCIMUserSchemaDefinition.NAME,
@@ -799,7 +800,7 @@ public class SCIMSchemaDefinitions {
 
         public static final SCIMResourceTypeSchema SCIM_GROUP_SCHEMA =
                 SCIMResourceTypeSchema.createSCIMResourceSchema(
-                        SCIMConstants.GROUP_CORE_SCHEMA_URI,
+                        new ArrayList<String>(Arrays.asList(SCIMConstants.GROUP_CORE_SCHEMA_URI)),
                         ID, EXTERNAL_ID, META,
                         SCIMGroupSchemaDefinition.DISPLAY_NAME,
                         SCIMGroupSchemaDefinition.MEMBERS);
@@ -810,7 +811,7 @@ public class SCIMSchemaDefinitions {
 
         public static final SCIMResourceTypeSchema SCIM_EnterpriseUser_SCHEMA =
                 SCIMResourceTypeSchema.createSCIMResourceSchema(
-                        SCIMConstants.GROUP_CORE_SCHEMA_URI,
+                        new ArrayList<String>(Arrays.asList(SCIMConstants.USER_CORE_SCHEMA_URI)),
                         ID, EXTERNAL_ID, META,
                         SCIMGroupSchemaDefinition.DISPLAY_NAME,
                         SCIMGroupSchemaDefinition.MEMBERS);

@@ -1,6 +1,8 @@
 package org.wso2.charon.core.schema;
 
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.wso2.charon.core.attributes.AbstractAttribute;
 import org.wso2.charon.core.attributes.Attribute;
 import org.wso2.charon.core.attributes.ComplexAttribute;
@@ -8,11 +10,14 @@ import org.wso2.charon.core.attributes.MultiValuedAttribute;
 import org.wso2.charon.core.exceptions.BadRequestException;
 import org.wso2.charon.core.exceptions.CharonException;
 import org.wso2.charon.core.objects.AbstractSCIMObject;
+import org.wso2.charon.core.protocol.endpoints.UserResourceManager;
 
 import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractValidator {
+
+    private static Log logger= LogFactory.getLog(AbstractValidator.class);
 
     /**
      * Validate SCIMObject for required attributes given the object and the corresponding schema.
@@ -83,13 +88,20 @@ public abstract class AbstractValidator {
         for (AttributeSchema attributeSchema : attributeSchemaList) {
             //check for schema.
             if (attributeList.containsKey(attributeSchema.getName())) {
-                if (!schemaList.contains(resourceSchema.getSchemas())) {
-                    schemaList.add(resourceSchema.getSchemas());
+                if (!schemaList.contains(resourceSchema.getSchemasList())) {
+                  //  schemaList.add(resourceSchema.getSchemasList());
                 }
             }
         }
     }
 
+    /**
+     *Check for readonlyAttributes and remove them if they have been modified.
+     *
+     * @param scimObject
+     * @param resourceSchema
+     * @throws CharonException
+     */
     public static void removeAnyReadOnlyAttributes(AbstractSCIMObject scimObject,
                                                     SCIMResourceTypeSchema resourceSchema) throws CharonException {
         //get attributes from schema.
@@ -102,7 +114,7 @@ public abstract class AbstractValidator {
                 if (attributeList.containsKey(attributeSchema.getName())) {
                     String error = "Read only attribute: " + attributeSchema.getName() +
                             " is set from consumer in the SCIM Object. " + "Removing it.";
-                    //TODO:put a log
+                    logger.debug(error);
                     scimObject.deleteAttribute(attributeSchema.getName());
                 }
             }

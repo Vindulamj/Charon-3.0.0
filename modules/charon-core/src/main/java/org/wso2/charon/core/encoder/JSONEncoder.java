@@ -21,6 +21,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This encodes the data
+ */
+
 public class JSONEncoder {
 
     private String format;
@@ -143,7 +147,7 @@ public class JSONEncoder {
     public void encodeComplexAttribute(ComplexAttribute complexAttribute, JSONObject rootObject)
             throws JSONException {
         JSONObject subObject = new JSONObject();
-        Map<String, Attribute> attributes = complexAttribute.getSubAttributes();
+        Map<String, Attribute> attributes = complexAttribute.getSubAttributesList();
         for (Attribute attributeValue : attributes.values()) {
             //using instanceof instead of polymorphic way, in order to make encoder pluggable.
             if (attributeValue instanceof SimpleAttribute) {
@@ -194,14 +198,9 @@ public class JSONEncoder {
         JSONArray jsonArray = new JSONArray();
         //TODO:what if values are set as list of string values.For the moment it is ok, since only schemas
         //attribute has such values and we handle it separately in encoding.
-        List<String> stringAttributeValues = multiValuedAttribute.getStringAttributeValues();
+        //List<String> stringAttributeValues = multiValuedAttribute.getStringAttributeValues();
         List<Attribute> attributeValues = multiValuedAttribute.getAttributeValues();
         //if values are strings,
-        if (stringAttributeValues != null && !stringAttributeValues.isEmpty()) {
-            for (String stringAttributeValue : stringAttributeValues) {
-                jsonArray.put(stringAttributeValue);
-            }
-        }
         if (attributeValues != null && !attributeValues.isEmpty()) {
             for (Attribute attributeValue : attributeValues) {
                 if (attributeValue instanceof SimpleAttribute) {
@@ -226,7 +225,7 @@ public class JSONEncoder {
     protected void encodeComplexAttributeValue(ComplexAttribute attributeValue,
                                                JSONArray jsonArray) throws JSONException {
         JSONObject subObject = new JSONObject();
-        Map<String, Attribute> subAttributes = attributeValue.getSubAttributes();
+        Map<String, Attribute> subAttributes = attributeValue.getSubAttributesList();
         for (Attribute value : subAttributes.values()) {
             //using instanceof instead of polymorphic way, in order to make encoder pluggable.
             if (value instanceof SimpleAttribute) {

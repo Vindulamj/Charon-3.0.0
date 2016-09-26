@@ -18,9 +18,10 @@
 package org.wso2.charon.core.schema;
 
 /*
-This is to check for extension schema for the user and build a custom user schema with it. Unless a extension is defined,
-core-user schema need to be returned.
- */
+* This is to check for extension schema for the user and build a
+* custom user schema with it. Unless a extension is defined,
+* core-user schema need to be returned.
+*/
 
 public class SCIMResourceSchemaManager {
 	
@@ -29,19 +30,17 @@ public class SCIMResourceSchemaManager {
 	public static SCIMResourceSchemaManager getInstance() {
 		return manager;
 	}
-	
-	private SCIMResourceSchemaManager() {
-		
-	}
 
 	/**
 	 * Return the SCIM User Resource Schema
-	 * @return
+	 *
+	 * @return SCIMResourceTypeSchema
+	 *
 	 */
 	public SCIMResourceTypeSchema getUserResourceSchema() {
 
 		//TODO:check for the extension schema in the config file and construct a custom schema with them included
-		// returning the core schema
+		// returning the core user schema
 		return SCIMSchemaDefinitions.SCIM_USER_SCHEMA;
 	}
 

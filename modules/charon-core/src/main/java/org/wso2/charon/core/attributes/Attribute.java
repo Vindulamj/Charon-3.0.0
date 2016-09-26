@@ -16,8 +16,6 @@ public interface Attribute {
 
     public String getDescription();
 
-    public Boolean getRequired();
-
     public Boolean getCaseExact();
 
     public SCIMDefinitions.Mutability getMutability();

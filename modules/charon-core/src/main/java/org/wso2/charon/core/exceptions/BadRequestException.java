@@ -3,7 +3,8 @@ package org.wso2.charon.core.exceptions;
 import org.wso2.charon.core.protocol.ResponseCodeConstants;
 
 /**
- * Request is unparsable, syntactically incorrect, or violates schema.
+ * If the request is unparsable, syntactically incorrect, or violates schema., this exception is thrown.
+ * HTTP error code is: 400 BAD REQUEST
  */
 public class BadRequestException extends AbstractCharonException  {
 

@@ -4,7 +4,7 @@ import org.wso2.charon.core.encoder.JSONDecoder;
 import org.wso2.charon.core.encoder.JSONEncoder;
 import org.wso2.charon.core.exceptions.AbstractCharonException;
 import org.wso2.charon.core.exceptions.CharonException;
-import org.wso2.charon.core.exceptions.FormatNotSupportedException;
+import org.wso2.charon.core.exceptions.NotFoundException;
 import org.wso2.charon.core.protocol.SCIMResponse;
 import org.wso2.charon.core.schema.SCIMConstants;
 
@@ -13,25 +13,25 @@ import java.util.Map;
 
 /**
  * This is an abstract layer for all the resource endpoints to abstract out common
- * operations. And and entry point for CharonManager implementations to pass handlers to the
- * implementations of extension points.
+ * operations. And an entry point for initiating the charon from the outside.
  */
 public abstract class AbstractResourceManager implements ResourceEndpoint {
 
-    private JSONEncoder encoder;
+    private static JSONEncoder encoder;
 
-    private JSONDecoder decoder;
+    private static JSONDecoder decoder;
 
     //Keeps  a map of endpoint urls of the exposed resources.
     private static Map<String, String> endpointURLMap;
 
+
     /**
-     * Returns the encoder given the encoding format.
+     * Returns the encoder for json.
      *
-     * @return
-     * @throws FormatNotSupportedException
+     * @return JSONEncoder - An json encoder for encoding data
+     * @throws CharonException
      */
-    public JSONEncoder getEncoder() throws FormatNotSupportedException, CharonException {
+    public JSONEncoder getEncoder() throws CharonException {
         if(encoder == null) {
             //if the encoder is not set, throw a charon exception
             String error="Encoder is not set";
@@ -41,13 +41,13 @@ public abstract class AbstractResourceManager implements ResourceEndpoint {
     }
 
     /**
-     * Returns the decoder given the decoding format.
+     * Returns the decoder for json.
      *
      *
-     * @return
-     * @throws FormatNotSupportedException
+     * @return JSONDecoder - An json decoder for decoding data
+     * @throws CharonException
      */
-    public JSONDecoder getDecoder() throws FormatNotSupportedException, CharonException {
+    public JSONDecoder getDecoder() throws CharonException {
 
         if(decoder == null) {
             //if the decoder is not set, throw a charon exception
@@ -58,22 +58,38 @@ public abstract class AbstractResourceManager implements ResourceEndpoint {
 
     }
 
-    public static SCIMResponse encodeSCIMException(JSONEncoder encoder,
-                                                   AbstractCharonException exception) {
-        Map<String, String> httpHeaders = new HashMap<String, String>();
-        httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.identifyContentType(encoder.getFormat()));
-        return new SCIMResponse(exception.getStatus(), encoder.encodeSCIMException(exception), httpHeaders);
+    /**
+     * Returns the endpoint according to the resource.
+     *
+     * @param resource -Resource type
+     * @return endpoint URL
+     * @throws NotFoundException
+     */
+    public static String getResourceEndpointURL(String resource) throws NotFoundException{
+        if (endpointURLMap != null && endpointURLMap.size() != 0) {
+            return endpointURLMap.get(resource);
+        } else {
+            throw new NotFoundException();
+        }
     }
 
     public void setEncoder(JSONEncoder encoder) { this.encoder = encoder; }
 
     public void setDecoder(JSONDecoder decoder) { this.decoder = decoder; }
 
-    public static String getResourceEndpointURL(String resource) {
-        if (endpointURLMap != null && endpointURLMap.size() != 0) {
-            return endpointURLMap.get(resource);
-        } else {
-            return null;
-        }
+    public void setEndpointURLMap(Map<String, String> endpointURLMap) {
+        AbstractResourceManager.endpointURLMap = endpointURLMap;
+    }
+
+    /**
+     * Returns SCIM Response object after json encoding the exception
+     *
+     * @param exception - exception message
+     * @return SCIMResponse
+     */
+    public static SCIMResponse encodeSCIMException(AbstractCharonException exception) {
+        Map<String, String> ResponseHeaders = new HashMap<String, String>();
+        ResponseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER,SCIMConstants.APPLICATION_JSON);
+        return new SCIMResponse(exception.getStatus(), encoder.encodeSCIMException(exception), ResponseHeaders);
     }
 }

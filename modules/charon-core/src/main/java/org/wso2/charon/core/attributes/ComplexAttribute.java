@@ -5,45 +5,43 @@ import org.wso2.charon.core.exceptions.CharonException;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by vindula on 9/21/16.
+/*
+ * This class is a blueprint of ComplexAttribute defined in SCIM Core Schema Spec.
  */
 public class ComplexAttribute extends AbstractAttribute{
 
-    /*If it is a complex attribute, has a list of sub attributes.*/
-    protected Map<String, Attribute> subAttributes = new HashMap<String, Attribute>();
+    //If it is a complex attribute, it has a list of sub attributes.
+    protected Map<String, Attribute> subAttributesList = new HashMap<String, Attribute>();
 
-    public ComplexAttribute(String name) {
-       this.name=name;
-    }
+    public ComplexAttribute(String name) { this.name=name; }
 
     /**
      * Retrieve the map of sub attributes.
      *
-     * @return
+     * @return Map of Attributes
      */
-    public Map<String, Attribute> getSubAttributes() {
-            return subAttributes;
+    public Map<String, Attribute> getSubAttributesList() {
+            return subAttributesList;
         }
 
     /**
      * Set the map of sub attributes.
      *
-     * @param subAttributes
+     * @param subAttributesList
      */
-    public void setSubAttributes(Map<String, Attribute> subAttributes) {
-        this.subAttributes = subAttributes;
+    public void setSubAttributesList(Map<String, Attribute> subAttributesList) {
+        this.subAttributesList = subAttributesList;
     }
 
     /**
      * Retrieve one attribute given the attribute name.
      *
      * @param attributeName
-     * @return
+     * @return Attribute
      */
     public Attribute getSubAttribute(String attributeName) throws CharonException {
-        if (subAttributes.containsKey(attributeName)) {
-            return subAttributes.get(attributeName);
+        if (subAttributesList.containsKey(attributeName)) {
+            return subAttributesList.get(attributeName);
         } else {
             return null;
         }
@@ -55,23 +53,28 @@ public class ComplexAttribute extends AbstractAttribute{
      * @param attributeName
      */
     public void removeSubAttribute(String attributeName) {
-        if (subAttributes.containsKey(attributeName)) {
-            subAttributes.remove(attributeName);
+        if (subAttributesList.containsKey(attributeName)) {
+            subAttributesList.remove(attributeName);
         }
     }
 
+    /**
+     * look for the existance of a sub attribute
+     *
+     * @param attributeName
+     */
     public boolean isSubAttributeExist(String attributeName) {
-        return subAttributes.containsKey(attributeName);
+        return subAttributesList.containsKey(attributeName);
     }
 
     /**
-     * Set a sub attribute on the complex attribute.
+     * Set a sub attribute of the complex attribute's sub attribute list.
      *
      * @param subAttribute
      * @throws CharonException
      */
     public void setSubAttribute(Attribute subAttribute)
             throws CharonException {
-        subAttributes.put(subAttribute.getName(), subAttribute);
+        subAttributesList.put(subAttribute.getName(), subAttribute);
     }
     }

@@ -8,12 +8,9 @@ import org.wso2.charon.core.extensions.UserManager;
 import org.wso2.charon.core.objects.User;
 import org.wso2.charon.core.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.protocol.SCIMResponse;
-import org.wso2.charon.core.schema.SCIMConstants;
+import org.wso2.charon.core.schema.*;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
-import org.wso2.charon.core.schema.SCIMResourceSchemaManager;
-import org.wso2.charon.core.schema.SCIMResourceTypeSchema;
-import org.wso2.charon.core.schema.ServerSideValidator;
 import org.wso2.charon.core.utils.CopyUtil;
 
 import java.util.HashMap;
@@ -37,17 +34,24 @@ public class UserResourceManager extends AbstractResourceManager {
         return null;
     }
 
-
+    /**
+     * Returns SCIMResponse based on the sucess or failure of the create user operation
+     *
+     * @param scimObjectString -raw string containing user info
+     * @return userManager - userManager instance defined by the external implementor of charon
+     */
     public SCIMResponse create(String scimObjectString, UserManager userManager)  {
 
         JSONEncoder encoder =null;
         try {
-            //obtain the encoder matching the requested output format.
+            //obtain the json encoder
             encoder = getEncoder();
 
-            //obtain the decoder matching the submitted format.
+            //obtain the json decoder
             JSONDecoder decoder = getDecoder();
 
+            //obtain the schema corresponding to user (
+            // unless configured returns core-user schema or else returns extended user schema)
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
 
             //decode the SCIM User object, encoded in the submitted payload.
@@ -66,7 +70,7 @@ public class UserResourceManager extends AbstractResourceManager {
 
             if (createdUser != null) {
                 //create a deep copy of the user object since we are going to change it.
-                User copiedUser = (User) CopyUtil.deepCopy(createdUser);
+                User copiedUser = createdUser;//(User) CopyUtil.deepCopy(createdUser);
                 //need to remove password before returning
                 ServerSideValidator.removePasswordOnReturn(copiedUser);
                 encodedUser = encoder.encodeSCIMObject(copiedUser);
@@ -83,23 +87,23 @@ public class UserResourceManager extends AbstractResourceManager {
             //put the URI of the User object in the response header parameter.
             return new SCIMResponse(ResponseCodeConstants.CODE_CREATED, encodedUser, ResponseHeaders);
 
-        } catch (FormatNotSupportedException e) {
-            //if the submitted format not supported, encode exception and set it in the response.
-            return AbstractResourceManager.encodeSCIMException(encoder, e);
         } catch (CharonException e) {
             //we have charon exceptions also, instead of having only internal server error exceptions,
             //because inside API code throws CharonException.
             if (e.getStatus() == -1) {
                 e.setStatus(ResponseCodeConstants.CODE_INTERNAL_ERROR);
             }
-            return AbstractResourceManager.encodeSCIMException(encoder, e);
+            return AbstractResourceManager.encodeSCIMException(e);
         } catch (BadRequestException e) {
-            return AbstractResourceManager.encodeSCIMException(encoder, e);
+            return AbstractResourceManager.encodeSCIMException(e);
         } catch (ConflictException e) {
-            return AbstractResourceManager.encodeSCIMException(encoder, e);
+            return AbstractResourceManager.encodeSCIMException(e);
         } catch (InternalErrorException e) {
-            return AbstractResourceManager.encodeSCIMException(encoder, e);
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (NotFoundException e) {
+            e.printStackTrace();
         }
+        return null;
     }
 
     public SCIMResponse delete(String id, String outputFormat) {

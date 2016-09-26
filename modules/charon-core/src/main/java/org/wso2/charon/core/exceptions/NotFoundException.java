@@ -12,5 +12,6 @@ public class NotFoundException extends AbstractCharonException {
     public NotFoundException() {
         status = ResponseCodeConstants.CODE_RESOURCE_NOT_FOUND;
         detail = ResponseCodeConstants.DESC_RESOURCE_NOT_FOUND;
+
     }
 }

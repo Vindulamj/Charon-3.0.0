@@ -1,6 +1,11 @@
 package org.wso2.charon.core.utils;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
+import org.wso2.charon.core.exceptions.BadRequestException;
 import org.wso2.charon.core.exceptions.CharonException;
+import org.wso2.charon.core.protocol.ResponseCodeConstants;
+import org.wso2.charon.core.schema.ResourceTypeSchema;
+import org.wso2.charon.core.schema.SCIMConstants;
 import org.wso2.charon.core.schema.SCIMDefinitions;
 
 import java.net.URI;
@@ -8,17 +13,33 @@ import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
+/*
+ * This class acts as an utility class for attributes
+ */
 public class AttributeUtil {
 
-    public static Object getAttributeValueFromString(String attributeStringValue,
+    /**
+     * Convert the raw string to SCIM defined data type accordingly
+     *
+     * @param attributeValue
+     * @param dataType
+     * @return Object
+     */
+    public static Object getAttributeValueFromString(Object attributeValue,
                                                      SCIMDefinitions.DataType dataType)
-            throws CharonException {
+            throws CharonException, BadRequestException {
+        if(attributeValue ==null){
+            return attributeValue;
+        }
+        String attributeStringValue = null;
+        if(!(attributeValue instanceof Boolean)){
+            attributeStringValue= (String) attributeValue;
+        }
         switch (dataType) {
             case STRING:
                 return attributeStringValue.trim();
             case BOOLEAN:
-                return Boolean.parseBoolean(attributeStringValue);
+                return parseBoolean(attributeValue);
             case DECIMAL:
                 return Double.parseDouble(attributeStringValue);
             case INTEGER:
@@ -36,18 +57,23 @@ public class AttributeUtil {
         throw new CharonException("Error in converting string value to attribute type: " + dataType);
 
     }
-
+    /**
+     * SCIM spec requires date time to be in yyyy-MM-dd'T'HH:mm:ss
+     *
+     * @param dateTimeString
+     */
     public static Date parseDateTime(String dateTimeString) throws CharonException {
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat(SCIMConstants.dateTimeFormat);
             return sdf.parse(dateTimeString);
         } catch (ParseException e) {
             throw new CharonException("Error in parsing date time. " +
-                    "Date time should adhere to the format: yyyy-MM-dd'T'HH:mm:ss");
+                    "Date time should adhere to the format: "+SCIMConstants.dateTimeFormat);
         }
     }
 
     public static URI parseReference(String referenceString) throws CharonException{
+        //TODO: Need a better way for doing this. Think of the way to handle reference types
         try{
             URI uri =new URI(referenceString);
             uri.normalize();
@@ -56,9 +82,8 @@ public class AttributeUtil {
             throw new CharonException("Error in normalization of the URI");
         }
     }
-
+    //this method is for the consistence purpose only
     public static String parseComplex(String complexString){
-        //TODO: check for sub complex attribute availability
         return complexString;
     }
 
@@ -73,6 +98,18 @@ public class AttributeUtil {
         return formattedDate;
     }
 
-
+    /**
+     * Converts the value to bolean or throw an exception
+     *
+     * @param booleanValue
+     */
+    public static Boolean parseBoolean(Object booleanValue) throws BadRequestException {
+        if(booleanValue instanceof Boolean){
+            return ((Boolean) booleanValue).booleanValue();
+        }
+        else{
+            throw new BadRequestException(ResponseCodeConstants.INVALID_VALUE);
+        }
+    }
 
 }

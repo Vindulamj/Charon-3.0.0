@@ -2,6 +2,7 @@ package org.wso2.charon.core.schema;
 
 import org.wso2.charon.core.exceptions.BadRequestException;
 import org.wso2.charon.core.exceptions.CharonException;
+import org.wso2.charon.core.exceptions.NotFoundException;
 import org.wso2.charon.core.objects.AbstractSCIMObject;
 import org.wso2.charon.core.objects.User;
 import org.wso2.charon.core.protocol.endpoints.AbstractResourceManager;
@@ -14,7 +15,7 @@ public class ServerSideValidator extends AbstractValidator{
 
 
     public static void validateCreatedSCIMObject(AbstractSCIMObject scimObject, SCIMResourceTypeSchema resourceSchema)
-            throws CharonException, BadRequestException {
+            throws CharonException, BadRequestException, NotFoundException {
 
         removeAnyReadOnlyAttributes(scimObject,resourceSchema);
 
@@ -26,11 +27,11 @@ public class ServerSideValidator extends AbstractValidator{
         //created n last modified are the same if not updated.
         scimObject.setLastModified(AttributeUtil.parseDateTime(AttributeUtil.formatDateTime(date)));
         //set location
-        if (SCIMConstants.USER_CORE_SCHEMA_URI.equals(resourceSchema.getSchemas())) {
+        if (SCIMConstants.USER_CORE_SCHEMA_URI.equals(resourceSchema.getSchemasList())) {
             String location = createLocationHeader(AbstractResourceManager.getResourceEndpointURL(
                     SCIMConstants.USER_ENDPOINT), scimObject.getId());
             scimObject.setLocation(location);
-        } else if (SCIMConstants.GROUP.equals(resourceSchema.getSchemas())) {
+        } else if (SCIMConstants.GROUP.equals(resourceSchema.getSchemasList())) {
             String location = createLocationHeader(AbstractResourceManager.getResourceEndpointURL(
                     SCIMConstants.GROUP_ENDPOINT), scimObject.getId());
             scimObject.setLocation(location);

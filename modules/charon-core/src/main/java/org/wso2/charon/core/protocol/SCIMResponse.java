@@ -26,20 +26,15 @@ public class SCIMResponse {
 
     protected int responseStatus;
     protected String responseMessage;
-
-    public String getResponseMessage() {
-        return responseMessage;
-    }
-
     //If there are any HTTP header parameters to be set in response other than response code,
     protected Map<String, String> headerParamMap;
 
     /**
      * Constructor with three params
      *
-     * @param responseStatus
-     * @param responseMessage
-     * @param headerMap
+     * @param responseStatus - HTTP status code corresponding to the operation status
+     * @param responseMessage - json encoded string for detailed response message
+     * @param headerMap - HTTP headers (eg-Content-type)
      */
     public SCIMResponse(int responseStatus, String responseMessage, Map<String, String> headerMap) {
         this.responseStatus = responseStatus;
@@ -47,4 +42,15 @@ public class SCIMResponse {
         this.headerParamMap = headerMap;
     }
 
+    public int getResponseStatus() {
+        return responseStatus;
+    }
+
+    public String getResponseMessage() {
+        return responseMessage;
+    }
+
+    public Map<String, String> getHeaderParamMap() {
+        return headerParamMap;
+    }
 }

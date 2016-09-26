@@ -27,22 +27,27 @@ public class AbstractSCIMObject implements SCIMObject{
     protected List<String> schemaList = new ArrayList<String>();
 
     /**
-     * Set the attribute in the SCIM Object.
+     * Set the attributes and corresponding schema in the SCIM Object.
      *
      * @param newAttribute
      * @param resourceSchema
      */
     public void setAttribute(Attribute newAttribute, ResourceTypeSchema resourceSchema) {
         //and update the schemas list if any new schema used in the attribute, and create schemas array.
-        if (!isSchemaExists(resourceSchema.getSchemas())) {
-            schemaList.add(resourceSchema.getSchemas());
-        }
+       // if (!isSchemaExists(resourceSchema.getSchemasList())) {
+           // schemaList.add(resourceSchema.getSchemasList());
+       // }
         //add the attribute to attribute map
         if (!isAttributeExist(newAttribute.getName())) {
             attributeList.put(newAttribute.getName(), newAttribute);
         }
     }
 
+    /**
+     * Set the attributes in the SCIM Object.
+     *
+     * @param newAttribute
+     */
     public void setAttribute(Attribute newAttribute) {
         //add the attribute to attribute map
         if (!isAttributeExist(newAttribute.getName())) {
@@ -58,9 +63,7 @@ public class AbstractSCIMObject implements SCIMObject{
         return attributeList.containsKey(attributeName);
     }
 
-    public Map<String, Attribute> getAttributeList() {
-        return attributeList;
-    }
+    public Map<String, Attribute> getAttributeList() { return attributeList; }
 
     public List<String> getSchemaList() {
         return schemaList;
@@ -74,7 +77,7 @@ public class AbstractSCIMObject implements SCIMObject{
     /**
      * Deleting an attribute is the responsibility of an attribute holder.
      *
-     * @param id
+     * @param id - name of the attribute
      */
     public void deleteAttribute(String id) {
         if (attributeList.containsKey(id)) {

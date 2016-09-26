@@ -1,6 +1,7 @@
 package org.wso2.charon.core.schema;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is the interface for resource schema definition. Default schema definitions included in
@@ -9,12 +10,12 @@ import java.util.ArrayList;
  */
 public interface ResourceTypeSchema {
 
-    public String getSchemas();
+    public List<String> getSchemasList();
 
-    public void setSchemas(String schemas);
+    public void setSchemasList(String schema);
 
     public ArrayList<AttributeSchema> getAttributesList();
 
-    public void setAttributes(ArrayList attributes);
+    public void setAttributeList(ArrayList attributeList);
 
 }
