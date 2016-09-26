@@ -65,6 +65,11 @@ public class AbstractSCIMObject implements SCIMObject{
 
     public Map<String, Attribute> getAttributeList() { return attributeList; }
 
+    @Override
+    public void setSchema(String schema) {
+        schemaList.add(schema);
+    }
+
     public List<String> getSchemaList() {
         return schemaList;
     }
@@ -89,8 +94,6 @@ public class AbstractSCIMObject implements SCIMObject{
         return attributeList.containsKey(SCIMConstants.CommonSchemaConstants.META);
     }
 
-
-
     /**
      * Set a value for the id attribute. If attribute not already created in the resource,
      * create attribute and set the value.
@@ -98,6 +101,8 @@ public class AbstractSCIMObject implements SCIMObject{
      * This is read-only. So can only set once.
      *
      * @param id Unique identifier for the SCIM Resource as defined by the Service Provider.
+     * @throws CharonException
+     * @throws BadRequestException
      */
     public void setId(String id) throws CharonException, BadRequestException {
         if (isAttributeExist(SCIMConstants.CommonSchemaConstants.ID)) {
@@ -112,6 +117,11 @@ public class AbstractSCIMObject implements SCIMObject{
 
     }
 
+    /**
+     * set the created date and time of the resource
+     *
+     * @param createdDate
+     */
     public void setCreatedDate(Date createdDate) throws CharonException, BadRequestException {
         //create the created date attribute as defined in schema.
         SimpleAttribute createdDateAttribute = new SimpleAttribute(
@@ -123,21 +133,26 @@ public class AbstractSCIMObject implements SCIMObject{
             ComplexAttribute metaAttribute = getMetaAttribute();
             //check created date attribute already exist
             if (metaAttribute.isSubAttributeExist(createdDateAttribute.getName())) {
-                //log info level log that created date already set and can't set again.
-                String error ="Read only attribute is trying to be modified";
+                //TODO:log info level log that created date already set and can't set again.
+                String error ="Read only meta attribute is tried to modify";
                 throw new CharonException(error);
             } else {
                 metaAttribute.setSubAttribute(createdDateAttribute);
             }
 
         } else {
-            //create meta attribute and set the sub attribute.
+            //create meta attribute and set the sub attribute Created Date.
             createMetaAttribute();
             getMetaAttribute().setSubAttribute(createdDateAttribute);
 
         }
     }
 
+    /**
+     * set the last modified date and time of the resource
+     *
+     * @param lastModifiedDate
+     */
     public void setLastModified(Date lastModifiedDate) throws CharonException, BadRequestException {
         //create the lastModified date attribute as defined in schema.
         SimpleAttribute lastModifiedAttribute = (SimpleAttribute) DefaultAttributeFactory.createAttribute(
@@ -147,7 +162,7 @@ public class AbstractSCIMObject implements SCIMObject{
         //check meta complex attribute already exist.
         if (getMetaAttribute() != null) {
             ComplexAttribute metaAttribute = getMetaAttribute();
-            //check created date attribute already exist
+            //check last modified attribute already exist
             if (metaAttribute.isSubAttributeExist(lastModifiedAttribute.getName())) {
                 metaAttribute.removeSubAttribute(lastModifiedAttribute.getName());
                 metaAttribute.setSubAttribute(lastModifiedAttribute);
@@ -163,20 +178,27 @@ public class AbstractSCIMObject implements SCIMObject{
         }
     }
 
-
+    /**
+     * crete the meta attribute of the scim object
+     *
+     */
     protected void createMetaAttribute() throws CharonException, BadRequestException {
         ComplexAttribute metaAttribute =
                 (ComplexAttribute) DefaultAttributeFactory.createAttribute(
                         SCIMSchemaDefinitions.META,
                         new ComplexAttribute(SCIMConstants.CommonSchemaConstants.META));
         if (isMetaAttributeExist()) {
-            String error ="Read only attribute is trying to be modified";
+            String error ="Read only meta attribute is tried to modify";
             throw new CharonException(error);
         } else {
             attributeList.put(SCIMConstants.CommonSchemaConstants.META, metaAttribute);
         }
     }
-
+    /**
+     * Return the meta attribute
+     *
+     * @return ComplexAttribute
+     */
     protected ComplexAttribute getMetaAttribute() {
         if (isMetaAttributeExist()) {
             return (ComplexAttribute) attributeList.get(
@@ -190,7 +212,7 @@ public class AbstractSCIMObject implements SCIMObject{
      * Get the value of id attribute.
      * Unique identifier for the SCIM Resource as defined by the Service Provider.
      *
-     * @return
+     * @return String
      */
     public String getId() throws CharonException {
         if (isAttributeExist(SCIMConstants.CommonSchemaConstants.ID)) {
@@ -201,9 +223,14 @@ public class AbstractSCIMObject implements SCIMObject{
         }
     }
 
+    /**
+     * set the location of the meta attribute
+     *
+     * @param location
+     */
     public void setLocation(String location) throws CharonException, BadRequestException {
-        //create the version attribute as defined in schema.
-        SimpleAttribute versionAttribute = (SimpleAttribute) DefaultAttributeFactory.createAttribute(
+        //create the location attribute as defined in schema.
+        SimpleAttribute locationAttribute = (SimpleAttribute) DefaultAttributeFactory.createAttribute(
                 SCIMSchemaDefinitions.LOCATION,
                 new SimpleAttribute(SCIMConstants.CommonSchemaConstants.LOCATION, location));
 
@@ -211,20 +238,48 @@ public class AbstractSCIMObject implements SCIMObject{
         if (getMetaAttribute() != null) {
             ComplexAttribute metaAttribute = getMetaAttribute();
             //check version attribute already exist
-            if (metaAttribute.isSubAttributeExist(versionAttribute.getName())) {
-                String error ="Read only attribute is trying to be modified";
+            if (metaAttribute.isSubAttributeExist(locationAttribute.getName())) {
+                String error ="Read only attribute is tried to modify";
                 throw new CharonException(error);
             } else {
-
-                metaAttribute.setSubAttribute(versionAttribute);
+                metaAttribute.setSubAttribute(locationAttribute);
             }
 
         } else {
             //create meta attribute and set the sub attribute.
             createMetaAttribute();
-            getMetaAttribute().setSubAttribute(versionAttribute);
+            getMetaAttribute().setSubAttribute(locationAttribute);
 
         }
     }
 
+    /**
+     * set the resourceType of the meta attribute
+     *
+     * @param resourceType
+     */
+    public void setResourceType(String resourceType) throws BadRequestException, CharonException {
+        //create the resourceType attribute as defined in schema.
+        SimpleAttribute resourceTypeAttribute = (SimpleAttribute) DefaultAttributeFactory.createAttribute(
+                SCIMSchemaDefinitions.RESOURCE_TYPE,
+                new SimpleAttribute(SCIMConstants.CommonSchemaConstants.RESOURCE_TYPE, resourceType));
+
+        //check meta complex attribute already exist.
+        if (getMetaAttribute() != null) {
+            ComplexAttribute metaAttribute = getMetaAttribute();
+            //check version attribute already exist
+            if (metaAttribute.isSubAttributeExist(resourceTypeAttribute.getName())) {
+                String error ="Read only attribute is tried to modify";
+                throw new CharonException(error);
+            } else {
+                metaAttribute.setSubAttribute(resourceTypeAttribute);
+            }
+
+        } else {
+            //create meta attribute and set the sub attribute.
+            createMetaAttribute();
+            getMetaAttribute().setSubAttribute(resourceTypeAttribute);
+
+        }
+    }
 }

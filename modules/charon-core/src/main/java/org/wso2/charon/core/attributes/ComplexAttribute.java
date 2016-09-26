@@ -59,7 +59,7 @@ public class ComplexAttribute extends AbstractAttribute{
     }
 
     /**
-     * look for the existance of a sub attribute
+     * look for the existence of a sub attribute
      *
      * @param attributeName
      */

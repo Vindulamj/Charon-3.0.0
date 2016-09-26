@@ -22,4 +22,6 @@ public interface SCIMObject {
 
     public Map<String, Attribute> getAttributeList();
 
+    public void setSchema(String schema);
+
 }

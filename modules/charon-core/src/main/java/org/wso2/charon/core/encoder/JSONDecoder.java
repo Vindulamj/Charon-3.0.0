@@ -52,9 +52,9 @@ public class JSONDecoder{
             List<AttributeSchema> attributeSchemas = resourceSchema.getAttributesList();
             //get the values for corresponding to schemas key
             JSONArray schemasValues = (JSONArray) decodedJsonObj.opt(SCIMConstants.CommonSchemaConstants.SCHEMAS);
-            //set the schemas in SCIMResourceTypeSchema
-            for (int i = 0; i < schemasValues.length(); i++) {
-                resourceSchema.setSchemasList((String) schemasValues.get(i));
+            //set the schemas in scimobject
+            for (int i = 0; i < resourceSchema.getSchemasList().size(); i++) {
+                scimObject.setSchema(resourceSchema.getSchemasList().get(i));
             }
             //iterate through the schema and extract the attributes.
             for (AttributeSchema attributeSchema : attributeSchemas) {

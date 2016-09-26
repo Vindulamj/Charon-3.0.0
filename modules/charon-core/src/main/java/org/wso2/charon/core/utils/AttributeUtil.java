@@ -93,7 +93,7 @@ public class AttributeUtil {
      * @param date
      */
     public static String formatDateTime(Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat(SCIMConstants.dateTimeFormat);
         String formattedDate = sdf.format(date);
         return formattedDate;
     }

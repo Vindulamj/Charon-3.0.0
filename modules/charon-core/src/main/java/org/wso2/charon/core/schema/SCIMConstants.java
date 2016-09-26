@@ -15,7 +15,7 @@ public class SCIMConstants {
 
     public static final String APPLICATION_JSON = "application/json";
 
-    public static final String dateTimeFormat = "yyyy-MM-dd'T'HH:mm:ss";
+    public static final String dateTimeFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
     /*Resource names as defined in SCIM Schema spec*/
     public static final String USER = "User";

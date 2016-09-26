@@ -36,6 +36,15 @@ public class SCIMResourceTypeSchema implements ResourceTypeSchema {
 
     }
 
+    public Boolean isSchemaAvailable(String schema){
+        if(schemasList.contains(schema)){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
     public List<String> getSchemasList() { return schemasList; }
 
     public void setSchemasList(String schema) { this.schemasList.add(schema); }

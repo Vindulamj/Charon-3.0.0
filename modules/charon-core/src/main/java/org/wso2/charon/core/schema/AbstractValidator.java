@@ -76,21 +76,22 @@ public abstract class AbstractValidator {
             }
         }
     }
-
+    /**
+     * Validate SCIMObject for schema list
+     *
+     * @param scimObject
+     * @param resourceSchema
+     */
     public static void validateSchemaList(AbstractSCIMObject scimObject,
-                                          SCIMResourceTypeSchema resourceSchema) {
-        //get attributes from schema.
-        List<AttributeSchema> attributeSchemaList = resourceSchema.getAttributesList();
-        //get attribute list from scim object.
-        Map<String, Attribute> attributeList = scimObject.getAttributeList();
-        //get the schema list of the object
-        List<String> schemaList = scimObject.getSchemaList();
-        for (AttributeSchema attributeSchema : attributeSchemaList) {
+                                          SCIMResourceTypeSchema resourceSchema) throws CharonException {
+        //get resource schema list
+        List<String> resourceSchemaList = resourceSchema.getSchemasList();
+        //get the scim object schema list
+        List<String> objectSchemaList = scimObject.getSchemaList();
+        for (String schema : resourceSchemaList) {
             //check for schema.
-            if (attributeList.containsKey(attributeSchema.getName())) {
-                if (!schemaList.contains(resourceSchema.getSchemasList())) {
-                  //  schemaList.add(resourceSchema.getSchemasList());
-                }
+            if (!objectSchemaList.contains(schema)) {
+               throw new CharonException("Not all schemas are set");
             }
         }
     }

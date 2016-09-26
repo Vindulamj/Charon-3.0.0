@@ -13,6 +13,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
 import org.wso2.charon.core.utils.CopyUtil;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,7 +73,7 @@ public class UserResourceManager extends AbstractResourceManager {
                 //create a deep copy of the user object since we are going to change it.
                 User copiedUser = createdUser;//(User) CopyUtil.deepCopy(createdUser);
                 //need to remove password before returning
-                ServerSideValidator.removePasswordOnReturn(copiedUser);
+                ServerSideValidator.removeAttributesOnReturn(copiedUser,new ArrayList<String>(),new ArrayList<String>());
                 encodedUser = encoder.encodeSCIMObject(copiedUser);
                 //add location header
                 ResponseHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(

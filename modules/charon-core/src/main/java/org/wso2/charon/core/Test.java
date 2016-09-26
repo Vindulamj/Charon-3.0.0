@@ -26,6 +26,7 @@ public class Test {
                "  \"id\":\"23232\",\n"+
                "  \"externalId\": \"701984\",\n" +
                "  \"userName\": \"bjensen@example.com\",\n" +
+               "  \"password\": \"testpass\",\n" +
                "  \"name\": {\n" +
                "    \"formatted\": \"Ms. Barbara J Jensen, III\",\n" +
                "    \"familyName\": \"Jensen\",\n" +
