@@ -52,6 +52,7 @@ public class Test {
 
        SCIMResponse res=um.create(array,new SCIMUserManager());
        System.out.println(res.getResponseMessage()+"\n "+ res.getResponseStatus()+" \n" +res.getHeaderParamMap());
+       System.out.println(res.getResponseShortMessage());
    }
 
 }

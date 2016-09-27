@@ -1,9 +1,6 @@
 package org.wso2.charon.core.objects;
 
-import org.wso2.charon.core.attributes.Attribute;
-import org.wso2.charon.core.attributes.ComplexAttribute;
-import org.wso2.charon.core.attributes.DefaultAttributeFactory;
-import org.wso2.charon.core.attributes.SimpleAttribute;
+import org.wso2.charon.core.attributes.*;
 import org.wso2.charon.core.exceptions.BadRequestException;
 import org.wso2.charon.core.exceptions.CharonException;
 import org.wso2.charon.core.exceptions.NotFoundException;
@@ -88,6 +85,36 @@ public class AbstractSCIMObject implements SCIMObject{
         if (attributeList.containsKey(id)) {
             attributeList.remove(id);
         }
+    }
+
+    /**
+     * Deleting a sub attribute of complex attribute is the responsibility of an attribute holder.
+     *
+     * @param parentAttribute - name of the parent attribute
+     * @param childAttribute - name of the sub attribute
+     */
+    public void deleteSubAttribute(String parentAttribute,String childAttribute) {
+        if (attributeList.containsKey(parentAttribute)) {
+            ((ComplexAttribute)(attributeList.get(parentAttribute))).removeSubAttribute(childAttribute);
+        }
+    }
+
+    /**
+     * Deleting a sub value's sub attribute of multivalued attribute is the responsibility of an attribute holder.
+     *
+     */
+    public void deleteValuesSubAttribute(String attribute, String subAttribute, String subSimpleAttribute) {
+        if (attributeList.containsKey(attribute)) {
+            MultiValuedAttribute parentAttribute=((MultiValuedAttribute)attributeList.get(attribute));
+            List<Attribute> attributeValues =parentAttribute.getAttributeValues();
+            for(Attribute subValue : attributeValues){
+                if(subAttribute.equals(subValue.getName())){
+                    ((ComplexAttribute)subValue).removeSubAttribute(subSimpleAttribute);
+                    break;
+                }
+            }
+        }
+
     }
 
     protected boolean isMetaAttributeExist() {
@@ -282,4 +309,6 @@ public class AbstractSCIMObject implements SCIMObject{
 
         }
     }
+
+
 }

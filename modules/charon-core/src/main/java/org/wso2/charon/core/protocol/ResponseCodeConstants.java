@@ -66,4 +66,6 @@ public class ResponseCodeConstants {
     public static final String INVALID_VALUE = "invalidValue";
     public static final String INVALID_VERS = "invalidVers";
     public static final String SENSITIVE = "sensitive";
+    //For HTTP status code 201 responses, the following details are defined
+    public static final String CREATED = "Created";
 }

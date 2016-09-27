@@ -256,6 +256,7 @@ public class JSONDecoder{
      */
     private ComplexAttribute buildComplexValue(AttributeSchema attributeSchema,
                                                JSONObject jsonObject) throws CharonException, BadRequestException {
+
         ComplexAttribute complexAttribute = new ComplexAttribute(attributeSchema.getName());
         Map<String, Attribute> subAttributesMap = new HashMap<String, Attribute>();
         List<SCIMAttributeSchema> subAttributeSchemas =
@@ -264,6 +265,14 @@ public class JSONDecoder{
         for (SCIMAttributeSchema subAttributeSchema : subAttributeSchemas) {
 
             Object subAttributeValue = jsonObject.opt(subAttributeSchema.getName());
+                if(subAttributeSchema.getName().equals(SCIMConstants.CommonSchemaConstants.VALUE)){
+                    if(subAttributeValue !=null){
+                        complexAttribute.setName(attributeSchema.getName()+"_"+subAttributeValue);
+                    }
+                    else{
+                        complexAttribute.setName(attributeSchema.getName()+"_"+SCIMConstants.DEFAULT);
+                    }
+                }
                 SimpleAttribute simpleAttribute =
                         buildSimpleAttribute(subAttributeSchema, subAttributeValue);
                 //let the attribute factory to set the sub attribute of a complex attribute to detect schema violations.

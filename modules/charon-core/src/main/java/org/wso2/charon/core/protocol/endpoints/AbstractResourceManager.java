@@ -90,6 +90,6 @@ public abstract class AbstractResourceManager implements ResourceEndpoint {
     public static SCIMResponse encodeSCIMException(AbstractCharonException exception) {
         Map<String, String> ResponseHeaders = new HashMap<String, String>();
         ResponseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER,SCIMConstants.APPLICATION_JSON);
-        return new SCIMResponse(exception.getStatus(), encoder.encodeSCIMException(exception), ResponseHeaders);
+        return new SCIMResponse(exception.getStatus(),null, encoder.encodeSCIMException(exception), ResponseHeaders);
     }
 }

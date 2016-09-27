@@ -71,7 +71,7 @@ public class UserResourceManager extends AbstractResourceManager {
 
             if (createdUser != null) {
                 //create a deep copy of the user object since we are going to change it.
-                User copiedUser = createdUser;//(User) CopyUtil.deepCopy(createdUser);
+                User copiedUser = (User) CopyUtil.deepCopy(createdUser);
                 //need to remove password before returning
                 ServerSideValidator.removeAttributesOnReturn(copiedUser,new ArrayList<String>(),new ArrayList<String>());
                 encodedUser = encoder.encodeSCIMObject(copiedUser);
@@ -86,7 +86,8 @@ public class UserResourceManager extends AbstractResourceManager {
             }
 
             //put the URI of the User object in the response header parameter.
-            return new SCIMResponse(ResponseCodeConstants.CODE_CREATED, encodedUser, ResponseHeaders);
+            return new SCIMResponse(ResponseCodeConstants.CODE_CREATED,ResponseCodeConstants.CREATED,
+                    encodedUser, ResponseHeaders);
 
         } catch (CharonException e) {
             //we have charon exceptions also, instead of having only internal server error exceptions,
