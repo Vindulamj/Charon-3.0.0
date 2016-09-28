@@ -13,7 +13,7 @@ public class SCIMConstants {
     /*Data formats*/
     public static final String JSON = "json";
 
-    public static final String APPLICATION_JSON = "application/json";
+    public static final String APPLICATION_JSON = "application/scim+json";
 
     public static final String dateTimeFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 

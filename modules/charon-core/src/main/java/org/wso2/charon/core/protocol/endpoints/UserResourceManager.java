@@ -86,7 +86,7 @@ public class UserResourceManager extends AbstractResourceManager {
             }
 
             //put the URI of the User object in the response header parameter.
-            return new SCIMResponse(ResponseCodeConstants.CODE_CREATED,ResponseCodeConstants.CREATED,
+            return new SCIMResponse(ResponseCodeConstants.CODE_CREATED,
                     encodedUser, ResponseHeaders);
 
         } catch (CharonException e) {
@@ -103,9 +103,8 @@ public class UserResourceManager extends AbstractResourceManager {
         } catch (InternalErrorException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         } catch (NotFoundException e) {
-            e.printStackTrace();
+            return AbstractResourceManager.encodeSCIMException(e);
         }
-        return null;
     }
 
     public SCIMResponse delete(String id, String outputFormat) {

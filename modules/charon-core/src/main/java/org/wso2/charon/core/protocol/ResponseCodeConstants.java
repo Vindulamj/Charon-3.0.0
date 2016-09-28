@@ -7,9 +7,11 @@ public class ResponseCodeConstants {
 
     public static final String ERROR_RESPONSE_SCHEMA_URI = "urn:ietf:params:scim:api:messages:2.0:Error";
 
-    public static final String ERRORS = "Errors";
+    public static final String ERRORS="errors";
+    public static final String SCHEMAS="schemas";
     public static final String STATUS = "status";
-    public static final String DESCRIPTION = "description";
+    public static final String DETAIL = "detail";
+    public static final String SCIM_TYPE = "scimType";
 
     public static final int CODE_CREATED = 201;
 

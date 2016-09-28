@@ -50,18 +50,19 @@ public class JSONEncoder {
     public String encodeSCIMException(AbstractCharonException exception) {
         //outer most json object
         JSONObject rootErrorObject = new JSONObject();
-        //if multiple errors present, we send them in an array.
-        JSONArray arrayOfErrors = new JSONArray();
         //JSON Object containing the error code and error message
         JSONObject errorObject = new JSONObject();
 
         try {
             //construct error object with details in the exception
-            errorObject.put(ResponseCodeConstants.DESCRIPTION, exception.getDetail());
+            errorObject.put(ResponseCodeConstants.SCHEMAS, exception.getSchemas());
+            if(!exception.getScimType().equals(null)){
+                errorObject.put(ResponseCodeConstants.SCIM_TYPE, exception.getScimType());
+            }
+            errorObject.put(ResponseCodeConstants.DETAIL, String.valueOf(exception.getDetail()));
             errorObject.put(ResponseCodeConstants.STATUS, String.valueOf(exception.getStatus()));
-            arrayOfErrors.put(errorObject);
             //construct the full json obj.
-            rootErrorObject.put(ResponseCodeConstants.ERRORS, arrayOfErrors);
+            rootErrorObject =errorObject;
 
         } catch (JSONException e) {
             //usually errors occur rarely when encoding exceptions. and no need to pass them to clients.
@@ -70,7 +71,6 @@ public class JSONEncoder {
         }
         return rootErrorObject.toString();
     }
-
     /**
      * Make JSON object from given SCIM object.
      *

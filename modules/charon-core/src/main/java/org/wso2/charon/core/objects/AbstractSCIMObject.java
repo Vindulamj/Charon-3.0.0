@@ -72,7 +72,10 @@ public class AbstractSCIMObject implements SCIMObject{
     }
 
     @Override
-    public Attribute getAttribute(String attributeName) throws NotFoundException {
+    public Attribute getAttribute(String attributeName){
+        if(attributeList.containsKey(attributeName)){
+            return attributeList.get(attributeName);
+        }
         return null;
     }
 

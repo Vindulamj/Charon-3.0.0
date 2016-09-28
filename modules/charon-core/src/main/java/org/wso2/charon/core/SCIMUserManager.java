@@ -22,29 +22,35 @@ package org.wso2.charon.core;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.w3c.dom.Attr;
+import org.wso2.charon.core.attributes.Attribute;
+import org.wso2.charon.core.attributes.ComplexAttribute;
+import org.wso2.charon.core.attributes.SimpleAttribute;
 import org.wso2.charon.core.exceptions.CharonException;
 import org.wso2.charon.core.extensions.UserManager;
 import org.wso2.charon.core.objects.User;
+import org.wso2.charon.core.schema.SCIMConstants;
 
 public class SCIMUserManager implements UserManager {
 
     public static final String USER_NAME_STRING = "userName";
-    public static final String SCIM_ENABLED =  "SCIMEnabled";
+    public static final String SCIM_ENABLED = "SCIMEnabled";
     public static final String APPLICATION_DOMAIN = "Application";
     public static final String INTERNAL_DOMAIN = "Internal";
     private static Log log = LogFactory.getLog(SCIMUserManager.class);
 
-    private String consumerName;
-    private boolean isBulkUserAdd = false;
 
-    public SCIMUserManager( ) {}
+    public SCIMUserManager() {
+    }
 
     public User createUser(User user) throws CharonException {
-        return createUser(user, false);
-    }
-
-    public User createUser(User user, boolean isBulkUserAdd) throws CharonException {
+        //TODO: Get the E-Tag(version) and add as a attribute of the cretated user
+        //SimpleAttribute versionAttribute = new SimpleAttribute("version","W/23165325");
+        //versionAttribute=buildSimpleAttribute(attributeSchema, attributeValObj);
+        //Attribute versionAttribute = ((ComplexAttribute)user.getAttribute(SCIMConstants.CommonSchemaConstants.META)).setSubAttribute();
+        //user.setAttribute(versionAttribute);
         return user;
     }
-   }
+}
+
 
