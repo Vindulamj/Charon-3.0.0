@@ -1,10 +1,12 @@
 package org.wso2.charon.core.protocol.endpoints;
 
 
+import org.wso2.charon.core.attributes.Attribute;
 import org.wso2.charon.core.encoder.JSONDecoder;
 import org.wso2.charon.core.encoder.JSONEncoder;
 import org.wso2.charon.core.exceptions.*;
 import org.wso2.charon.core.extensions.UserManager;
+import org.wso2.charon.core.objects.ListedResource;
 import org.wso2.charon.core.objects.User;
 import org.wso2.charon.core.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.protocol.SCIMResponse;
@@ -13,9 +15,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
 import org.wso2.charon.core.utils.CopyUtil;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * REST API exposed by Charon-Core to perform operations on UserResource.
@@ -102,11 +102,17 @@ public class UserResourceManager extends AbstractResourceManager {
 
             //validate the created user
             ServerSideValidator.validateCreatedSCIMObject(user, schema);
-
+            User createdUser = null;
+            if (userManager != null) {
             /*handover the SCIM User object to the user storage provided by the SP.
             need to send back the newly created user in the response payload*/
-            User createdUser = userManager.createUser(user);
-
+                createdUser = userManager.createUser(user);
+            }
+            else{
+                String error = "Provided user manager handler is null.";
+                //throw internal server error.
+                throw new InternalErrorException(error);
+            }
             //encode the newly created SCIM user object and add id attribute to Location header.
             String encodedUser;
             Map<String, String> ResponseHeaders = new HashMap<String, String>();
@@ -160,15 +166,24 @@ public class UserResourceManager extends AbstractResourceManager {
     public SCIMResponse delete(String id,UserManager userManager) {
         JSONEncoder encoder = null;
         try {
+            if (userManager != null) {
             /*handover the SCIM User object to the user storage provided by the SP for the delete operation*/
-            userManager.deleteUser(id);
-            //on successful deletion SCIMResponse only has 204 No Content status code.
-            return new SCIMResponse(ResponseCodeConstants.CODE_NO_CONTENT, null, null);
+                userManager.deleteUser(id);
+                //on successful deletion SCIMResponse only has 204 No Content status code.
+                return new SCIMResponse(ResponseCodeConstants.CODE_NO_CONTENT, null, null);
+            }
+            else{
+                String error = "Provided user manager handler is null.";
+                //throw internal server error.
+                throw new InternalErrorException(error);
+            }
         } catch (NotFoundException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         } catch (CharonException e) {
             return AbstractResourceManager.encodeSCIMException(e);
-        }
+        } catch (InternalErrorException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+      }
     }
 
 
@@ -188,9 +203,58 @@ public class UserResourceManager extends AbstractResourceManager {
         return null;
     }
 
-    public SCIMResponse list(UserManager userManager, String format) {
-        return null;
+    /**
+     * To list all the resources of resource endpoint.
+     *
+     * @param userManager
+     * @return
+     */
+
+    public SCIMResponse list(UserManager userManager) {
+        JSONEncoder encoder = null;
+        try {
+            //obtain the json encoder
+            encoder = getEncoder();
+
+            List<User> returnedUsers;
+            //API user should pass a UserManager storage to UserResourceEndpoint.
+            if (userManager != null) {
+                returnedUsers = userManager.listUsers();
+
+                //if user not found, return an error in relevant format.
+                if (returnedUsers == null || returnedUsers.isEmpty()) {
+                    String error = "Users not found in the user store.";
+                    //throw resource not found.
+                    throw new NotFoundException(error);
+                }
+                for(User user:returnedUsers){
+                    //perform service provider side validation.
+                    ServerSideValidator.removeAttributesOnReturn(user,null,null);
+                }
+                //create a listed resource object out of the returned users list.
+                ListedResource listedResource = createListedResource(returnedUsers);
+                //convert the listed resource into specific format.
+                String encodedListedResource = encoder.encodeSCIMObject(listedResource);
+                //if there are any http headers to be added in the response header.
+                Map<String, String> ResponseHeaders = new HashMap<String, String>();
+                ResponseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
+                return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedListedResource, ResponseHeaders);
+
+            } else {
+                String error = "Provided user manager handler is null.";
+                //log the error as well.
+                //throw internal server error.
+                throw new InternalErrorException(error);
+            }
+        } catch (CharonException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (NotFoundException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (InternalErrorException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        }
     }
+
 
     public SCIMResponse updateWithPUT(String existingId, String scimObjectString, String inputFormat, String outputFormat, UserManager userManager) {
         return null;
@@ -198,5 +262,17 @@ public class UserResourceManager extends AbstractResourceManager {
 
     public SCIMResponse updateWithPATCH(String existingId, String scimObjectString, String inputFormat, String outputFormat, UserManager userManager) {
         return null;
+    }
+
+    public ListedResource createListedResource(List<User> users)
+            throws CharonException, NotFoundException {
+        ListedResource listedResource = new ListedResource();
+        listedResource.setSchema(SCIMConstants.LISTED_RESOURCE_CORE_SCHEMA_URI);
+        listedResource.setTotalResults(users.size());
+        for (User user : users) {
+            Map<String, Attribute> userAttributes = user.getAttributeList();
+            listedResource.setResources(userAttributes);
+        }
+        return listedResource;
     }
 }

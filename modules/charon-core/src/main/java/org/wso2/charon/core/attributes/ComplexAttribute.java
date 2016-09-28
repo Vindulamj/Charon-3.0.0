@@ -15,6 +15,8 @@ public class ComplexAttribute extends AbstractAttribute{
 
     public ComplexAttribute(String name) { this.name=name; }
 
+    public ComplexAttribute() {}
+
     /**
      * Retrieve the map of sub attributes.
      *

@@ -30,11 +30,6 @@ public class AbstractSCIMObject implements SCIMObject{
      * @param resourceSchema
      */
     public void setAttribute(Attribute newAttribute, ResourceTypeSchema resourceSchema) {
-        //and update the schemas list if any new schema used in the attribute, and create schemas array.
-       // if (!isSchemaExists(resourceSchema.getSchemasList())) {
-           // schemaList.add(resourceSchema.getSchemasList());
-       // }
-        //add the attribute to attribute map
         if (!isAttributeExist(newAttribute.getName())) {
             attributeList.put(newAttribute.getName(), newAttribute);
         }
@@ -62,7 +57,6 @@ public class AbstractSCIMObject implements SCIMObject{
 
     public Map<String, Attribute> getAttributeList() { return attributeList; }
 
-    @Override
     public void setSchema(String schema) {
         schemaList.add(schema);
     }
@@ -71,7 +65,6 @@ public class AbstractSCIMObject implements SCIMObject{
         return schemaList;
     }
 
-    @Override
     public Attribute getAttribute(String attributeName){
         if(attributeList.containsKey(attributeName)){
             return attributeList.get(attributeName);

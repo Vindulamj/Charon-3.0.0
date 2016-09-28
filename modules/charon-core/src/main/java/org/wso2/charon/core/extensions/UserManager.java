@@ -5,8 +5,12 @@ import org.wso2.charon.core.exceptions.ConflictException;
 import org.wso2.charon.core.exceptions.NotFoundException;
 import org.wso2.charon.core.objects.User;
 
+import java.util.List;
+
 /**
- * Created by vindula on 9/19/16.
+ * This is the interface for UserManager extension.
+ * An implementation can plugin their own user manager-(either LDAP based, DB based etc)
+ * by implementing this interface and mentioning it in configuration.
  */
 public interface UserManager {
         /***************User Manipulation operations*******************/
@@ -32,4 +36,6 @@ public interface UserManager {
      * @param userId
      */
     public void deleteUser(String userId) throws NotFoundException, CharonException;
+
+    public List<User> listUsers() throws CharonException;
 }

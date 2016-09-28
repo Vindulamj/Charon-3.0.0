@@ -104,10 +104,9 @@ public interface ResourceEndpoint {
     /**
      * To list all the resources of resource endpoint.
      * @param userManager
-     * @param format
      * @return
      */
-    public SCIMResponse list(UserManager userManager, String format);
+    public SCIMResponse list(UserManager userManager);
     
     public SCIMResponse updateWithPUT(String existingId, String scimObjectString,
                                       String inputFormat,

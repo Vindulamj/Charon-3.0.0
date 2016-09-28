@@ -9,6 +9,7 @@ public class SCIMConstants {
     public static final String CORE_SCHEMA_URI = "urn:ietf:params:scim:schemas:core:2.0";
     public static final String USER_CORE_SCHEMA_URI = "urn:ietf:params:scim:schemas:core:2.0:User";
     public static final String GROUP_CORE_SCHEMA_URI = "urn:ietf:params:scim:schemas:core:2.0:Group";
+    public static final String LISTED_RESOURCE_CORE_SCHEMA_URI = "urn:ietf:params:scim:api:messages:2.0:ListResponse";
 
     /*Data formats*/
     public static final String JSON = "json";
@@ -29,7 +30,7 @@ public class SCIMConstants {
     public static final String LOCATION_HEADER = "Location";
     public static final String CONTENT_TYPE_HEADER = "Content-Type";
 
-    public static final String DEFAULT="default";
+    public static final String DEFAULT = "default";
 
 
     /*Constants found in core-common schema.*/
@@ -60,13 +61,21 @@ public class SCIMConstants {
                 "The service provider MUST always interpret the externalId as scoped to the provisioning domain.";
         public static final String META_DESC = "A complex attribute containing resource metadata.";
         public static final String RESOURCE_TYPE_DESC = "The name of the resource type of the resource.";
-        public static final String CREATED_DESC="The \"DateTime\" that the resource was added to the service provider.";
-        public static final String LAST_MODIFIED_DESC="The most recent DateTime that the details of this resource were updated at the service provider.";
-        public static final String LOCATION_DESC ="Location  The URI of the resource being returned";
-        public static final String VERSION_DESC="The version of the resource being returned.";
+        public static final String CREATED_DESC = "The \"DateTime\" that the resource was added to the service provider.";
+        public static final String LAST_MODIFIED_DESC = "The most recent DateTime that the details of this resource were updated at the service provider.";
+        public static final String LOCATION_DESC = "Location  The URI of the resource being returned";
+        public static final String VERSION_DESC = "The version of the resource being returned.";
 
     }
+    /*Constants found in listed resource schema.*/
 
+    public static class ListedResourceSchemaConstants {
+
+        public static final String TOTAL_RESULTS = "totalResults";
+        public static final String RESOURCES = "Resources";
+        public static final String ITEMS_PER_PAGE = "itemsPerPage";
+        public static final String START_INDEX = "startIndex";
+    }
     /*Constants found in user schema.*/
 
     public static class UserSchemaConstants {

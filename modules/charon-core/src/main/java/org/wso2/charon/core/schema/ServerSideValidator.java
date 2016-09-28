@@ -66,8 +66,8 @@ public class ServerSideValidator extends AbstractValidator{
                                                    SCIMResourceTypeSchema resourceSchema,ArrayList<String> reuqestedAttributes,
                                                    ArrayList<String> requestedExcludingAttributes)
             throws BadRequestException, CharonException {
-        removeAttributesOnReturn(scimObject,reuqestedAttributes,requestedExcludingAttributes);
         validateSCIMObjectForRequiredAttributes(scimObject, resourceSchema);
+        removeAttributesOnReturn(scimObject,reuqestedAttributes,requestedExcludingAttributes);
         validateSchemaList(scimObject, resourceSchema);
     }
 }

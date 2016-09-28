@@ -25,12 +25,12 @@ public class Test {
                "  \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:User\"],\n" +
                "  \"id\":\"23232\",\n"+
                "  \"externalId\": \"701984\",\n" +
-               "  \"userName\": \"bjensen@example.com\",\n" +
+               "  \"userName\": \"vindula@example.com\",\n" +
                "  \"password\": \"testpass\",\n" +
                "  \"name\": {\n" +
                "    \"formatted\": \"Ms. Barbara J Jensen, III\",\n" +
                "    \"familyName\": \"Jensen\",\n" +
-               "    \"givenName\": \"Vindula\",\n" +
+               "    \"givenName\": \"VJ\",\n" +
                "    \"middleName\": \"Jane\",\n" +
                "    \"honorificPrefix\": \"Ms.\",\n" +
                "    \"honorificSuffix\": \"III\"\n" +
@@ -58,7 +58,10 @@ public class Test {
        //SCIMResponse res= um.get("e83bdca2-159a-4a4e-a49e-d4b673e9643",new SCIMUserManager());
 
        //-----DELETE USER  ---------
-       SCIMResponse res= um.delete("067d724b-c225-45ff-aeca-3cfaf8bba19a",new SCIMUserManager());
+       //SCIMResponse res= um.delete("067d724b-c225-45ff-aeca-3cfaf8bba19a",new SCIMUserManager());
+
+       //-----LIST USER  ---------
+       SCIMResponse res= um.list(new SCIMUserManager());
 
        System.out.println(res.getResponseStatus());
        System.out.println("");

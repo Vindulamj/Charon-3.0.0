@@ -23,6 +23,4 @@ public interface SCIMObject extends Serializable {
 
     public Map<String, Attribute> getAttributeList();
 
-    public void setSchema(String schema);
-
 }

@@ -1,9 +1,12 @@
 package org.wso2.charon.core.attributes;
 
 import org.wso2.charon.core.exceptions.CharonException;
+import org.wso2.charon.core.schema.SCIMConstants;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 /*
  * This class is a blueprint of MultiValuedAttribute defined in SCIM Core Schema Spec.
  */
@@ -32,6 +35,16 @@ public class MultiValuedAttribute extends AbstractAttribute{
     @Override
     public Attribute getSubAttribute(String attributeName) throws CharonException {
         throw new CharonException("getSubAttribute method not supported by MultiValuedAttribute.");
+    }
+
+    /**
+     * To construct and set a value of a multi-valued attribute, as a complex value containing
+     * set of sub attributes.
+     */
+    public void setComplexValueWithSetOfSubAttributes(Map<String, Attribute> subAttributes) {
+        ComplexAttribute complexValue = new ComplexAttribute();
+        complexValue.setSubAttributesList(subAttributes);
+        this.attributeValues.add(complexValue);
     }
 
 

@@ -33,6 +33,8 @@ import org.wso2.charon.core.objects.User;
 import org.wso2.charon.core.schema.SCIMConstants;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SCIMUserManager implements UserManager {
 
@@ -97,6 +99,35 @@ public class SCIMUserManager implements UserManager {
         }catch(Exception e){
             throw new NotFoundException();
         }
+    }
+
+    @Override
+    public List<User> listUsers() throws CharonException {
+        final File folder = new File("/home/vindula/Desktop/Charon/Storage/");
+        List<User> userList=new ArrayList<User>();
+        for (final File fileEntry : folder.listFiles()) {
+            if (fileEntry.isDirectory()) {
+                //listFilesForFolder(fileEntry);
+            } else {
+                User e = null;
+                try {
+                    FileInputStream fileIn = new FileInputStream("/home/vindula/Desktop/Charon/Storage/"+fileEntry.getName());
+                    ObjectInputStream in = new ObjectInputStream(fileIn);
+                    e = (User) in.readObject();
+                    in.close();
+                    fileIn.close();
+                } catch (FileNotFoundException e1) {
+                    e1.printStackTrace();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                } catch (ClassNotFoundException e1) {
+                    e1.printStackTrace();
+                }
+                userList.add(e);
+            }
+
+            }
+        return userList;
     }
 
 
