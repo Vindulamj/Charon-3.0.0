@@ -10,6 +10,5 @@ public class InternalErrorException extends AbstractCharonException  {
         this.schemas= ResponseCodeConstants.ERROR_RESPONSE_SCHEMA_URI;
         this.status=ResponseCodeConstants.CODE_INTERNAL_ERROR;
         this.detail=error;
-        this.scimType=null;
     }
 }

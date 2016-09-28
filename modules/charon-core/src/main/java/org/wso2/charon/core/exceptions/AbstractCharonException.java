@@ -15,9 +15,6 @@ public class AbstractCharonException extends Exception {
     //Error responses are identified using the following "schema" URI
     protected String schemas;
 
-    //A SCIM detail error keyword.
-    protected String scimType;
-
     //A detailed human-readable message.
     protected String detail;
 
@@ -28,13 +25,11 @@ public class AbstractCharonException extends Exception {
         this.schemas= ResponseCodeConstants.ERROR_RESPONSE_SCHEMA_URI;
         this.status=status;
         this.detail=detail;
-        this.scimType=scimType;
     }
     public AbstractCharonException() {
         this.schemas= ResponseCodeConstants.ERROR_RESPONSE_SCHEMA_URI;
         this.status = -1;
         this.detail = null;
-        this.scimType= null;
     }
 
     /**
@@ -53,22 +48,16 @@ public class AbstractCharonException extends Exception {
         super(message, cause);
         this.status = -1;
         this.detail = message;
-        this.scimType = null;
     }
 
     public AbstractCharonException(String message) {
         this.status = -1;
         this.detail = message;
-        this.scimType = null;
     }
 
     public String getSchemas() { return schemas; }
 
     public void setSchemas(String schemas) { this.schemas = schemas; }
-
-    public String getScimType() { return scimType; }
-
-    public void setScimType(String scimType) { this.scimType = scimType; }
 
     public String getDetail() { return detail; }
 

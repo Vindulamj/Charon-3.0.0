@@ -12,4 +12,9 @@ public class ConflictException extends AbstractCharonException  {
         status = ResponseCodeConstants.CODE_CONFLICT;
         detail = ResponseCodeConstants.DESC_CONFLICT;
     }
+
+    public ConflictException(String detail) {
+        status = ResponseCodeConstants.CODE_CONFLICT;
+        this.detail = detail;
+    }
 }

@@ -8,10 +8,17 @@ import org.wso2.charon.core.protocol.ResponseCodeConstants;
  */
 public class BadRequestException extends AbstractCharonException  {
 
+    //A SCIM detail error keyword.
+    protected String scimType;
+
     public BadRequestException(String scimType) {
         status = ResponseCodeConstants.CODE_BAD_REQUEST;
         detail = ResponseCodeConstants.DESC_BAD_REQUEST;
         this.scimType=scimType;
     }
+
+    public String getScimType() { return scimType; }
+
+    public void setScimType(String scimType) { this.scimType = scimType; }
 
 }
