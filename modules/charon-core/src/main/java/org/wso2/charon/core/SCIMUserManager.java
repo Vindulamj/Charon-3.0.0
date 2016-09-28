@@ -27,6 +27,7 @@ import org.wso2.charon.core.attributes.Attribute;
 import org.wso2.charon.core.attributes.ComplexAttribute;
 import org.wso2.charon.core.attributes.SimpleAttribute;
 import org.wso2.charon.core.exceptions.CharonException;
+import org.wso2.charon.core.exceptions.NotFoundException;
 import org.wso2.charon.core.extensions.UserManager;
 import org.wso2.charon.core.objects.User;
 import org.wso2.charon.core.schema.SCIMConstants;
@@ -49,12 +50,12 @@ public class SCIMUserManager implements UserManager {
         //TODO: Get the E-Tag(version) and add as a attribute of the cretated user
         try {
             FileOutputStream fileOut =
-                    new FileOutputStream("/home/vindula/Desktop/Charon/user.ser");
+                    new FileOutputStream("/home/vindula/Desktop/Charon/Storage/"+user.getId()+".ser");
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
             out.writeObject(user);
             out.close();
             fileOut.close();
-            System.out.printf("Serialized data is saved in /home/vindula/Desktop/Charon/user.ser\n\n");
+            System.out.printf("Serialized data is saved in /home/vindula/Desktop/Charon/Storage/"+user.getId()+".ser\n\n");
         }catch(IOException i) {
             i.printStackTrace();
         }
@@ -67,13 +68,12 @@ public class SCIMUserManager implements UserManager {
 
         User e = null;
         try {
-            FileInputStream fileIn = new FileInputStream("/home/vindula/Desktop/Charon/user.ser");
+            FileInputStream fileIn = new FileInputStream("/home/vindula/Desktop/Charon/Storage/"+id+".ser");
             ObjectInputStream in = new ObjectInputStream(fileIn);
             e = (User) in.readObject();
             in.close();
             fileIn.close();
         }catch(IOException i) {
-            i.printStackTrace();
             return null;
         }catch(ClassNotFoundException c) {
             System.out.println("Employee class not found");
@@ -81,6 +81,22 @@ public class SCIMUserManager implements UserManager {
             return null;
         }
         return e;
+    }
+
+    @Override
+    public void deleteUser(String userId) throws NotFoundException, CharonException {
+        try{
+            File file = new File("/home/vindula/Desktop/Charon/Storage/"+userId+".ser");
+
+            if(file.delete()){
+                System.out.println(file.getName() + " is deleted!");
+            }else {
+                throw new CharonException("Error occurred while deleting");
+
+            }
+        }catch(Exception e){
+            throw new NotFoundException();
+        }
     }
 
 

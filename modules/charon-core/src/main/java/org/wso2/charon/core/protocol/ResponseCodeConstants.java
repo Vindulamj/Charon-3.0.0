@@ -15,6 +15,7 @@ public class ResponseCodeConstants {
 
     public static final int CODE_OK = 200;
     public static final int CODE_CREATED = 201;
+    public static final int CODE_NO_CONTENT = 204;
 
     public static final int CODE_TEMPORARY_REDIRECT = 307;
     public static final String DESC_TEMPORARY_REDIRECT = "The client is directed to repeat the same HTTP request at the " +

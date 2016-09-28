@@ -10,6 +10,7 @@ import org.wso2.charon.core.attributes.ComplexAttribute;
 import org.wso2.charon.core.attributes.MultiValuedAttribute;
 import org.wso2.charon.core.attributes.SimpleAttribute;
 import org.wso2.charon.core.exceptions.AbstractCharonException;
+import org.wso2.charon.core.exceptions.BadRequestException;
 import org.wso2.charon.core.exceptions.CharonException;
 import org.wso2.charon.core.objects.SCIMObject;
 import org.wso2.charon.core.protocol.ResponseCodeConstants;
@@ -56,7 +57,7 @@ public class JSONEncoder {
         try {
             //construct error object with details in the exception
             errorObject.put(ResponseCodeConstants.SCHEMAS, exception.getSchemas());
-            if(!exception.getScimType().equals(null)){
+            if(exception instanceof BadRequestException){
                 errorObject.put(ResponseCodeConstants.SCIM_TYPE, exception.getScimType());
             }
             errorObject.put(ResponseCodeConstants.DETAIL, String.valueOf(exception.getDetail()));

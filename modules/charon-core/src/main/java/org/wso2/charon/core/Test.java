@@ -55,7 +55,11 @@ public class Test {
 
 
        //-----GET USER  ---------
-       SCIMResponse res= um.get("2963cded-fa84-491c-9479-d99232fe65d5",new SCIMUserManager());
+       //SCIMResponse res= um.get("e83bdca2-159a-4a4e-a49e-d4b673e9643",new SCIMUserManager());
+
+       //-----DELETE USER  ---------
+       SCIMResponse res= um.delete("067d724b-c225-45ff-aeca-3cfaf8bba19a",new SCIMUserManager());
+
        System.out.println(res.getResponseStatus());
        System.out.println("");
        System.out.println(res.getHeaderParamMap());

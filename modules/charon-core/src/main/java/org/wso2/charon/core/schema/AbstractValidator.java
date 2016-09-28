@@ -185,6 +185,14 @@ public abstract class AbstractValidator {
                 if(requestedExcludingAttributes.contains(attribute.getName())){
                     createdUser.deleteAttribute(attribute.getName());
                 }
+            else if(attribute.getReturned().equals(SCIMDefinitions.Returned.DEFAULT)){
+                    //if it has been asked to remove, remove it
+                    if(requestedExcludingAttributes.contains(attribute.getName())){
+                        createdUser.deleteAttribute(attribute.getName());
+                    }
+                }
+            // If the Returned type ALWAYS : no need to check and it will be not affected by
+            // requestedExcludingAttributes parameter
             }
 
             //check the same for sub attributes

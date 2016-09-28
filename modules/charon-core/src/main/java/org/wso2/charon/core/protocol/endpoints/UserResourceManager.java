@@ -62,9 +62,11 @@ public class UserResourceManager extends AbstractResourceManager {
             //convert the user into requested format.
             String encodedUser = encoder.encodeSCIMObject(user);
             //if there are any http headers to be added in the response header.
-            Map<String, String> httpHeaders = new HashMap<String, String>();
-            httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
-            return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedUser, httpHeaders);
+            Map<String, String> ResponseHeaders = new HashMap<String, String>();
+            ResponseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
+            ResponseHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(
+                    SCIMConstants.USER_ENDPOINT) + "/" + user.getId());
+            return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedUser, ResponseHeaders);
 
         } catch (NotFoundException e) {
             return AbstractResourceManager.encodeSCIMException(e);
@@ -147,9 +149,28 @@ public class UserResourceManager extends AbstractResourceManager {
         }
     }
 
-    public SCIMResponse delete(String id, String outputFormat) {
-        return null;
+    /**
+     * Method of the ResourceEndpoint that is mapped to HTTP Delete method..
+     *
+     * @param id - unique resource id
+     * @param userManager - userManager instance defined by the external implementor of charon
+     * @return
+     */
+
+    public SCIMResponse delete(String id,UserManager userManager) {
+        JSONEncoder encoder = null;
+        try {
+            /*handover the SCIM User object to the user storage provided by the SP for the delete operation*/
+            userManager.deleteUser(id);
+            //on successful deletion SCIMResponse only has 204 No Content status code.
+            return new SCIMResponse(ResponseCodeConstants.CODE_NO_CONTENT, null, null);
+        } catch (NotFoundException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (CharonException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        }
     }
+
 
     public SCIMResponse listByAttribute(String searchAttribute, UserManager userManager, String format) {
         return null;

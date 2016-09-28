@@ -51,10 +51,10 @@ public interface ResourceEndpoint {
      * Method of the ResourceEndpoint that is mapped to HTTP Delete method..
      *
      * @param id
-     * @param outputFormat - required to encode exceptions if any
+     * @param userManager
      * @return
      */
-    public SCIMResponse delete(String id, String outputFormat);
+    public SCIMResponse delete(String id,UserManager userManager);
 
     /**
      * Method that maps to HTTP GET with URL query parameter: "attributes=attributeName"
