@@ -62,72 +62,13 @@ public class ServerSideValidator extends AbstractValidator{
         return locationString;
     }
 
-    public static void removeAttributesOnReturn(User createdUser, ArrayList<String> reuqestedAttributes,
-                                                ArrayList<String> requestedExcludingAttributes) {
-        Map<String, Attribute> attributeList = createdUser.getAttributeList();
-        ArrayList<Attribute> attributeTemporyList= new ArrayList<Attribute>();
-        for (Attribute attribute : attributeList.values()) {
-            attributeTemporyList.add(attribute);
-        }
-        for(Attribute attribute : attributeTemporyList){
-            //check for never/request attributes.
-            if (attribute.getReturned().equals(SCIMDefinitions.Returned.NEVER)) {
-                createdUser.deleteAttribute(attribute.getName());
-            }
-            //if the returned property is request, need to check whether is it specifically requested by the user.
-            // If so return it.
-            else if (attribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST)){
-                if(!reuqestedAttributes.contains(attribute.getName()) ){
-                    createdUser.deleteAttribute(attribute.getName());
-                }
-                //if it has been asked to remove, remove it
-                if(requestedExcludingAttributes.contains(attribute.getName())){
-                    createdUser.deleteAttribute(attribute.getName());
-                }
-            }
-
-            //check the same for sub attributes
-            if(attribute.getType().equals(SCIMDefinitions.DataType.COMPLEX)){
-                if(attribute.getMultiValued()){
-                    List<Attribute> valuesList = ((MultiValuedAttribute)attribute).getAttributeValues();
-
-                    for (Attribute subAttribute : valuesList) {
-                        Map<String,Attribute> valuesSubAttributeList=((ComplexAttribute)subAttribute).getSubAttributesList();
-                        ArrayList<Attribute> valuesSubAttributeTemporyList= new ArrayList<Attribute>();
-                        for (Attribute subSimpleAttribute : valuesSubAttributeList.values()) {
-                            valuesSubAttributeTemporyList.add(subSimpleAttribute);
-                        }
-                        for(Attribute subSimpleAttribute : valuesSubAttributeTemporyList){
-                            if(subSimpleAttribute.getReturned().equals(SCIMDefinitions.Returned.NEVER)){
-                                createdUser.deleteValuesSubAttribute(attribute.getName(),
-                                        subAttribute.getName(),subSimpleAttribute.getName());
-                            }
-                            if(subAttribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST)){
-                                createdUser.deleteValuesSubAttribute(attribute.getName(),
-                                        subAttribute.getName(),subSimpleAttribute.getName());
-                            }
-                            //TODO: what if the user says he needs sub attribute in the 'attributes' parameter in the request
-                        }
-                    }
-                }
-                else{
-                    Map<String, Attribute> subAttributeList = ((ComplexAttribute)attribute).getSubAttributesList();
-                    ArrayList<Attribute> subAttributeTemporyList= new ArrayList<Attribute>();
-                    for (Attribute subAttribute : subAttributeList.values()) {
-                        subAttributeTemporyList.add(subAttribute);
-                    }
-                    for(Attribute subAttribute : subAttributeTemporyList){
-                        if(subAttribute.getReturned().equals(SCIMDefinitions.Returned.NEVER)){
-                            createdUser.deleteSubAttribute(attribute.getName(),subAttribute.getName());
-                        }
-                        if(subAttribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST)){
-                            createdUser.deleteSubAttribute(attribute.getName(),subAttribute.getName());
-                        }
-                    //TODO: what if the user says he needs sub attribute in the 'attributes' parameter in the request
-                    }
-                }
-            }
-        }
+    public static void validateRetrievedSCIMObject(AbstractSCIMObject scimObject,
+                                                   SCIMResourceTypeSchema resourceSchema,ArrayList<String> reuqestedAttributes,
+                                                   ArrayList<String> requestedExcludingAttributes)
+            throws BadRequestException, CharonException {
+        removeAttributesOnReturn(scimObject,reuqestedAttributes,requestedExcludingAttributes);
+        validateSCIMObjectForRequiredAttributes(scimObject, resourceSchema);
+        validateSchemaList(scimObject, resourceSchema);
     }
 }
 

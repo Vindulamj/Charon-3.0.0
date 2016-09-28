@@ -31,8 +31,48 @@ public class UserResourceManager extends AbstractResourceManager {
         logger = LogFactory.getLog(UserResourceManager.class);
     }
 
-    public SCIMResponse get(String id, String format, UserManager userManager) {
-        return null;
+    /**
+     * Retrieves a user resource given an unique user id. Mapped to HTTP GET request.
+     *
+     * @param id          - unique resource id
+     * @param userManager - userManager instance defined by the external implementor of charon
+     * @return SCIM response to be returned.
+     */
+    public SCIMResponse get(String id, UserManager userManager) {
+        JSONEncoder encoder = null;
+        try {
+            //obtain the json encoder
+            encoder = getEncoder();
+
+            /*API user should pass a UserManager impl to UserResourceEndpoint.
+            retrieve the user from the provided UM handler.*/
+            User user = ((UserManager) userManager).getUser(id);
+
+            //if user not found, return an error in relevant format.
+            if (user == null) {
+                String error = "User not found in the user store.";
+                throw new NotFoundException(error);
+            }
+
+            //obtain the schema corresponding to user
+            // unless configured returns core-user schema or else returns extended user schema)
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+            //perform service provider side validation.
+            ServerSideValidator.validateRetrievedSCIMObject(user, schema,new ArrayList<String>(),new ArrayList<String>());
+            //convert the user into requested format.
+            String encodedUser = encoder.encodeSCIMObject(user);
+            //if there are any http headers to be added in the response header.
+            Map<String, String> httpHeaders = new HashMap<String, String>();
+            httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
+            return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedUser, httpHeaders);
+
+        } catch (NotFoundException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (CharonException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (BadRequestException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        }
     }
 
     /**
@@ -51,7 +91,7 @@ public class UserResourceManager extends AbstractResourceManager {
             //obtain the json decoder
             JSONDecoder decoder = getDecoder();
 
-            //obtain the schema corresponding to user (
+            //obtain the schema corresponding to user
             // unless configured returns core-user schema or else returns extended user schema)
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
 

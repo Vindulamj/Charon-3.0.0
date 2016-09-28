@@ -31,6 +31,8 @@ import org.wso2.charon.core.extensions.UserManager;
 import org.wso2.charon.core.objects.User;
 import org.wso2.charon.core.schema.SCIMConstants;
 
+import java.io.*;
+
 public class SCIMUserManager implements UserManager {
 
     public static final String USER_NAME_STRING = "userName";
@@ -45,12 +47,43 @@ public class SCIMUserManager implements UserManager {
 
     public User createUser(User user) throws CharonException {
         //TODO: Get the E-Tag(version) and add as a attribute of the cretated user
-        //SimpleAttribute versionAttribute = new SimpleAttribute("version","W/23165325");
-        //versionAttribute=buildSimpleAttribute(attributeSchema, attributeValObj);
-        //Attribute versionAttribute = ((ComplexAttribute)user.getAttribute(SCIMConstants.CommonSchemaConstants.META)).setSubAttribute();
-        //user.setAttribute(versionAttribute);
+        try {
+            FileOutputStream fileOut =
+                    new FileOutputStream("/home/vindula/Desktop/Charon/user.ser");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(user);
+            out.close();
+            fileOut.close();
+            System.out.printf("Serialized data is saved in /home/vindula/Desktop/Charon/user.ser\n\n");
+        }catch(IOException i) {
+            i.printStackTrace();
+        }
         return user;
     }
+
+    @Override
+
+    public User getUser(String id) {
+
+        User e = null;
+        try {
+            FileInputStream fileIn = new FileInputStream("/home/vindula/Desktop/Charon/user.ser");
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            e = (User) in.readObject();
+            in.close();
+            fileIn.close();
+        }catch(IOException i) {
+            i.printStackTrace();
+            return null;
+        }catch(ClassNotFoundException c) {
+            System.out.println("Employee class not found");
+            c.printStackTrace();
+            return null;
+        }
+        return e;
+    }
+
+
 }
 
 

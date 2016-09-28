@@ -30,7 +30,7 @@ public class Test {
                "  \"name\": {\n" +
                "    \"formatted\": \"Ms. Barbara J Jensen, III\",\n" +
                "    \"familyName\": \"Jensen\",\n" +
-               "    \"givenName\": \"Barbara\",\n" +
+               "    \"givenName\": \"Vindula\",\n" +
                "    \"middleName\": \"Jane\",\n" +
                "    \"honorificPrefix\": \"Ms.\",\n" +
                "    \"honorificSuffix\": \"III\"\n" +
@@ -50,13 +50,17 @@ public class Test {
                "    }\n" +
                "  ]}";
 
-       SCIMResponse res=um.create(array,new SCIMUserManager());
+       //----CREATE USER --------
+       //SCIMResponse res=um.create(array,new SCIMUserManager());
+
+
+       //-----GET USER  ---------
+       SCIMResponse res= um.get("2963cded-fa84-491c-9479-d99232fe65d5",new SCIMUserManager());
        System.out.println(res.getResponseStatus());
        System.out.println("");
        System.out.println(res.getHeaderParamMap());
        System.out.println("");
        System.out.println(res.getResponseMessage());
-
    }
 
 }

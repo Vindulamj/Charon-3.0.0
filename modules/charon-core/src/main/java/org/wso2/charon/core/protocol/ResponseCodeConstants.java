@@ -13,6 +13,7 @@ public class ResponseCodeConstants {
     public static final String DETAIL = "detail";
     public static final String SCIM_TYPE = "scimType";
 
+    public static final int CODE_OK = 200;
     public static final int CODE_CREATED = 201;
 
     public static final int CODE_TEMPORARY_REDIRECT = 307;

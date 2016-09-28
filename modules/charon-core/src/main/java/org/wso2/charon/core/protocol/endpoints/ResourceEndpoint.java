@@ -29,11 +29,10 @@ public interface ResourceEndpoint {
      * Method of resource endpoint which is mapped to HTTP GET request.
      *
      * @param id      - unique resource id
-     * @param format  - format mentioned in HTTP Content-Type header.
      * @param userManager
      * @return SCIMResponse
      */
-    public SCIMResponse get(String id, String format, UserManager userManager);
+    public SCIMResponse get(String id,UserManager userManager);
 
     /**
      * Method of resource endpoint which is mapped to HTTP POST request.

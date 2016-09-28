@@ -11,4 +11,5 @@ public interface UserManager {
 
     public User createUser(User user) throws CharonException, ConflictException;
 
+    User getUser(String id);
 }
