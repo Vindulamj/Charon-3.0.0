@@ -1,6 +1,6 @@
 # Charon-3.0
 
-Currently following features are supoorted.
+Currently following features are supported.
 
 ##### Users Endpoint
 - [x] Create
