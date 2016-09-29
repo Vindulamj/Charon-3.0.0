@@ -17,6 +17,7 @@
 */
 package org.wso2.charon.core.protocol.endpoints;
 
+import org.json.JSONArray;
 import org.wso2.charon.core.extensions.UserManager;
 import org.wso2.charon.core.protocol.SCIMResponse;
 
@@ -32,7 +33,7 @@ public interface ResourceEndpoint {
      * @param userManager
      * @return SCIMResponse
      */
-    public SCIMResponse get(String id,UserManager userManager);
+    public SCIMResponse get(String id,UserManager userManager, String attributes, String excludeAttributes);
 
     /**
      * Method of resource endpoint which is mapped to HTTP POST request.
@@ -45,7 +46,7 @@ public interface ResourceEndpoint {
      *         client and server views of the new Resource. When a Resource is created, its URI must be returned
      *         in the response Location header.}
      */
-    public SCIMResponse create(String scimObjectString, UserManager userManager);
+    public SCIMResponse create(String scimObjectString, UserManager userManager, String attributes, String excludeAttributes);
 
     /**
      * Method of the ResourceEndpoint that is mapped to HTTP Delete method..
@@ -104,9 +105,11 @@ public interface ResourceEndpoint {
     /**
      * To list all the resources of resource endpoint.
      * @param userManager
+     * @param attributes
+     * @param excludeAttributes
      * @return
      */
-    public SCIMResponse list(UserManager userManager);
+    public SCIMResponse list(UserManager userManager, String attributes, String excludeAttributes);
     
     public SCIMResponse updateWithPUT(String existingId, String scimObjectString,
                                       String inputFormat,

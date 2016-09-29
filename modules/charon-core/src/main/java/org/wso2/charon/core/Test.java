@@ -50,18 +50,21 @@ public class Test {
                "    }\n" +
                "  ]}";
 
+       String attributes="{\"externalId\",\"name\"}";
+       String excludeAttributes="{\"externalId\",\"name\"}";
+
        //----CREATE USER --------
        //SCIMResponse res=um.create(array,new SCIMUserManager());
 
 
        //-----GET USER  ---------
-       //SCIMResponse res= um.get("0d5d76ff-5250-402e-af4f-029b60f871c8",new SCIMUserManager());
+       SCIMResponse res= um.get("0d5d76ff-5250-402e-af4f-029b60f871c8",new SCIMUserManager(),null,null);
 
        //-----DELETE USER  ---------
        //SCIMResponse res= um.delete("0d5d76ff-5250-402e-af4f-029b60f871c8",new SCIMUserManager());
 
        //-----LIST USER  ---------
-       SCIMResponse res= um.list(new SCIMUserManager());
+       //SCIMResponse res= um.list(new SCIMUserManager(),attributes,excludeAttributes);
 
        System.out.println(res.getResponseStatus());
        System.out.println("");

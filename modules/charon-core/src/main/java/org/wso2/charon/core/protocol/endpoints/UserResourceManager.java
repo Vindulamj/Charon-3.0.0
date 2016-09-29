@@ -1,6 +1,7 @@
 package org.wso2.charon.core.protocol.endpoints;
 
 
+import org.json.JSONArray;
 import org.wso2.charon.core.attributes.Attribute;
 import org.wso2.charon.core.encoder.JSONDecoder;
 import org.wso2.charon.core.encoder.JSONEncoder;
@@ -38,7 +39,7 @@ public class UserResourceManager extends AbstractResourceManager {
      * @param userManager - userManager instance defined by the external implementor of charon
      * @return SCIM response to be returned.
      */
-    public SCIMResponse get(String id, UserManager userManager) {
+    public SCIMResponse get(String id, UserManager userManager, String attributes, String excludeAttributes) {
         JSONEncoder encoder = null;
         try {
             //obtain the json encoder
@@ -58,7 +59,7 @@ public class UserResourceManager extends AbstractResourceManager {
             // unless configured returns core-user schema or else returns extended user schema)
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
             //perform service provider side validation.
-            ServerSideValidator.validateRetrievedSCIMObject(user, schema,new ArrayList<String>(),new ArrayList<String>());
+            ServerSideValidator.validateRetrievedSCIMObject(user, schema, attributes, excludeAttributes);
             //convert the user into requested format.
             String encodedUser = encoder.encodeSCIMObject(user);
             //if there are any http headers to be added in the response header.
@@ -83,7 +84,8 @@ public class UserResourceManager extends AbstractResourceManager {
      * @param scimObjectString -raw string containing user info
      * @return userManager - userManager instance defined by the external implementor of charon
      */
-    public SCIMResponse create(String scimObjectString, UserManager userManager)  {
+    public SCIMResponse create(String scimObjectString, UserManager userManager,
+                               String attributes, String excludeAttributes)  {
 
         JSONEncoder encoder =null;
         try {
@@ -121,7 +123,7 @@ public class UserResourceManager extends AbstractResourceManager {
                 //create a deep copy of the user object since we are going to change it.
                 User copiedUser = (User) CopyUtil.deepCopy(createdUser);
                 //need to remove password before returning
-                ServerSideValidator.removeAttributesOnReturn(copiedUser,new ArrayList<String>(),new ArrayList<String>());
+                ServerSideValidator.removeAttributesOnReturn(copiedUser, attributes, excludeAttributes);
                 encodedUser = encoder.encodeSCIMObject(copiedUser);
                 //add location header
                 ResponseHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(
@@ -207,10 +209,13 @@ public class UserResourceManager extends AbstractResourceManager {
      * To list all the resources of resource endpoint.
      *
      * @param userManager
+     * @param attributes
+     * @param excludeAttributes
      * @return
      */
 
-    public SCIMResponse list(UserManager userManager) {
+    public SCIMResponse list(UserManager userManager, String attributes, String excludeAttributes)
+    {
         JSONEncoder encoder = null;
         try {
             //obtain the json encoder
@@ -229,7 +234,7 @@ public class UserResourceManager extends AbstractResourceManager {
                 }
                 for(User user:returnedUsers){
                     //perform service provider side validation.
-                    ServerSideValidator.removeAttributesOnReturn(user,new ArrayList<String>(),new ArrayList<String>());
+                    ServerSideValidator.removeAttributesOnReturn(user, attributes, excludeAttributes);
                 }
                 //create a listed resource object out of the returned users list.
                 ListedResource listedResource = createListedResource(returnedUsers);

@@ -285,7 +285,5 @@ public class JSONDecoder{
         return (ComplexAttribute) DefaultAttributeFactory.createAttribute(attributeSchema,
                 complexAttribute);
     }
-
-
 }
 

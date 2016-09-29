@@ -12,6 +12,7 @@ import org.wso2.charon.core.exceptions.CharonException;
 import org.wso2.charon.core.objects.AbstractSCIMObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -159,8 +160,16 @@ public abstract class AbstractValidator {
 
     }
 
-    public static void removeAttributesOnReturn(AbstractSCIMObject scimObject, ArrayList<String> requestedAttributes,
-                                                ArrayList<String> requestedExcludingAttributes) {
+    public static void removeAttributesOnReturn(AbstractSCIMObject scimObject, String requestedAttributes,
+                                                String requestedExcludingAttributes) {
+        if(requestedAttributes!=null ){
+            //make a list from the comma separated requestedAttributes
+            List<String> requestedAttributesList = Arrays.asList(requestedAttributes.split("\\s*,\\s*"));
+        }
+        if(requestedExcludingAttributes!=null){
+            //make a list from the comma separated requestedExcludingAttributes
+            List<String> requestedExcludingAttributesList = Arrays.asList(requestedExcludingAttributes.split("\\s*,\\s*"));
+        }
         Map<String, Attribute> attributeList = scimObject.getAttributeList();
         ArrayList<Attribute> attributeTemporyList= new ArrayList<Attribute>();
         for (Attribute attribute : attributeList.values()) {
@@ -173,14 +182,14 @@ public abstract class AbstractValidator {
             }
             //if the returned property is request, need to check whether is it specifically requested by the user.
             // If so return it.
-           if(requestedAttributes.isEmpty() && requestedExcludingAttributes.isEmpty()){
+           if(requestedAttributes ==null && requestedExcludingAttributes == null){
                  if (attribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST)){
                         scimObject.deleteAttribute(attribute.getName());
                 }
             }
             else{
                 //A request should only contains either attributes or exclude attribute params. Not the both
-                if(!requestedAttributes.isEmpty()){
+                if(requestedAttributes !=null){
                     //if attributes are set, delete all the request and default attributes
                     // and add only the requested attributes
                     if ((attribute.getReturned().equals(SCIMDefinitions.Returned.DEFAULT)
@@ -189,7 +198,7 @@ public abstract class AbstractValidator {
                         scimObject.deleteAttribute(attribute.getName());
                     }
                 }
-                else if(!requestedExcludingAttributes.isEmpty()){
+                else if(requestedExcludingAttributes !=null){
                     //if exclude attribute is set, set of exclude attributes need to be
                     // removed from the default set of attributes
                     if ((attribute.getReturned().equals(SCIMDefinitions.Returned.DEFAULT))

@@ -24,7 +24,6 @@ public abstract class AbstractResourceManager implements ResourceEndpoint {
     //Keeps  a map of endpoint urls of the exposed resources.
     private static Map<String, String> endpointURLMap;
 
-
     /**
      * Returns the encoder for json.
      *
