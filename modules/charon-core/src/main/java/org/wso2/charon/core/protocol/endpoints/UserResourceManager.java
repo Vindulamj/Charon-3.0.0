@@ -229,7 +229,7 @@ public class UserResourceManager extends AbstractResourceManager {
                 }
                 for(User user:returnedUsers){
                     //perform service provider side validation.
-                    ServerSideValidator.removeAttributesOnReturn(user,null,null);
+                    ServerSideValidator.removeAttributesOnReturn(user,new ArrayList<String>(),new ArrayList<String>());
                 }
                 //create a listed resource object out of the returned users list.
                 ListedResource listedResource = createListedResource(returnedUsers);
@@ -264,6 +264,12 @@ public class UserResourceManager extends AbstractResourceManager {
         return null;
     }
 
+    /**
+     * Creates the Listed Resource.
+     *
+     * @param users
+     * @return
+     */
     public ListedResource createListedResource(List<User> users)
             throws CharonException, NotFoundException {
         ListedResource listedResource = new ListedResource();

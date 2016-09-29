@@ -55,10 +55,10 @@ public class Test {
 
 
        //-----GET USER  ---------
-       //SCIMResponse res= um.get("e83bdca2-159a-4a4e-a49e-d4b673e9643",new SCIMUserManager());
+       //SCIMResponse res= um.get("0d5d76ff-5250-402e-af4f-029b60f871c8",new SCIMUserManager());
 
        //-----DELETE USER  ---------
-       //SCIMResponse res= um.delete("067d724b-c225-45ff-aeca-3cfaf8bba19a",new SCIMUserManager());
+       //SCIMResponse res= um.delete("0d5d76ff-5250-402e-af4f-029b60f871c8",new SCIMUserManager());
 
        //-----LIST USER  ---------
        SCIMResponse res= um.list(new SCIMUserManager());

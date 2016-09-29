@@ -159,9 +159,9 @@ public abstract class AbstractValidator {
 
     }
 
-    public static void removeAttributesOnReturn(AbstractSCIMObject User, ArrayList<String> reuqestedAttributes,
+    public static void removeAttributesOnReturn(AbstractSCIMObject scimObject, ArrayList<String> requestedAttributes,
                                                 ArrayList<String> requestedExcludingAttributes) {
-        Map<String, Attribute> attributeList = User.getAttributeList();
+        Map<String, Attribute> attributeList = scimObject.getAttributeList();
         ArrayList<Attribute> attributeTemporyList= new ArrayList<Attribute>();
         for (Attribute attribute : attributeList.values()) {
             attributeTemporyList.add(attribute);
@@ -169,26 +169,35 @@ public abstract class AbstractValidator {
         for(Attribute attribute : attributeTemporyList){
             //check for never/request attributes.
             if (attribute.getReturned().equals(SCIMDefinitions.Returned.NEVER)) {
-                User.deleteAttribute(attribute.getName());
+                scimObject.deleteAttribute(attribute.getName());
             }
             //if the returned property is request, need to check whether is it specifically requested by the user.
             // If so return it.
-            else if (attribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST)){
-                if(!reuqestedAttributes.contains(attribute.getName()) ){
-                    User.deleteAttribute(attribute.getName());
-                }
-                //if it has been asked to remove, remove it
-                if(requestedExcludingAttributes.contains(attribute.getName())){
-                    User.deleteAttribute(attribute.getName());
+           if(requestedAttributes.isEmpty() && requestedExcludingAttributes.isEmpty()){
+                 if (attribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST)){
+                        scimObject.deleteAttribute(attribute.getName());
                 }
             }
-
-            else if(attribute.getReturned().equals(SCIMDefinitions.Returned.DEFAULT)){
-                    //if it has been asked to remove, remove it
-                    if(requestedExcludingAttributes.contains(attribute.getName())){
-                        User.deleteAttribute(attribute.getName());
+            else{
+                //A request should only contains either attributes or exclude attribute params. Not the both
+                if(!requestedAttributes.isEmpty()){
+                    //if attributes are set, delete all the request and default attributes
+                    // and add only the requested attributes
+                    if ((attribute.getReturned().equals(SCIMDefinitions.Returned.DEFAULT)
+                            || attribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST))
+                            && (!requestedAttributes.contains(attribute.getName()))){
+                        scimObject.deleteAttribute(attribute.getName());
                     }
                 }
+                else if(!requestedExcludingAttributes.isEmpty()){
+                    //if exclude attribute is set, set of exclude attributes need to be
+                    // removed from the default set of attributes
+                    if ((attribute.getReturned().equals(SCIMDefinitions.Returned.DEFAULT))
+                            && requestedExcludingAttributes.contains(attribute.getName())){
+                        scimObject.deleteAttribute(attribute.getName());
+                    }
+                }
+            }
             // If the Returned type ALWAYS : no need to check and it will be not affected by
             // requestedExcludingAttributes parameter
 
@@ -205,11 +214,11 @@ public abstract class AbstractValidator {
                         }
                         for(Attribute subSimpleAttribute : valuesSubAttributeTemporyList){
                             if(subSimpleAttribute.getReturned().equals(SCIMDefinitions.Returned.NEVER)){
-                                User.deleteValuesSubAttribute(attribute.getName(),
+                                scimObject.deleteValuesSubAttribute(attribute.getName(),
                                         subAttribute.getName(),subSimpleAttribute.getName());
                             }
                             if(subAttribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST)){
-                                User.deleteValuesSubAttribute(attribute.getName(),
+                                scimObject.deleteValuesSubAttribute(attribute.getName(),
                                         subAttribute.getName(),subSimpleAttribute.getName());
                             }
                             //TODO: what if the user says he needs sub attribute in the 'attributes' parameter in the request
@@ -224,10 +233,10 @@ public abstract class AbstractValidator {
                     }
                     for(Attribute subAttribute : subAttributeTemporyList){
                         if(subAttribute.getReturned().equals(SCIMDefinitions.Returned.NEVER)){
-                            User.deleteSubAttribute(attribute.getName(),subAttribute.getName());
+                            scimObject.deleteSubAttribute(attribute.getName(),subAttribute.getName());
                         }
                         if(subAttribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST)){
-                            User.deleteSubAttribute(attribute.getName(),subAttribute.getName());
+                            scimObject.deleteSubAttribute(attribute.getName(),subAttribute.getName());
                         }
                         //TODO: what if the user says he needs sub attribute in the 'attributes' parameter in the request
                     }
