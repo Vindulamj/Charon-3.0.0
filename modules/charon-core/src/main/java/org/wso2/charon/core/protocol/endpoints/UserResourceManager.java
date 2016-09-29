@@ -8,6 +8,7 @@ import org.wso2.charon.core.encoder.JSONEncoder;
 import org.wso2.charon.core.exceptions.*;
 import org.wso2.charon.core.extensions.UserManager;
 import org.wso2.charon.core.objects.ListedResource;
+import org.wso2.charon.core.objects.PaginatedListedResource;
 import org.wso2.charon.core.objects.User;
 import org.wso2.charon.core.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.protocol.SCIMResponse;
@@ -197,12 +198,75 @@ public class UserResourceManager extends AbstractResourceManager {
         return null;
     }
 
-    public SCIMResponse listBySort(String sortBy, String sortOrder, UserManager usermanager, String format) {
+    public SCIMResponse listBySort(String sortBy, String sortOrder, UserManager userManager, String format) {
         return null;
     }
 
-    public SCIMResponse listWithPagination(int startIndex, int count, UserManager userManager, String format) {
-        return null;
+    /**
+     * To list all the resources of resource endpoint with pagination.
+     *
+     * @param startIndex
+     * @param count
+     * @param userManager
+     * @param attributes
+     * @param excludeAttributes
+     * @return
+     */
+    public SCIMResponse listWithPagination(int startIndex, int count, UserManager userManager,
+                                           String attributes, String excludeAttributes) {
+        //A value less than one shall be interpreted as 1
+        if(startIndex<1){
+            startIndex=1;
+        }
+        //If count is not set, server default should be taken
+        if(count==0){
+            count=2;
+        }
+        JSONEncoder encoder = null;
+        try {
+            //obtain the json encoder
+            encoder = getEncoder();
+
+            List<User> returnedUsers;
+            int totalResults=0;
+            //API user should pass a UserManager storage to UserResourceEndpoint.
+            if (userManager != null) {
+                returnedUsers = userManager.listWithPagination(startIndex,count);
+                totalResults =userManager.getUserCount();
+
+                //if user not found, return an error in relevant format.
+                if (returnedUsers == null || returnedUsers.isEmpty()) {
+                    String error = "Users not found in the user store.";
+                    //throw resource not found.
+                    throw new NotFoundException(error);
+                }
+                for(User user:returnedUsers){
+                    //perform service provider side validation.
+                    ServerSideValidator.removeAttributesOnReturn(user, attributes, excludeAttributes);
+                }
+                //create a listed resource object out of the returned users list.
+                PaginatedListedResource listedResource = createPaginatedListedResource(
+                        returnedUsers,startIndex,totalResults);
+                //convert the listed resource into specific format.
+                String encodedListedResource = encoder.encodeSCIMObject(listedResource);
+                //if there are any http headers to be added in the response header.
+                Map<String, String> ResponseHeaders = new HashMap<String, String>();
+                ResponseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
+                return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedListedResource, ResponseHeaders);
+
+            } else {
+                String error = "Provided user manager handler is null.";
+                //log the error as well.
+                //throw internal server error.
+                throw new InternalErrorException(error);
+            }
+        } catch (CharonException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (NotFoundException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (InternalErrorException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        }
     }
 
     /**
@@ -285,5 +349,27 @@ public class UserResourceManager extends AbstractResourceManager {
             listedResource.setResources(userAttributes);
         }
         return listedResource;
+    }
+
+
+    /**
+     * Creates the Paginated Listed Resource.
+     *
+     * @param users
+     * @return
+     */
+    public PaginatedListedResource createPaginatedListedResource(List<User> users,int startIndex, int totalResults)
+            throws CharonException, NotFoundException {
+        PaginatedListedResource paginatedListedResource = new PaginatedListedResource();
+        paginatedListedResource.setSchema(SCIMConstants.LISTED_RESOURCE_CORE_SCHEMA_URI);
+        paginatedListedResource.setTotalResults(totalResults);
+        paginatedListedResource.setItemsPerPage(users.size());
+        paginatedListedResource.setStartIndex(startIndex);
+
+        for (User user : users) {
+            Map<String, Attribute> userAttributes = user.getAttributeList();
+            paginatedListedResource.setResources(userAttributes);
+        }
+        return paginatedListedResource;
     }
 }

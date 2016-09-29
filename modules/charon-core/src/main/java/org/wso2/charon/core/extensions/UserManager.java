@@ -38,4 +38,8 @@ public interface UserManager {
     public void deleteUser(String userId) throws NotFoundException, CharonException;
 
     public List<User> listUsers() throws CharonException;
+
+    public List<User> listWithPagination(int startIndex, int count);
+
+    public int getUserCount();
 }

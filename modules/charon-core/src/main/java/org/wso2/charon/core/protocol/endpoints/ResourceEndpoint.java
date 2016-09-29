@@ -97,10 +97,12 @@ public interface ResourceEndpoint {
      * @param startIndex
      * @param count
      * @param userManager
-     * @param format      @return
+     * @param attributes
+     * @param excludeAttributes
+     * @return SCIMResponse
      */
     public SCIMResponse listWithPagination(int startIndex, int count, UserManager userManager,
-                                           String format);
+                                           String attributes, String excludeAttributes);
 
     /**
      * To list all the resources of resource endpoint.

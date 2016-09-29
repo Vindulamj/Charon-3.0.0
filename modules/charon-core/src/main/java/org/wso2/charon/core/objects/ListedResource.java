@@ -85,7 +85,7 @@ public class ListedResource implements SCIMObject {
         }
     }
 
-    private boolean isAttributeExist(String attributeName) {
+    protected boolean isAttributeExist(String attributeName) {
         return attributeList.containsKey(attributeName);
     }
 

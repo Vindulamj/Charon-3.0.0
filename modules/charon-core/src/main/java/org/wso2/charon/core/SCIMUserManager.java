@@ -130,6 +130,49 @@ public class SCIMUserManager implements UserManager {
         return userList;
     }
 
+    @Override
+    public List<User> listWithPagination(int startIndex, int count) {
+        final File folder = new File("/home/vindula/Desktop/Charon/Storage/");
+        List<User> userList=new ArrayList<User>();
+        for (final File fileEntry : folder.listFiles()) {
+            if (fileEntry.isDirectory()) {
+                //listFilesForFolder(fileEntry);
+            } else {
+                User e = null;
+                try {
+                    FileInputStream fileIn = new FileInputStream("/home/vindula/Desktop/Charon/Storage/"+fileEntry.getName());
+                    ObjectInputStream in = new ObjectInputStream(fileIn);
+                    e = (User) in.readObject();
+                    in.close();
+                    fileIn.close();
+                } catch (FileNotFoundException e1) {
+                    e1.printStackTrace();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                } catch (ClassNotFoundException e1) {
+                    e1.printStackTrace();
+                }
+                userList.add(e);
+            }
+
+        }
+        List<User> userListNew=new ArrayList<User>();
+        for(int i=startIndex-1;i<startIndex-1+count;i++){
+            userListNew.add(userList.get(i));
+        }
+        return userListNew;
+    }
+
+    @Override
+    public int getUserCount() {
+        try {
+            return listUsers().size();
+        } catch (CharonException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
 
 }
 

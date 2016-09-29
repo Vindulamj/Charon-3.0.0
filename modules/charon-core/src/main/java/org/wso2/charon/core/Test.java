@@ -50,7 +50,7 @@ public class Test {
                "    }\n" +
                "  ]}";
 
-       String attributes="{\"externalId\",\"name\"}";
+       String attributes="{\"externalId\"}";
        String excludeAttributes="{\"externalId\",\"name\"}";
 
        //----CREATE USER --------
@@ -64,7 +64,10 @@ public class Test {
        //SCIMResponse res= um.delete("0d5d76ff-5250-402e-af4f-029b60f871c8",new SCIMUserManager());
 
        //-----LIST USER  ---------
-       SCIMResponse res= um.list(new SCIMUserManager(),null,null);
+       //SCIMResponse res= um.list(new SCIMUserManager(),null,null);
+
+       //-----LIST USER WITH PAGINATION ---------
+       SCIMResponse res= um.listWithPagination(1,2,new SCIMUserManager(),attributes,null);
 
        System.out.println(res.getResponseStatus());
        System.out.println("");
