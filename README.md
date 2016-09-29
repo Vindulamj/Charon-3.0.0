@@ -7,4 +7,5 @@ Currently following features are supported.
 - [x] Get
 - [x] Delete
 - [x] List
+- [x] Pagination
 
