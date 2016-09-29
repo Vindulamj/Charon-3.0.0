@@ -2,8 +2,12 @@ package org.wso2.charon.core.objects;
 
 import org.wso2.charon.core.attributes.Attribute;
 import org.wso2.charon.core.attributes.MultiValuedAttribute;
+import org.wso2.charon.core.attributes.SimpleAttribute;
+import org.wso2.charon.core.exceptions.CharonException;
 import org.wso2.charon.core.exceptions.NotFoundException;
 import org.wso2.charon.core.schema.SCIMConstants;
+import org.wso2.charon.core.schema.SCIMDefinitions;
+import org.wso2.charon.core.schema.SCIMSchemaDefinitions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,8 +22,8 @@ public class ListedResource implements SCIMObject {
 
     /*List of schemas which the resource is associated with*/
     protected List<String> schemaList = new ArrayList<String>();
-    //number of items in the scim object List
-    protected int totalResults;
+    //number of items in the scim object List  //default is 0
+    protected int totalResults =0;
     /*Collection of attributes which constitute this resource.*/
     protected Map<String, Attribute> attributeList = new HashMap<String, Attribute>();
 
@@ -28,7 +32,17 @@ public class ListedResource implements SCIMObject {
     }
 
     public void setTotalResults(int totalResults) {
-        this.totalResults = totalResults;
+        if (!isAttributeExist(SCIMConstants.ListedResourceSchemaConstants.TOTAL_RESULTS)) {
+            SimpleAttribute totalResultsAttribute =
+                    new SimpleAttribute(SCIMConstants.ListedResourceSchemaConstants.TOTAL_RESULTS, totalResults);
+            //No need to let the Default attribute factory to handle the attribute, as this is
+            //not officially defined as SCIM attribute, hence have no charactersitics defined
+            //TODO: may be we can let the default attribute factory to handle it?
+            attributeList.put(SCIMConstants.ListedResourceSchemaConstants.TOTAL_RESULTS, totalResultsAttribute);
+        } else {
+            ((SimpleAttribute) attributeList.get(SCIMConstants.ListedResourceSchemaConstants.TOTAL_RESULTS))
+                    .setValue(totalResults);
+        }
     }
 
     public void setSchemaList(List<String> schemaList) {
