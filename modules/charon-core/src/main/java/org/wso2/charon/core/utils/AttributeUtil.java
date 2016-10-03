@@ -35,27 +35,30 @@ public class AttributeUtil {
         if(!(attributeValue instanceof Boolean)){
             attributeStringValue= (String) attributeValue;
         }
-        switch (dataType) {
-            case STRING:
-                return attributeStringValue.trim();
-            case BOOLEAN:
-                return parseBoolean(attributeValue);
-            case DECIMAL:
-                return Double.parseDouble(attributeStringValue);
-            case INTEGER:
-                return Integer.parseInt(attributeStringValue);
-            case DATE_TIME:
-                return parseDateTime(attributeStringValue);
-            case BINARY:
-                return new Byte(attributeStringValue);
-            case REFERENCE:
-                return parseReference(attributeStringValue);
-            case COMPLEX:
-                return parseComplex(attributeStringValue);
-
+        try {
+            switch (dataType) {
+                case STRING:
+                    return attributeStringValue.trim();
+                case BOOLEAN:
+                    return parseBoolean(attributeValue);
+                case DECIMAL:
+                    return Double.parseDouble(attributeStringValue);
+                case INTEGER:
+                    return Integer.parseInt(attributeStringValue);
+                case DATE_TIME:
+                    return parseDateTime(attributeStringValue);
+                case BINARY:
+                    return new Byte(attributeStringValue);
+                case REFERENCE:
+                    return parseReference(attributeStringValue);
+                case COMPLEX:
+                    return parseComplex(attributeStringValue);
+            }
         }
-        throw new CharonException("Error in converting string value to attribute type: " + dataType);
-
+        catch(Exception e){
+            throw new CharonException("Error in converting string value to attribute type: " + dataType);
+        }
+        return null;
     }
     /**
      * SCIM spec requires date time to be in yyyy-MM-dd'T'HH:mm:ss

@@ -112,10 +112,16 @@ public interface ResourceEndpoint {
      * @return
      */
     public SCIMResponse list(UserManager userManager, String attributes, String excludeAttributes);
-    
+
+    /**
+     * To update the user by giving entire attribute set
+     * @param existingId
+     * @param scimObjectString
+     * @param userManager
+     * @return
+     */
+
     public SCIMResponse updateWithPUT(String existingId, String scimObjectString,
-                                      String inputFormat,
-                                      String outputFormat,
                                       UserManager userManager);
 
     /**

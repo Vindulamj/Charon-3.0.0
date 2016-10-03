@@ -1,8 +1,9 @@
 package org.wso2.charon.core.protocol.endpoints;
 
 
-import org.json.JSONArray;
 import org.wso2.charon.core.attributes.Attribute;
+import org.wso2.charon.core.attributes.MultiValuedAttribute;
+import org.wso2.charon.core.attributes.SimpleAttribute;
 import org.wso2.charon.core.encoder.JSONDecoder;
 import org.wso2.charon.core.encoder.JSONEncoder;
 import org.wso2.charon.core.exceptions.*;
@@ -103,9 +104,11 @@ public class UserResourceManager extends AbstractResourceManager {
             //decode the SCIM User object, encoded in the submitted payload.
             User user = (User) decoder.decodeResource(scimObjectString, schema, new User());
 
-            //validate the created user
+            //validate the created user.
             ServerSideValidator.validateCreatedSCIMObject(user, schema);
-            User createdUser = null;
+
+            User createdUser ;
+
             if (userManager != null) {
             /*handover the SCIM User object to the user storage provided by the SP.
             need to send back the newly created user in the response payload*/
@@ -219,6 +222,7 @@ public class UserResourceManager extends AbstractResourceManager {
             startIndex=1;
         }
         //If count is not set, server default should be taken
+        //TODO : We should read this from a config file
         if(count==0){
             count=2;
         }
@@ -232,6 +236,8 @@ public class UserResourceManager extends AbstractResourceManager {
             //API user should pass a UserManager storage to UserResourceEndpoint.
             if (userManager != null) {
                 returnedUsers = userManager.listWithPagination(startIndex,count);
+
+                //TODO: Are we having this method support
                 totalResults =userManager.getUserCount();
 
                 //if user not found, return an error in relevant format.
@@ -324,9 +330,77 @@ public class UserResourceManager extends AbstractResourceManager {
         }
     }
 
+    /**
+     * To update the user by giving entire attribute set
+     * @param existingId
+     * @param scimObjectString
+     * @param userManager
+     * @return
+     */
+    public SCIMResponse updateWithPUT(String existingId, String scimObjectString,UserManager userManager) {
+        //needs to validate the incoming object. eg: id can not be set by the consumer.
 
-    public SCIMResponse updateWithPUT(String existingId, String scimObjectString, String inputFormat, String outputFormat, UserManager userManager) {
-        return null;
+        JSONEncoder encoder = null;
+        JSONDecoder decoder = null;
+
+        try {
+            //obtain the json encoder
+            encoder = getEncoder();
+            //obtain the json decoder.
+            decoder = getDecoder();
+
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+
+            //decode the SCIM User object, encoded in the submitted payload.
+            User user = (User) decoder.decodeResource(scimObjectString, schema, new User());
+            User updatedUser = null;
+            if (userManager != null) {
+                //retrieve the old object
+                User oldUser = userManager.getUser(existingId);
+                if (oldUser != null) {
+                    User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(oldUser, user, schema);
+                    updatedUser = userManager.updateUser(validatedUser);
+
+                } else {
+                    String error = "No user exists with the given id: " + existingId;
+                    throw new NotFoundException(error);
+                }
+
+            } else {
+                String error = "Provided user manager handler is null.";
+                throw new InternalErrorException(error);
+            }
+            //encode the newly created SCIM user object and add id attribute to Location header.
+            String encodedUser;
+            Map<String, String> httpHeaders = new HashMap<String, String>();
+            if (updatedUser != null) {
+                //create a deep copy of the user object since we are going to change it.
+                User copiedUser = (User) CopyUtil.deepCopy(updatedUser);
+                //need to remove password before returning
+                ServerSideValidator.removeAnyReadOnlyAttributes(copiedUser,schema);
+                encodedUser = encoder.encodeSCIMObject(copiedUser);
+                //add location header
+                httpHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(
+                        SCIMConstants.USER_ENDPOINT) + "/" + updatedUser.getId());
+                httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
+
+            } else {
+                String error = "Updated User resource is null..";
+                throw new InternalErrorException(error);
+            }
+
+            //put the URI of the User object in the response header parameter.
+            return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedUser, httpHeaders);
+
+        } catch (NotFoundException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (BadRequestException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (CharonException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (InternalErrorException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        }
     }
 
     public SCIMResponse updateWithPATCH(String existingId, String scimObjectString, String inputFormat, String outputFormat, UserManager userManager) {

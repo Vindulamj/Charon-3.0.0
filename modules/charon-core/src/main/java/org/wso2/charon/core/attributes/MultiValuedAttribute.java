@@ -1,7 +1,7 @@
 package org.wso2.charon.core.attributes;
 
+import org.w3c.dom.Attr;
 import org.wso2.charon.core.exceptions.CharonException;
-import org.wso2.charon.core.schema.SCIMConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +14,9 @@ public class MultiValuedAttribute extends AbstractAttribute{
 
     //Multi valued attributes can have VALUES as an array of complex or simple attributes.
     protected List<Attribute> attributeValues = new ArrayList<Attribute>();
+
+    //Multi valued attributes can have VALUES as an array of primitive values.
+    protected List<Object> attributePrimitiveValues = new ArrayList<Object>();
 
     public MultiValuedAttribute(String attributeName, List<Attribute> attributeValues) {
         this.name = attributeName;
@@ -32,6 +35,7 @@ public class MultiValuedAttribute extends AbstractAttribute{
         this.attributeValues = attributeValues;
     }
 
+
     @Override
     public Attribute getSubAttribute(String attributeName) throws CharonException {
         throw new CharonException("getSubAttribute method not supported by MultiValuedAttribute.");
@@ -47,5 +51,12 @@ public class MultiValuedAttribute extends AbstractAttribute{
         this.attributeValues.add(complexValue);
     }
 
+    public List<Object> getAttributePrimitiveValues() {
+        return attributePrimitiveValues;
+    }
+
+    public void setAttributePrimitiveValues(List<Object> attributePrimitiveValues) {
+        this.attributePrimitiveValues = attributePrimitiveValues;
+    }
 
 }

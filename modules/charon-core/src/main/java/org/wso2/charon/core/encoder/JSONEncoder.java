@@ -199,7 +199,7 @@ public class JSONEncoder {
         JSONArray jsonArray = new JSONArray();
         //TODO:what if values are set as list of string values.For the moment it is ok, since only schemas
         //attribute has such values and we handle it separately in encoding.
-        //List<String> stringAttributeValues = multiValuedAttribute.getStringAttributeValues();
+        List<Object> stringAttributeValues = multiValuedAttribute.getAttributePrimitiveValues();
         List<Attribute> attributeValues = multiValuedAttribute.getAttributeValues();
         //if values are strings,
         if (attributeValues != null && !attributeValues.isEmpty()) {
@@ -211,6 +211,11 @@ public class JSONEncoder {
 
                     encodeComplexAttributeValue((ComplexAttribute) attributeValue, jsonArray);
                 }
+            }
+        }
+        if(stringAttributeValues !=null && !stringAttributeValues.isEmpty()){
+            for (Object arrayValue : stringAttributeValues) {
+                jsonArray.put(arrayValue);
             }
         }
         jsonObject.put(multiValuedAttribute.getName(), jsonArray);

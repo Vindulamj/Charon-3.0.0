@@ -25,11 +25,11 @@ public class Test {
                "  \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:User\"],\n" +
                "  \"id\":\"23232\",\n"+
                "  \"externalId\": \"701984\",\n" +
-               "  \"userName\": \"vindula@example.com\",\n" +
+               "  \"userName\": \"jayan@example.com\",\n" +
                "  \"password\": \"testpass\",\n" +
                "  \"name\": {\n" +
                "    \"formatted\": \"Ms. Barbara J Jensen, III\",\n" +
-               "    \"familyName\": \"Jensen\",\n" +
+               "    \"familyName\": \"vindula\",\n" +
                "    \"givenName\": \"VJ\",\n" +
                "    \"middleName\": \"Jane\",\n" +
                "    \"honorificPrefix\": \"Ms.\",\n" +
@@ -50,15 +50,15 @@ public class Test {
                "    }\n" +
                "  ]}";
 
-       String attributes="{\"externalId\"}";
-       String excludeAttributes="{\"externalId\",\"name\"}";
+       String attributes="emails";
+       String excludeAttributes="externalId,emails.value,name";
 
        //----CREATE USER --------
-       //SCIMResponse res=um.create(array,new SCIMUserManager(),"externalId",null);
+       SCIMResponse res=um.create(array,new SCIMUserManager(),attributes,null);
 
 
        //-----GET USER  ---------
-       //SCIMResponse res= um.get("0d5d76ff-5250-402e-af4f-029b60f871c8",new SCIMUserManager(),null,null);
+       //SCIMResponse res= um.get("ac43aa0e-5418-4919-94e6-e7788854d100",new SCIMUserManager(),null,null);
 
        //-----DELETE USER  ---------
        //SCIMResponse res= um.delete("0d5d76ff-5250-402e-af4f-029b60f871c8",new SCIMUserManager());
@@ -67,7 +67,10 @@ public class Test {
        //SCIMResponse res= um.list(new SCIMUserManager(),null,null);
 
        //-----LIST USER WITH PAGINATION ---------
-       SCIMResponse res= um.listWithPagination(1,2,new SCIMUserManager(),attributes,null);
+       //SCIMResponse res= um.listWithPagination(1,2,new SCIMUserManager(),attributes,null);
+
+       //-----UPDATE USER VIA PUT ---------
+       //SCIMResponse res= um.updateWithPUT("0d5d76ff-5250-402e-af4f-029b60f871c8",array,new SCIMUserManager());
 
        System.out.println(res.getResponseStatus());
        System.out.println("");

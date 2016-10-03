@@ -42,4 +42,6 @@ public interface UserManager {
     public List<User> listWithPagination(int startIndex, int count);
 
     public int getUserCount();
+
+    public User updateUser(User validatedUser);
 }

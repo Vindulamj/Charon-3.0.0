@@ -92,8 +92,7 @@ public class SCIMSchemaDefinitions {
 
         //sub attributes of email attribute
 
-        //"Email addresses for the user.  The value SHOULD be canonicalized by the service provider, e.g.,\n" +
-        //"'bjensen@example.com' instead of 'bjensen@EXAMPLE.COM'.Canonical type values of 'work', 'home', and 'other'.";
+        //"Email addresses for the user.
         public static final SCIMAttributeSchema EMAIL_VALUE =
                 SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.CommonSchemaConstants.VALUE,
                         SCIMDefinitions.DataType.STRING, false, SCIMConstants.UserSchemaConstants.EMAIL_VALUE_DESC, false, false,

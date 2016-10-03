@@ -1,15 +1,9 @@
 package org.wso2.charon.core.schema;
 
-import org.w3c.dom.Attr;
-import org.wso2.charon.core.attributes.AbstractAttribute;
-import org.wso2.charon.core.attributes.Attribute;
-import org.wso2.charon.core.attributes.ComplexAttribute;
-import org.wso2.charon.core.attributes.MultiValuedAttribute;
 import org.wso2.charon.core.exceptions.BadRequestException;
 import org.wso2.charon.core.exceptions.CharonException;
 import org.wso2.charon.core.exceptions.NotFoundException;
 import org.wso2.charon.core.objects.AbstractSCIMObject;
-import org.wso2.charon.core.objects.User;
 import org.wso2.charon.core.protocol.endpoints.AbstractResourceManager;
 import org.wso2.charon.core.utils.AttributeUtil;
 
@@ -66,10 +60,42 @@ public class ServerSideValidator extends AbstractValidator{
                                                    SCIMResourceTypeSchema resourceSchema,String reuqestedAttributes,
                                                    String requestedExcludingAttributes)
             throws BadRequestException, CharonException {
-        validateSCIMObjectForRequiredAttributes(scimObject, resourceSchema);
+        //validateSCIMObjectForRequiredAttributes(scimObject, resourceSchema);
         removeAttributesOnReturn(scimObject,reuqestedAttributes,requestedExcludingAttributes);
         validateSchemaList(scimObject, resourceSchema);
     }
+
+    /**
+     * Perform validation on SCIM Object update on service provider side
+     *
+     * @param oldObject
+     * @param newObject
+     * @param resourceSchema
+     * @return
+     * @throws CharonException
+     */
+    public static AbstractSCIMObject validateUpdatedSCIMObject(AbstractSCIMObject oldObject,
+                                                               AbstractSCIMObject newObject,
+                                                               SCIMResourceTypeSchema resourceSchema)
+            throws CharonException, BadRequestException {
+
+            AbstractSCIMObject validatedObject = null;
+            validatedObject = checkIfReadOnlyAndImmutableAttributesModified(oldObject, newObject, resourceSchema);
+            //copy meta attribute from old to new
+            validatedObject.setAttribute(oldObject.getAttribute(SCIMConstants.CommonSchemaConstants.META));
+            //copy id attribute to new group object
+            validatedObject.setAttribute(oldObject.getAttribute(SCIMConstants.CommonSchemaConstants.ID));
+            //edit last modified date
+            Date date = new Date();
+            validatedObject.setLastModified(date);
+            //check for required attributes.
+            validateSCIMObjectForRequiredAttributes(validatedObject, resourceSchema);
+
+        return validatedObject;
+        //TODO: if user object, validate name
+    }
+
+
 }
 
 
