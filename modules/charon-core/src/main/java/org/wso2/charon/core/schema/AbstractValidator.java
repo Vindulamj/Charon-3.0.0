@@ -196,7 +196,7 @@ public abstract class AbstractValidator {
                 }
             }
             else{
-                //A request should only contains either attributes or exclude attribute params. Not the both
+                //A request should only contains either attributes or exclude attribute params. Not both
                 if(requestedAttributes !=null){
                     //if attributes are set, delete all the request and default attributes
                     //and add only the requested attributes
@@ -369,7 +369,6 @@ public abstract class AbstractValidator {
                 if ((subSimpleAttribute.getReturned().equals(SCIMDefinitions.Returned.DEFAULT))
                         && requestedExcludingAttributesList.contains(
                         attribute.getName()+"."+subSimpleAttribute.getName())){
-                    System.out.println(subAttribute.getName()+"-"+subSimpleAttribute.getName());
                     scimObject.deleteValuesSubAttribute(attribute.getName(),
                             subAttribute.getName(),subSimpleAttribute.getName());
                 }

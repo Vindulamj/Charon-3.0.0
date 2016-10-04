@@ -302,9 +302,12 @@ public class UserResourceManager extends AbstractResourceManager {
                     //throw resource not found.
                     throw new NotFoundException(error);
                 }
+                // unless configured returns core-user schema or else returns extended user schema)
+                SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+
                 for(User user:returnedUsers){
                     //perform service provider side validation.
-                    ServerSideValidator.removeAttributesOnReturn(user, attributes, excludeAttributes);
+                    ServerSideValidator.validateRetrievedSCIMObject(user, schema, attributes, excludeAttributes);
                 }
                 //create a listed resource object out of the returned users list.
                 ListedResource listedResource = createListedResource(returnedUsers);
@@ -326,6 +329,8 @@ public class UserResourceManager extends AbstractResourceManager {
         } catch (NotFoundException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         } catch (InternalErrorException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (BadRequestException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         }
     }

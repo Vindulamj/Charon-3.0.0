@@ -29,7 +29,7 @@ public class Test {
                "  \"password\": \"testpass\",\n" +
                "  \"name\": {\n" +
                "    \"formatted\": \"Ms. Barbara J Jensen, III\",\n" +
-               "    \"familyName\": \"vindula\",\n" +
+               "    \"familyName\": \"sachini\",\n" +
                "    \"givenName\": \"VJ\",\n" +
                "    \"middleName\": \"Jane\",\n" +
                "    \"honorificPrefix\": \"Ms.\",\n" +
@@ -54,20 +54,20 @@ public class Test {
        String excludeAttributes="externalId,emails.value,name";
 
        //----CREATE USER --------
-       SCIMResponse res=um.create(array,new SCIMUserManager(),null,excludeAttributes);
+       //SCIMResponse res=um.create(array,new SCIMUserManager(),null,excludeAttributes);
 
 
        //-----GET USER  ---------
-       //SCIMResponse res= um.get("ac43aa0e-5418-4919-94e6-e7788854d100",new SCIMUserManager(),null,null);
+       //SCIMResponse res= um.get("af8cdc9c-d6b2-414c-82ab-ad02993151f3",new SCIMUserManager(),attributes,null);
 
        //-----DELETE USER  ---------
-       //SCIMResponse res= um.delete("0d5d76ff-5250-402e-af4f-029b60f871c8",new SCIMUserManager());
+       //SCIMResponse res= um.delete("cf712155-e974-42ae-9e57-6c42f7bbadad",new SCIMUserManager());
 
        //-----LIST USER  ---------
-       //SCIMResponse res= um.list(new SCIMUserManager(),null,null);
+       SCIMResponse res= um.list(new SCIMUserManager(),attributes,null);
 
        //-----LIST USER WITH PAGINATION ---------
-       //SCIMResponse res= um.listWithPagination(1,2,new SCIMUserManager(),attributes,null);
+       //SCIMResponse res= um.listWithPagination(1,1,new SCIMUserManager(),attributes,null);
 
        //-----UPDATE USER VIA PUT ---------
        //SCIMResponse res= um.updateWithPUT("0d5d76ff-5250-402e-af4f-029b60f871c8",array,new SCIMUserManager());
