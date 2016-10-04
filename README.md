@@ -8,4 +8,5 @@ Currently following features are supported.
 - [x] Delete
 - [x] List
 - [x] Pagination
+- [x] attributes and exclude attribte support for all operations
 
