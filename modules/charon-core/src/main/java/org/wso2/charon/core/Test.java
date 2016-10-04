@@ -50,11 +50,11 @@ public class Test {
                "    }\n" +
                "  ]}";
 
-       String attributes="emails";
+       String attributes="emails.value,name.familyName";
        String excludeAttributes="externalId,emails.value,name";
 
        //----CREATE USER --------
-       SCIMResponse res=um.create(array,new SCIMUserManager(),attributes,null);
+       SCIMResponse res=um.create(array,new SCIMUserManager(),null,excludeAttributes);
 
 
        //-----GET USER  ---------

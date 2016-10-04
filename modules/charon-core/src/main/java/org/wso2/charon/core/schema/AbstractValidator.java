@@ -8,6 +8,7 @@ import org.wso2.charon.core.attributes.*;
 import org.wso2.charon.core.exceptions.BadRequestException;
 import org.wso2.charon.core.exceptions.CharonException;
 import org.wso2.charon.core.objects.AbstractSCIMObject;
+import org.wso2.charon.core.objects.SCIMObject;
 import org.wso2.charon.core.protocol.ResponseCodeConstants;
 
 import java.util.*;
@@ -158,7 +159,7 @@ public abstract class AbstractValidator {
     }
 
     /**
-     * This method is to remove any defined and requested attributes.
+     * This method is to remove any defined and requested attributes and include requested attributes.
      *
      * @param scimObject
      * @param requestedAttributes
@@ -236,47 +237,9 @@ public abstract class AbstractValidator {
                             valuesSubAttributeTemporyList.add(subSimpleAttribute);
                         }
                         for(Attribute subSimpleAttribute : valuesSubAttributeTemporyList){
-                            if(subSimpleAttribute.getReturned().equals(SCIMDefinitions.Returned.NEVER)){
-                                scimObject.deleteValuesSubAttribute(attribute.getName(),
-                                        subAttribute.getName(),subSimpleAttribute.getName());
-                            }
-                            if(requestedAttributes ==null && requestedExcludingAttributes == null){
-                                if (attribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST)){
-                                    scimObject.deleteValuesSubAttribute(attribute.getName(),
-                                            subAttribute.getName(), subSimpleAttribute.getName());
-                                }
-                            }
-                            else{
-                                //A request should only contains either attributes or exclude attribute params. Not the both
-                                if(requestedAttributes !=null){
-                                    //if attributes are set, delete all the request and default attributes
-                                    // and add only the requested attributes
-                                    if ((subSimpleAttribute.getReturned().equals(SCIMDefinitions.Returned.DEFAULT)
-                                            || subSimpleAttribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST))
-                                            && (!requestedAttributesList.contains(
-                                            attribute.getName()+"."+subSimpleAttribute.getName()) &&
-                                            !requestedAttributesList.contains(attribute.getName()))){
-                                        scimObject.deleteValuesSubAttribute(attribute.getName(),
-                                                subAttribute.getName(), subSimpleAttribute.getName());
-                                    }
-                                }
-                                else if(requestedExcludingAttributes !=null){
-                                    //removing attributes which has returned as request. This is because no request is made
-                                    if (subSimpleAttribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST)) {
-                                        scimObject.deleteValuesSubAttribute(attribute.getName(),
-                                                subAttribute.getName(), subSimpleAttribute.getName());
-                                    }
-                                    //if exclude attribute is set, set of exclude attributes need to be
-                                    // removed from the default set of attributes
-                                    if ((subSimpleAttribute.getReturned().equals(SCIMDefinitions.Returned.DEFAULT))
-                                            && requestedExcludingAttributesList.contains(
-                                            attribute.getName()+"."+subSimpleAttribute.getName())){
-                                        System.out.println(subAttribute.getName()+"-"+subSimpleAttribute.getName());
-                                        scimObject.deleteValuesSubAttribute(attribute.getName(),
-                                                subAttribute.getName(),subSimpleAttribute.getName());
-                                    }
-                                }
-                            }
+                            removeValuesSubAttributeOnReturn(subSimpleAttribute, subAttribute, attribute,
+                                    requestedAttributes, requestedExcludingAttributes, requestedAttributesList,
+                                    requestedExcludingAttributesList, scimObject);
                         }
                     }
                 }
@@ -287,48 +250,133 @@ public abstract class AbstractValidator {
                         subAttributeTemporyList.add(subAttribute);
                     }
                     for(Attribute subAttribute : subAttributeTemporyList){
-                        //check for never/request attributes.
-                        if (subAttribute.getReturned().equals(SCIMDefinitions.Returned.NEVER)) {
-                            scimObject.deleteSubAttribute(attribute.getName(),subAttribute.getName());
-                        }
-                        //if the returned property is request, need to check whether is it specifically requested by the user.
-                        // If so return it.
-                        if(requestedAttributes ==null && requestedExcludingAttributes == null){
-                            if (subAttribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST)){
-                                scimObject.deleteSubAttribute(attribute.getName(),subAttribute.getName());
-                            }
-                        }
-                        else{
-                            //A request should only contains either attributes or exclude attribute params. Not the both
-                            if(requestedAttributes !=null){
-                                //if attributes are set, delete all the request and default attributes
-                                // and add only the requested attributes
-                                if ((subAttribute.getReturned().equals(SCIMDefinitions.Returned.DEFAULT)
-                                        || subAttribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST))
-                                        && (!requestedAttributesList.contains(
-                                                attribute.getName()+"."+subAttribute.getName()) &&
-                                        !requestedAttributesList.contains(attribute.getName()))){
-                                    scimObject.deleteSubAttribute(attribute.getName(),subAttribute.getName());
-                                }
-                            }
-                            else if(requestedExcludingAttributes !=null){
-                                //removing attributes which has returned as request. This is because no request is made
-                                if (subAttribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST)) {
-                                    scimObject.deleteSubAttribute(attribute.getName(),subAttribute.getName());
-                                }
-                                //if exclude attribute is set, set of exclude attributes need to be
-                                // removed from the default set of attributes
-                                if ((subAttribute.getReturned().equals(SCIMDefinitions.Returned.DEFAULT))
-                                        && requestedExcludingAttributesList.contains(
-                                                attribute.getName()+"."+subAttribute.getName())){
-                                    scimObject.deleteSubAttribute(attribute.getName(),subAttribute.getName());
-                                }
-                            }
-                        }
+                        removeSubAttributesOnReturn(subAttribute, attribute, requestedAttributes, requestedExcludingAttributes,
+                                requestedAttributesList, requestedExcludingAttributesList,scimObject);
                     }
                 }
             }
         }
+    }
+
+    /**
+     * This method is to remove any defined and requested sub attributes and include requested sub attributes
+     * from complex attributes.
+     *
+     * @param subAttribute
+     * @param attribute
+     * @param requestedAttributes
+     * @param requestedExcludingAttributes
+     * @param requestedAttributesList
+     * @param requestedExcludingAttributesList
+     * @param scimObject
+     */
+
+    private static void removeSubAttributesOnReturn(Attribute subAttribute, Attribute attribute, String requestedAttributes,
+                                             String requestedExcludingAttributes, List<String> requestedAttributesList,
+                                             List<String> requestedExcludingAttributesList, AbstractSCIMObject scimObject){
+        //check for never/request attributes.
+        if (subAttribute.getReturned().equals(SCIMDefinitions.Returned.NEVER)) {
+            scimObject.deleteSubAttribute(attribute.getName(),subAttribute.getName());
+        }
+        //if the returned property is request, need to check whether is it specifically requested by the user.
+        // If so return it.
+        if(requestedAttributes ==null && requestedExcludingAttributes == null){
+            if (subAttribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST)){
+                scimObject.deleteSubAttribute(attribute.getName(),subAttribute.getName());
+            }
+        }
+        else{
+            //A request should only contains either attributes or exclude attribute params. Not the both
+            if(requestedAttributes !=null){
+                //if attributes are set, delete all the request and default attributes
+                // and add only the requested attributes
+                if ((subAttribute.getReturned().equals(SCIMDefinitions.Returned.DEFAULT)
+                        || subAttribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST))
+                        && (!requestedAttributesList.contains(
+                        attribute.getName()+"."+subAttribute.getName()) &&
+                        !requestedAttributesList.contains(attribute.getName()))){
+                    scimObject.deleteSubAttribute(attribute.getName(),subAttribute.getName());
+                }
+            }
+            else if(requestedExcludingAttributes !=null){
+                //removing attributes which has returned as request. This is because no request is made
+                if (subAttribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST)) {
+                    scimObject.deleteSubAttribute(attribute.getName(),subAttribute.getName());
+                }
+                //if exclude attribute is set, set of exclude attributes need to be
+                // removed from the default set of attributes
+                if ((subAttribute.getReturned().equals(SCIMDefinitions.Returned.DEFAULT))
+                        && requestedExcludingAttributesList.contains(
+                        attribute.getName()+"."+subAttribute.getName())){
+                    scimObject.deleteSubAttribute(attribute.getName(),subAttribute.getName());
+                }
+            }
+        }
+    }
+
+    /**
+     * This method is to remove any defined and requested sub attributes and include requested sub attributes
+     * from multivalued attributes
+     *
+     * @param subSimpleAttribute
+     * @param subAttribute
+     * @param attribute
+     * @param requestedAttributes
+     * @param requestedExcludingAttributes
+     * @param requestedAttributesList
+     * @param requestedExcludingAttributesList
+     * @param scimObject
+     */
+    private static void removeValuesSubAttributeOnReturn(Attribute subSimpleAttribute, Attribute subAttribute,
+                                                         Attribute attribute, String requestedAttributes,
+                                                         String requestedExcludingAttributes,
+                                                         List<String> requestedAttributesList,
+                                                         List<String> requestedExcludingAttributesList,
+                                                         AbstractSCIMObject scimObject){
+
+        if(subSimpleAttribute.getReturned().equals(SCIMDefinitions.Returned.NEVER)){
+            scimObject.deleteValuesSubAttribute(attribute.getName(),
+                    subAttribute.getName(),subSimpleAttribute.getName());
+        }
+        if(requestedAttributes ==null && requestedExcludingAttributes == null){
+            if (attribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST)){
+                scimObject.deleteValuesSubAttribute(attribute.getName(),
+                        subAttribute.getName(), subSimpleAttribute.getName());
+            }
+        }
+        else{
+            //A request should only contains either attributes or exclude attribute params. Not the both
+            if(requestedAttributes !=null){
+                //if attributes are set, delete all the request and default attributes
+                // and add only the requested attributes
+                if ((subSimpleAttribute.getReturned().equals(SCIMDefinitions.Returned.DEFAULT)
+                        || subSimpleAttribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST))
+                        && (!requestedAttributesList.contains(
+                        attribute.getName()+"."+subSimpleAttribute.getName()) &&
+                        !requestedAttributesList.contains(attribute.getName()))){
+                    scimObject.deleteValuesSubAttribute(attribute.getName(),
+                            subAttribute.getName(), subSimpleAttribute.getName());
+                }
+            }
+            else if(requestedExcludingAttributes !=null){
+                //removing attributes which has returned as request. This is because no request is made
+                if (subSimpleAttribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST)) {
+                    scimObject.deleteValuesSubAttribute(attribute.getName(),
+                            subAttribute.getName(), subSimpleAttribute.getName());
+                }
+                //if exclude attribute is set, set of exclude attributes need to be
+                // removed from the default set of attributes
+                if ((subSimpleAttribute.getReturned().equals(SCIMDefinitions.Returned.DEFAULT))
+                        && requestedExcludingAttributesList.contains(
+                        attribute.getName()+"."+subSimpleAttribute.getName())){
+                    System.out.println(subAttribute.getName()+"-"+subSimpleAttribute.getName());
+                    scimObject.deleteValuesSubAttribute(attribute.getName(),
+                            subAttribute.getName(),subSimpleAttribute.getName());
+                }
+            }
+        }
+
+
     }
 
     /**
