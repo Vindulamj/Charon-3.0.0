@@ -9,4 +9,4 @@ Currently following features are supported.
 - [x] List
 - [x] Pagination
 - [x] attributes and exclude attribute support for all operations
-
+- [x] Update with PUT
