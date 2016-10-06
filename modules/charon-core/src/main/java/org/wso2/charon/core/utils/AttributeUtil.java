@@ -1,6 +1,7 @@
 package org.wso2.charon.core.utils;
 
 import com.sun.org.apache.xpath.internal.operations.Bool;
+import org.json.JSONArray;
 import org.wso2.charon.core.exceptions.BadRequestException;
 import org.wso2.charon.core.exceptions.CharonException;
 import org.wso2.charon.core.protocol.ResponseCodeConstants;

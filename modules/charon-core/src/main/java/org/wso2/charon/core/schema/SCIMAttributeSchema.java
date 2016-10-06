@@ -109,6 +109,16 @@ public class SCIMAttributeSchema implements AttributeSchema {
         return subAttributes ;
     }
 
+    @Override
+    public AttributeSchema getSubAttributeSchema(String subAttribute) {
+        for(SCIMAttributeSchema subAttributeSchema : subAttributes){
+            if(subAttributeSchema.getName().equals(subAttribute)){
+                return subAttributeSchema;
+            }
+        }
+        return null;
+    }
+
     public void setSubAttributes(ArrayList<SCIMAttributeSchema> subAttributes) { this.subAttributes = subAttributes; }
 
     public List<String> getCanonicalValues() { return canonicalValues; }
@@ -118,4 +128,5 @@ public class SCIMAttributeSchema implements AttributeSchema {
     public ArrayList<SCIMDefinitions.ReferenceType> getReferenceTypes() { return referenceTypes; }
 
     public void setReferenceTypes(ArrayList<SCIMDefinitions.ReferenceType> referenceTypes) { this.referenceTypes = referenceTypes; }
+
 }

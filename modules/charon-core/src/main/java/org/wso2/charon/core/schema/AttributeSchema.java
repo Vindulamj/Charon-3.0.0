@@ -47,5 +47,7 @@ public interface AttributeSchema {
 
     public List<SCIMAttributeSchema> getSubAttributeSchemas();
 
+    public AttributeSchema getSubAttributeSchema(String subAttribute);
+
 }
 

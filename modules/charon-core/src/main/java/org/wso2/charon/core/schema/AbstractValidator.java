@@ -3,7 +3,6 @@ package org.wso2.charon.core.schema;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.w3c.dom.Attr;
 import org.wso2.charon.core.attributes.*;
 import org.wso2.charon.core.exceptions.BadRequestException;
 import org.wso2.charon.core.exceptions.CharonException;
@@ -88,7 +87,7 @@ public abstract class AbstractValidator {
         for (String schema : resourceSchemaList) {
             //check for schema.
             if (!objectSchemaList.contains(schema)) {
-               throw new CharonException("Not all schemas are set");
+                throw new CharonException("Not all schemas are set");
             }
         }
     }
@@ -190,9 +189,9 @@ public abstract class AbstractValidator {
             }
             //if the returned property is request, need to check whether is it specifically requested by the user.
             // If so return it.
-           if(requestedAttributes ==null && requestedExcludingAttributes == null){
-                 if (attribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST)){
-                        scimObject.deleteAttribute(attribute.getName());
+            if(requestedAttributes ==null && requestedExcludingAttributes == null){
+                if (attribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST)){
+                    scimObject.deleteAttribute(attribute.getName());
                 }
             }
             else{
@@ -272,8 +271,8 @@ public abstract class AbstractValidator {
      */
 
     private static void removeSubAttributesOnReturn(Attribute subAttribute, Attribute attribute, String requestedAttributes,
-                                             String requestedExcludingAttributes, List<String> requestedAttributesList,
-                                             List<String> requestedExcludingAttributesList, AbstractSCIMObject scimObject){
+                                                    String requestedExcludingAttributes, List<String> requestedAttributesList,
+                                                    List<String> requestedExcludingAttributesList, AbstractSCIMObject scimObject){
         //check for never/request attributes.
         if (subAttribute.getReturned().equals(SCIMDefinitions.Returned.NEVER)) {
             scimObject.deleteSubAttribute(attribute.getName(),subAttribute.getName());
@@ -423,6 +422,16 @@ public abstract class AbstractValidator {
         return false;
     }
 
+    /**
+     * check for read only and immutable attributes which has been modified on update request
+     *
+     * @param oldObject
+     * @param newObject
+     * @param resourceSchema
+     * @return
+     * @throws BadRequestException
+     * @throws CharonException
+     */
     protected static AbstractSCIMObject checkIfReadOnlyAndImmutableAttributesModified(
             AbstractSCIMObject oldObject, AbstractSCIMObject newObject, SCIMResourceTypeSchema resourceSchema)
             throws BadRequestException, CharonException {
@@ -491,8 +500,6 @@ public abstract class AbstractValidator {
                                 }
                             }
                         }
-
-
                     }
                     else {
                         //A complex attribute itself can not be immutable if it's sub variables are not immutable
@@ -574,6 +581,14 @@ public abstract class AbstractValidator {
         }
         return newObject;
     }
+
+    /**
+     * check whether the give attribute is in the given list
+     *
+     * @param attributeName
+     * @param list
+     * @return
+     */
     private static boolean isListContains(String attributeName, List<Attribute> list){
         for(Attribute attribute :list){
             if(attribute.getName().equals(attributeName)){
@@ -583,6 +598,13 @@ public abstract class AbstractValidator {
         return false;
     }
 
+    /**
+     * check for related sub value corresponding to the given sub value
+     *
+     * @param newSubValue
+     * @param oldSubValuesList
+     * @return
+     */
     private static Attribute getRelatedSubValue(Attribute newSubValue, List<Attribute> oldSubValuesList){
         for(Attribute oldSubValue : oldSubValuesList){
             if(oldSubValue.getName().equals(newSubValue.getName())){
@@ -592,6 +614,14 @@ public abstract class AbstractValidator {
         return null;
     }
 
+    /**
+     * check for same values in a simple singular attributes or multivalued primitive type attributes
+     *
+     * @param oldAttributeList
+     * @param newAttributeList
+     * @param attributeSchema
+     * @throws BadRequestException
+     */
     private static void checkForSameValues(Map<String, Attribute> oldAttributeList, Map<String, Attribute> newAttributeList,
                                            AttributeSchema attributeSchema) throws BadRequestException {
 
@@ -600,7 +630,7 @@ public abstract class AbstractValidator {
 
         if(newTemporyAttribute instanceof SimpleAttribute){
             if(!((((SimpleAttribute) newTemporyAttribute).getValue()).equals(((SimpleAttribute) oldTemporyAttribute).getValue()))){
-                    throw new BadRequestException(ResponseCodeConstants.MUTABILITY);
+                throw new BadRequestException(ResponseCodeConstants.MUTABILITY);
             }
         }
         else if(newTemporyAttribute instanceof MultiValuedAttribute &&
@@ -613,6 +643,12 @@ public abstract class AbstractValidator {
         }
     }
 
+    /**
+     * check whether the given two lists are equal from the content irrespective of the order
+     * @param l1
+     * @param l2
+     * @return
+     */
     private static boolean checkListEquality(List<Object> l1, List<Object> l2){
         final Set<Object> s1 = new HashSet(l1);
         final Set<Object> s2 = new HashSet(l2);
@@ -620,6 +656,15 @@ public abstract class AbstractValidator {
         return s1.equals(s2);
     }
 
+    /**
+     * check for read only and immutable attributes that has been modified in a complex type attribute
+     *
+     * @param newAttribute
+     * @param oldAttribute
+     * @param subAttributeSchemaList
+     * @throws CharonException
+     * @throws BadRequestException
+     */
     private static void checkForReadOnlyAndImmutableInComplexAttributes(Attribute newAttribute, Attribute oldAttribute,
                                                                         List<SCIMAttributeSchema> subAttributeSchemaList
     ) throws CharonException, BadRequestException {

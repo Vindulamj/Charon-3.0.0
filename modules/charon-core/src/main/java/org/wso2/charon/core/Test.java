@@ -54,7 +54,7 @@ public class Test {
        String excludeAttributes="externalId,emails.value";
 
        //----CREATE USER --------
-       //SCIMResponse res=um.create(array,new SCIMUserManager(),null,excludeAttributes);
+       SCIMResponse res=um.create(array,new SCIMUserManager(),null,null);
 
 
        //-----GET USER  ---------
@@ -70,7 +70,7 @@ public class Test {
        //SCIMResponse res= um.listWithPagination(1,2,new SCIMUserManager(),attributes,null);
 
        //-----UPDATE USER VIA PUT ---------
-       SCIMResponse res= um.updateWithPUT("52c4c533-479a-4c2b-a0ff-5bc1e9a4e07b",array,new SCIMUserManager(),null,null);
+       //SCIMResponse res= um.updateWithPUT("52c4c533-479a-4c2b-a0ff-5bc1e9a4e07b",array,new SCIMUserManager(),null,null);
 
        System.out.println(res.getResponseStatus());
        System.out.println("");

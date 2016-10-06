@@ -2,10 +2,7 @@ package org.wso2.charon.core.encoder;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
+import org.json.*;
 import org.wso2.charon.core.attributes.*;
 import org.wso2.charon.core.exceptions.BadRequestException;
 import org.wso2.charon.core.exceptions.CharonException;
@@ -28,7 +25,7 @@ import static org.wso2.charon.core.schema.SCIMDefinitions.DataType.*;
  * according to the info that the user has sent, and returns SCIMUser object
  */
 
-public class JSONDecoder{
+public class JSONDecoder {
 
     private Log logger;
 
@@ -40,8 +37,8 @@ public class JSONDecoder{
      * Decode the resource string sent in the SCIM request payload.
      *
      * @param scimResourceString - json encoded string of user info
-     * @param resourceSchema - SCIM defined user schema
-     * @param scimObject  - a container holding the attributes and schema list
+     * @param resourceSchema     - SCIM defined user schema
+     * @param scimObject         - a container holding the attributes and schema list
      * @return SCIMObject
      */
     public SCIMObject decodeResource(String scimResourceString, ResourceTypeSchema resourceSchema,
@@ -60,69 +57,64 @@ public class JSONDecoder{
             for (AttributeSchema attributeSchema : attributeSchemas) {
                 //obtain the user defined value for given key- attribute schema name
                 Object attributeValObj = decodedJsonObj.opt(attributeSchema.getName());
-                SCIMDefinitions.DataType attributeSchemaDataType =attributeSchema.getType();
+                SCIMDefinitions.DataType attributeSchemaDataType = attributeSchema.getType();
 
-                if(attributeSchemaDataType.equals(STRING) || attributeSchemaDataType.equals(BINARY) ||
-                        attributeSchemaDataType.equals(BOOLEAN)|| attributeSchemaDataType.equals(DATE_TIME)||
-                        attributeSchemaDataType.equals(DECIMAL)|| attributeSchemaDataType.equals(INTEGER)||
+                if (attributeSchemaDataType.equals(STRING) || attributeSchemaDataType.equals(BINARY) ||
+                        attributeSchemaDataType.equals(BOOLEAN) || attributeSchemaDataType.equals(DATE_TIME) ||
+                        attributeSchemaDataType.equals(DECIMAL) || attributeSchemaDataType.equals(INTEGER) ||
                         attributeSchemaDataType.equals(REFERENCE)) {
-                    if(!attributeSchema.getMultiValued()){
-                        if(attributeValObj instanceof String || attributeValObj instanceof Boolean ||
-                                attributeValObj instanceof  Integer || attributeValObj==null){
+
+                    if (!attributeSchema.getMultiValued()) {
+                        if (attributeValObj instanceof String || attributeValObj instanceof Boolean ||
+                                attributeValObj instanceof Integer || attributeValObj == null) {
                             //If an attribute is passed without a value, no need to save it.
-                            if (attributeValObj==null) {
+                            if (attributeValObj == null) {
                                 continue;
                             }
                             //if the corresponding schema data type is String/Boolean/Binary/Decimal/Integer/DataTime
                             // or Reference, it is a SimpleAttribute.
                             scimObject.setAttribute(buildSimpleAttribute(attributeSchema, attributeValObj), resourceSchema);
 
-                        }
-                        else{
+                        } else {
                             logger.error("Error decoding the simple attribute");
                             throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
                         }
-                    }
-                    else  {
-                        if(attributeValObj instanceof JSONArray || attributeValObj == null){
+                    } else {
+                        if (attributeValObj instanceof JSONArray || attributeValObj == null) {
                             //If an attribute is passed without a value, no need to save it.
                             if (attributeValObj == null) {
                                 continue;
                             }
+
                             scimObject.setAttribute(buildPrimitiveMultiValuedAttribute(attributeSchema,
                                     (JSONArray) attributeValObj), resourceSchema);
-                        }
-                        else{
+                        } else {
                             logger.error("Error decoding the primitive multivalued attribute");
                             throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
                         }
                     }
-                }
-                else if (attributeSchemaDataType.equals(COMPLEX)) {
-                    if(attributeSchema.getMultiValued()== true) {
-                        if (attributeValObj instanceof JSONArray || attributeValObj==null) {
-                            if (attributeValObj==null) {
+                } else if (attributeSchemaDataType.equals(COMPLEX)) {
+                    if (attributeSchema.getMultiValued() == true) {
+                        if (attributeValObj instanceof JSONArray || attributeValObj == null) {
+                            if (attributeValObj == null) {
                                 continue;
                             }
                             //if the corresponding json value object is JSONArray, it is a MultiValuedAttribute.
                             scimObject.setAttribute(buildComplexMultiValuedAttribute(attributeSchema,
-                                            (JSONArray) attributeValObj), resourceSchema);
-                        }
-                        else{
+                                    (JSONArray) attributeValObj), resourceSchema);
+                        } else {
                             logger.error("Error decoding the complex multivalued attribute");
                             throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
                         }
-                    }
-                    else if(attributeSchema.getMultiValued()==false){
-                        if (attributeValObj instanceof JSONObject || attributeValObj==null) {
-                            if (attributeValObj==null) {
+                    } else if (attributeSchema.getMultiValued() == false) {
+                        if (attributeValObj instanceof JSONObject || attributeValObj == null) {
+                            if (attributeValObj == null) {
                                 continue;
                             }
                             //if the corresponding json value object is JSONObject, it is a ComplexAttribute.
                             scimObject.setAttribute(buildComplexAttribute(attributeSchema,
                                     (JSONObject) attributeValObj), resourceSchema);
-                        }
-                        else{
+                        } else {
                             logger.error("Error decoding the complex attribute");
                             throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
                         }
@@ -130,8 +122,7 @@ public class JSONDecoder{
                 }
             }
             return scimObject;
-        }
-        catch (JSONException e) {
+        } catch (JSONException e) {
             logger.error("json error in decoding the resource");
             throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
         }
@@ -141,13 +132,13 @@ public class JSONDecoder{
      * Return a simple attribute with the user defined value included and necessary attribute characteristics set
      *
      * @param attributeSchema - Attribute schema
-     * @param attributeValue - value for the attribute
+     * @param attributeValue  - value for the attribute
      * @return SimpleAttribute
      */
     private SimpleAttribute buildSimpleAttribute(AttributeSchema attributeSchema,
                                                  Object attributeValue) throws CharonException, BadRequestException {
         Object attributeValueObject = AttributeUtil.getAttributeValueFromString(
-                 attributeValue, attributeSchema.getType());
+                attributeValue, attributeSchema.getType());
         SimpleAttribute simpleAttribute = new SimpleAttribute(attributeSchema.getName(), attributeValueObject);
         return (SimpleAttribute) DefaultAttributeFactory.createAttribute(attributeSchema,
                 simpleAttribute);
@@ -162,32 +153,32 @@ public class JSONDecoder{
      */
     private MultiValuedAttribute buildComplexMultiValuedAttribute(AttributeSchema attributeSchema, JSONArray attributeValues)
             throws CharonException, BadRequestException {
-            try {
-                MultiValuedAttribute multiValuedAttribute = new MultiValuedAttribute(attributeSchema.getName());
+        try {
+            MultiValuedAttribute multiValuedAttribute = new MultiValuedAttribute(attributeSchema.getName());
 
-                List<Attribute> complexAttributeValues = new ArrayList<Attribute>();
+            List<Attribute> complexAttributeValues = new ArrayList<Attribute>();
 
-                //iterate through JSONArray and create the list of string values.
-                for (int i = 0; i < attributeValues.length(); i++) {
-                    Object attributeValue = attributeValues.get(i);
-                    if (attributeValue instanceof JSONObject) {
-                        JSONObject complexAttributeValue = (JSONObject) attributeValue;
-                        complexAttributeValues.add(buildComplexValue(attributeSchema, complexAttributeValue));
-                    } else {
-                        String error = "Unknown JSON representation for the MultiValued attribute "+
-                                attributeSchema.getName() +" which has data type as "+attributeSchema.getType();
-                        throw new BadRequestException(error,ResponseCodeConstants.INVALID_SYNTAX);
-                    }
-
+            //iterate through JSONArray and create the list of string values.
+            for (int i = 0; i < attributeValues.length(); i++) {
+                Object attributeValue = attributeValues.get(i);
+                if (attributeValue instanceof JSONObject) {
+                    JSONObject complexAttributeValue = (JSONObject) attributeValue;
+                    complexAttributeValues.add(buildComplexValue(attributeSchema, complexAttributeValue));
+                } else {
+                    String error = "Unknown JSON representation for the MultiValued attribute " +
+                            attributeSchema.getName() + " which has data type as " + attributeSchema.getType();
+                    throw new BadRequestException(error, ResponseCodeConstants.INVALID_SYNTAX);
                 }
-                multiValuedAttribute.setAttributeValues(complexAttributeValues);
 
-                return (MultiValuedAttribute) DefaultAttributeFactory.createAttribute(attributeSchema,
-                        multiValuedAttribute);
-            } catch (JSONException e) {
-                String error = "Error in accessing JSON value of multivalued attribute";
-                throw new CharonException(error);
             }
+            multiValuedAttribute.setAttributeValues(complexAttributeValues);
+
+            return (MultiValuedAttribute) DefaultAttributeFactory.createAttribute(attributeSchema,
+                    multiValuedAttribute);
+        } catch (JSONException e) {
+            String error = "Error in accessing JSON value of multivalued attribute";
+            throw new CharonException(error);
+        }
     }
 
     /**
@@ -209,18 +200,17 @@ public class JSONDecoder{
             //iterate through JSONArray and create the list of string values.
             for (int i = 0; i < attributeValues.length(); i++) {
                 Object attributeValue = attributeValues.get(i);
-                if(attributeValue instanceof String || attributeValue instanceof Boolean ||
-                        attributeValue instanceof  Integer || attributeValue == null){
+                if (attributeValue instanceof String || attributeValue instanceof Boolean ||
+                        attributeValue instanceof Integer || attributeValue == null) {
                     //If an attribute is passed without a value, no need to save it.
                     if (attributeValue == null) {
                         continue;
                     }
                     primitiveValues.add(attributeValue);
-                }
-                else {
-                    String error = "Unknown JSON representation for the MultiValued attribute "+
-                            attributeSchema.getName() +" which has data type as "+attributeSchema.getType();
-                    throw new BadRequestException(error,ResponseCodeConstants.INVALID_SYNTAX);
+                } else {
+                    String error = "Unknown JSON representation for the MultiValued attribute " +
+                            attributeSchema.getName() + " which has data type as " + attributeSchema.getType();
+                    throw new BadRequestException(error, ResponseCodeConstants.INVALID_SYNTAX);
                 }
 
             }
@@ -238,11 +228,11 @@ public class JSONDecoder{
      * Return a complex attribute with the user defined sub values included and necessary attribute characteristics set
      *
      * @param complexAttributeSchema - complex attribute schema
-     * @param jsonObject - sub attributes values for the complex attribute
+     * @param jsonObject             - sub attributes values for the complex attribute
      * @return ComplexAttribute
      */
     private ComplexAttribute buildComplexAttribute(AttributeSchema complexAttributeSchema,
-                                            JSONObject jsonObject)
+                                                   JSONObject jsonObject)
             throws BadRequestException, CharonException {
 
         ComplexAttribute complexAttribute = new ComplexAttribute(complexAttributeSchema.getName());
@@ -262,7 +252,7 @@ public class JSONDecoder{
                     subAttributeSchemaType.equals(BOOLEAN) || subAttributeSchemaType.equals(DATE_TIME) ||
                     subAttributeSchemaType.equals(DECIMAL) || subAttributeSchemaType.equals(INTEGER) ||
                     subAttributeSchemaType.equals(REFERENCE)) {
-                if(!subAttributeSchema.getMultiValued()) {
+                if (!subAttributeSchema.getMultiValued()) {
                     if (attributeValObj instanceof String || attributeValObj instanceof Boolean ||
                             attributeValObj instanceof Integer || attributeValObj == null) {
                         //If an attribute is passed without a value, no need to save it.
@@ -273,22 +263,19 @@ public class JSONDecoder{
                         // or Reference, it is a SimpleAttribute.
                         subAttributesMap.put(subAttributeSchema.getName(),
                                 buildSimpleAttribute(subAttributeSchema, attributeValObj));
-                    }
-                    else {
+                    } else {
                         logger.error("Error decoding the sub attribute");
                         throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
                     }
-                }
-                else{
-                    if(attributeValObj instanceof JSONArray || attributeValObj ==null){
+                } else {
+                    if (attributeValObj instanceof JSONArray || attributeValObj == null) {
                         //If an attribute is passed without a value, no need to save it.
                         if (attributeValObj == null) {
                             continue;
                         }
                         subAttributesMap.put(subAttributeSchema.getName(),
-                                buildPrimitiveMultiValuedAttribute(subAttributeSchema,(JSONArray) attributeValObj));
-                    }
-                    else {
+                                buildPrimitiveMultiValuedAttribute(subAttributeSchema, (JSONArray) attributeValObj));
+                    } else {
                         logger.error("Error decoding the sub attribute");
                         throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
                     }
@@ -300,7 +287,7 @@ public class JSONDecoder{
                 throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
             }
         }
-            complexAttribute.setSubAttributesList(subAttributesMap);
+        complexAttribute.setSubAttributesList(subAttributesMap);
         return (ComplexAttribute) DefaultAttributeFactory.createAttribute(complexAttributeSchema, complexAttribute);
     }
 
@@ -323,46 +310,71 @@ public class JSONDecoder{
         for (SCIMAttributeSchema subAttributeSchema : subAttributeSchemas) {
 
             Object subAttributeValue = jsonObject.opt(subAttributeSchema.getName());
-                //setting up a name for the complex attribute for the reference purpose
-                if(subAttributeSchema.getName().equals(SCIMConstants.CommonSchemaConstants.VALUE)){
-                    //(value,type) pair is considered as a primary key for each entry
-                    if(subAttributeValue !=null){
-                        Object subAttributeValueForType = jsonObject.opt(SCIMConstants.CommonSchemaConstants.TYPE);
-                        if(subAttributeValueForType !=null){
-                            complexAttribute.setName(attributeSchema.getName()+"_"+
-                                    subAttributeValue+"_"+ subAttributeValueForType);
-                        }
-                        else{
-                            complexAttribute.setName(attributeSchema.getName()+"_"+
-                                    subAttributeValue+"_"+SCIMConstants.DEFAULT);
-                        }
+            //setting up a name for the complex attribute for the reference purpose
+            if (subAttributeSchema.getName().equals(SCIMConstants.CommonSchemaConstants.VALUE)) {
+                //(value,type) pair is considered as a primary key for each entry
+                if (subAttributeValue != null) {
+                    Object subAttributeValueForType = jsonObject.opt(SCIMConstants.CommonSchemaConstants.TYPE);
+                    if (subAttributeValueForType != null) {
+                        complexAttribute.setName(attributeSchema.getName() + "_" +
+                                subAttributeValue + "_" + subAttributeValueForType);
+                    } else {
+                        complexAttribute.setName(attributeSchema.getName() + "_" +
+                                subAttributeValue + "_" + SCIMConstants.DEFAULT);
                     }
-                    else{
-                        Object subAttributeValueFortype = jsonObject.opt(SCIMConstants.CommonSchemaConstants.TYPE);
-                        if(subAttributeValueFortype !=null){
-                            complexAttribute.setName(attributeSchema.getName()+"_"+
-                                    SCIMConstants.DEFAULT+"_"+subAttributeValueFortype);
-                        }
-                        else{
-                            complexAttribute.setName(attributeSchema.getName()+"_"+
-                                    SCIMConstants.DEFAULT+"_"+SCIMConstants.DEFAULT);
-                        }
+                } else {
+                    Object subAttributeValueFortype = jsonObject.opt(SCIMConstants.CommonSchemaConstants.TYPE);
+                    if (subAttributeValueFortype != null) {
+                        complexAttribute.setName(attributeSchema.getName() + "_" +
+                                SCIMConstants.DEFAULT + "_" + subAttributeValueFortype);
+                    } else {
+                        complexAttribute.setName(attributeSchema.getName() + "_" +
+                                SCIMConstants.DEFAULT + "_" + SCIMConstants.DEFAULT);
                     }
                 }
-            if(subAttributeValue!=null){
-                SimpleAttribute simpleAttribute =
-                        buildSimpleAttribute(subAttributeSchema, subAttributeValue);
-                //let the attribute factory to set the sub attribute of a complex attribute to detect schema violations.
-                simpleAttribute=(SimpleAttribute) DefaultAttributeFactory.createAttribute(subAttributeSchema,
-                        simpleAttribute);
-                subAttributesMap.put(subAttributeSchema.getName(), simpleAttribute);
             }
+            if (subAttributeValue != null) {
+                if (subAttributeSchema.getMultiValued()) {
+                    if (subAttributeValue instanceof JSONArray || subAttributeValue == null) {
+                        //If an attribute is passed without a value, no need to save it.
+                        if (subAttributeValue == null) {
+                            continue;
+                        }
+                        MultiValuedAttribute multiValuedAttribute =
+                                buildPrimitiveMultiValuedAttribute(subAttributeSchema, (JSONArray) subAttributeValue);
+                        //let the attribute factory to set the sub attribute of a complex attribute to detect schema violations.
+                        multiValuedAttribute = (MultiValuedAttribute) DefaultAttributeFactory.createAttribute(subAttributeSchema,
+                                multiValuedAttribute);
+                        subAttributesMap.put(subAttributeSchema.getName(), multiValuedAttribute);
+
+                    } else {
+                        throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                    }
+                } else {
+                    if (subAttributeValue instanceof String || subAttributeValue instanceof Boolean ||
+                            subAttributeValue instanceof Integer || subAttributeValue == null) {
+                        //If an attribute is passed without a value, no need to save it.
+                        if (subAttributeValue == null) {
+                            continue;
+                        }
+                        SimpleAttribute simpleAttribute =
+                                buildSimpleAttribute(subAttributeSchema, subAttributeValue);
+                        //let the attribute factory to set the sub attribute of a complex attribute to detect schema violations.
+                        simpleAttribute = (SimpleAttribute) DefaultAttributeFactory.createAttribute(subAttributeSchema,
+                                simpleAttribute);
+                        subAttributesMap.put(subAttributeSchema.getName(), simpleAttribute);
+                    } else {
+                        throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                    }
+                }
 
 
+            }
         }
-        complexAttribute.setSubAttributesList(subAttributesMap);
-        return (ComplexAttribute) DefaultAttributeFactory.createAttribute(attributeSchema,
-                complexAttribute);
+            complexAttribute.setSubAttributesList(subAttributesMap);
+            return (ComplexAttribute) DefaultAttributeFactory.createAttribute(attributeSchema,
+                    complexAttribute);
+
     }
 }
 

@@ -1,6 +1,6 @@
 package org.wso2.charon.core.schema;
 
-import org.wso2.charon.core.attributes.ComplexAttribute;
+import org.wso2.charon.core.attributes.*;
 import org.wso2.charon.core.exceptions.BadRequestException;
 import org.wso2.charon.core.exceptions.CharonException;
 import org.wso2.charon.core.exceptions.NotFoundException;
@@ -34,6 +34,8 @@ public class ServerSideValidator extends AbstractValidator{
         scimObject.setCreatedDate(AttributeUtil.parseDateTime(AttributeUtil.formatDateTime(date)));
         //creates date and the last modified are the same if not updated.
         scimObject.setLastModified(AttributeUtil.parseDateTime(AttributeUtil.formatDateTime(date)));
+        //set display name for complex multivalued attribute
+        setDisplayNameInComplexMultiValuedAttributes(scimObject,resourceSchema);
         //set location and resourceType
         if (resourceSchema.isSchemaAvailable(SCIMConstants.USER_CORE_SCHEMA_URI)){
             String location = createLocationHeader(AbstractResourceManager.getResourceEndpointURL(
@@ -51,6 +53,67 @@ public class ServerSideValidator extends AbstractValidator{
         validateSchemaList(scimObject, resourceSchema);
     }
 
+    /**
+     * This method is basically for adding display sub attribute to multivalued attributes
+     * which has 'display' as a sub attribute in the respective attribute schema
+     *
+     * @param scimObject
+     * @param resourceSchema
+     * @throws CharonException
+     * @throws BadRequestException
+     */
+    private static void setDisplayNameInComplexMultiValuedAttributes(
+            AbstractSCIMObject scimObject, SCIMResourceTypeSchema resourceSchema) throws CharonException, BadRequestException {
+
+        Map<String, Attribute> attributeList=scimObject.getAttributeList();
+        ArrayList<AttributeSchema> attributeSchemaList=resourceSchema.getAttributesList();
+
+        for(AttributeSchema attributeSchema : attributeSchemaList){
+
+            if(attributeSchema.getMultiValued() && attributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)){
+
+                if(attributeSchema.getSubAttributeSchema(SCIMConstants.CommonSchemaConstants.DISPLAY) != null){
+
+                    if(attributeList.containsKey(attributeSchema.getName())){
+                        Attribute multiValuedAttribute = attributeList.get(attributeSchema.getName());
+                        List<Attribute> subValuesList = ((MultiValuedAttribute)(multiValuedAttribute)).getAttributeValues();
+
+                        for(Attribute subValue : subValuesList){
+                            for(AttributeSchema subAttributeSchema : attributeSchema.getSubAttributeSchemas())
+                                if(subAttributeSchema.getName().equals(SCIMConstants.CommonSchemaConstants.VALUE)){
+
+                                    if(!subAttributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)
+                                            && !subAttributeSchema.getMultiValued()){
+                                        //take the value from the value sub attribute and put is as display attribute
+                                        SimpleAttribute simpleAttribute = new SimpleAttribute(
+                                                SCIMConstants.CommonSchemaConstants.DISPLAY,
+                                                ((SimpleAttribute)(subValue.getSubAttribute(subAttributeSchema.getName()))).getValue());
+                                        AttributeSchema subSchema = attributeSchema.getSubAttributeSchema(SCIMConstants.CommonSchemaConstants.DISPLAY);
+                                        simpleAttribute=(SimpleAttribute) DefaultAttributeFactory.createAttribute(subSchema, simpleAttribute);
+                                        ((ComplexAttribute)(subValue)).setSubAttribute(simpleAttribute);
+                                    }
+                                    else if(!subAttributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)
+                                            && subAttributeSchema.getMultiValued()){
+
+                                        Attribute valueSubAttribute= (MultiValuedAttribute)(subValue.getSubAttribute(subAttributeSchema.getName()));
+                                        Object displayValue= ((MultiValuedAttribute)(valueSubAttribute)).getAttributePrimitiveValues().get(0);
+                                        //if multiple values are available, get the first value and put it as display name
+                                        SimpleAttribute simpleAttribute = new SimpleAttribute(
+                                                SCIMConstants.CommonSchemaConstants.DISPLAY, displayValue);
+                                        AttributeSchema subSchema = attributeSchema.getSubAttributeSchema(SCIMConstants.CommonSchemaConstants.DISPLAY);
+                                        simpleAttribute=(SimpleAttribute) DefaultAttributeFactory.createAttribute(subSchema, simpleAttribute);
+                                        ((ComplexAttribute)(subValue)).setSubAttribute(simpleAttribute);
+
+                                    }
+                                }
+                        }
+
+
+                    }
+                }
+            }
+        }
+    }
 
     private static String createLocationHeader(String location, String resourceID) {
         String locationString = location + "/" + resourceID;
