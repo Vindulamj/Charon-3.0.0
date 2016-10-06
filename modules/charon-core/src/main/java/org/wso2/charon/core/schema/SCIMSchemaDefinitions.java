@@ -103,7 +103,7 @@ public class SCIMSchemaDefinitions {
         public static final SCIMAttributeSchema EMAIL_DISPLAY =
                 SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.CommonSchemaConstants.DISPLAY,
                         SCIMDefinitions.DataType.STRING, false, SCIMConstants.UserSchemaConstants.EMAIL_DISPLAY_DESC, false, false,
-                        SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null, null);
 
         //A label indicating the attribute's function, e.g., 'work' or 'home'.

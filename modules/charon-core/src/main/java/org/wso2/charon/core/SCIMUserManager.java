@@ -175,30 +175,13 @@ public class SCIMUserManager implements UserManager {
 
     @Override
     public User updateUser(User validatedUser) {
-        String id= null;
         try {
-            id = validatedUser.getId();
+            User user=createUser(validatedUser);
+            return user;
         } catch (CharonException e) {
             e.printStackTrace();
-        }
-        User e = null;
-        try {
-            FileInputStream fileIn = new FileInputStream("/home/vindula/Desktop/Charon/Storage/"+id+".ser");
-            ObjectInputStream in = new ObjectInputStream(fileIn);
-            e = (User) in.readObject();
-            in.close();
-            fileIn.close();
-            createUser(e);
-        }catch(IOException i) {
             return null;
-        }catch(ClassNotFoundException c) {
-            System.out.println("Employee class not found");
-            c.printStackTrace();
-            return null;
-        } catch (CharonException e1) {
-            e1.printStackTrace();
         }
-        return null;
     }
 
 

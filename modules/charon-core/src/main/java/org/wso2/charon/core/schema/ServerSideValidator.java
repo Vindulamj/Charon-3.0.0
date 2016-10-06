@@ -1,5 +1,6 @@
 package org.wso2.charon.core.schema;
 
+import org.wso2.charon.core.attributes.ComplexAttribute;
 import org.wso2.charon.core.exceptions.BadRequestException;
 import org.wso2.charon.core.exceptions.CharonException;
 import org.wso2.charon.core.exceptions.NotFoundException;

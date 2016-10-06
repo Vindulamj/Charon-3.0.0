@@ -162,7 +162,7 @@ public class UserResourceManager extends AbstractResourceManager {
     }
 
     /**
-     * Method of the ResourceEndpoint that is mapped to HTTP Delete method..
+     * Method of the ResourceManager that is mapped to HTTP Delete method..
      *
      * @param id - unique resource id
      * @param userManager - userManager instance defined by the external implementor of charon
@@ -237,7 +237,7 @@ public class UserResourceManager extends AbstractResourceManager {
             if (userManager != null) {
                 returnedUsers = userManager.listWithPagination(startIndex,count);
 
-                //TODO: Are we having this method support
+                //TODO: Are we having this method support from user core
                 totalResults =userManager.getUserCount();
 
                 //if user not found, return an error in relevant format.
@@ -246,9 +246,13 @@ public class UserResourceManager extends AbstractResourceManager {
                     //throw resource not found.
                     throw new NotFoundException(error);
                 }
+
+                // unless configured returns core-user schema or else returns extended user schema)
+                SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+
                 for(User user:returnedUsers){
                     //perform service provider side validation.
-                    ServerSideValidator.removeAttributesOnReturn(user, attributes, excludeAttributes);
+                    ServerSideValidator.validateRetrievedSCIMObject(user, schema, attributes, excludeAttributes);
                 }
                 //create a listed resource object out of the returned users list.
                 PaginatedListedResource listedResource = createPaginatedListedResource(
@@ -262,7 +266,6 @@ public class UserResourceManager extends AbstractResourceManager {
 
             } else {
                 String error = "Provided user manager handler is null.";
-                //log the error as well.
                 //throw internal server error.
                 throw new InternalErrorException(error);
             }
@@ -271,6 +274,8 @@ public class UserResourceManager extends AbstractResourceManager {
         } catch (NotFoundException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         } catch (InternalErrorException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (BadRequestException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         }
     }
@@ -342,7 +347,8 @@ public class UserResourceManager extends AbstractResourceManager {
      * @param userManager
      * @return
      */
-    public SCIMResponse updateWithPUT(String existingId, String scimObjectString,UserManager userManager) {
+    public SCIMResponse updateWithPUT(String existingId, String scimObjectString, UserManager userManager,
+                                      String attributes, String excludeAttributes) {
         //needs to validate the incoming object. eg: id can not be set by the consumer.
 
         JSONEncoder encoder = null;
@@ -382,7 +388,7 @@ public class UserResourceManager extends AbstractResourceManager {
                 //create a deep copy of the user object since we are going to change it.
                 User copiedUser = (User) CopyUtil.deepCopy(updatedUser);
                 //need to remove password before returning
-                ServerSideValidator.removeAnyReadOnlyAttributes(copiedUser,schema);
+                ServerSideValidator.removeAttributesOnReturn(copiedUser,attributes,excludeAttributes);
                 encodedUser = encoder.encodeSCIMObject(copiedUser);
                 //add location header
                 httpHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(

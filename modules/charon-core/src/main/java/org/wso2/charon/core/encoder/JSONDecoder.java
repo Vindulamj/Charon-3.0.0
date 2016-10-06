@@ -249,7 +249,7 @@ public class JSONDecoder{
         Map<String, Attribute> subAttributesMap = new HashMap<String, Attribute>();
         //list of sub attributes of the complex attribute
         List<SCIMAttributeSchema> subAttributeSchemas =
-                ((SCIMAttributeSchema) complexAttributeSchema).getSubAttributes();
+                ((SCIMAttributeSchema) complexAttributeSchema).getSubAttributeSchemas();
 
         //iterate through the complex attribute schema and extract the sub attributes.
         for (AttributeSchema subAttributeSchema : subAttributeSchemas) {
@@ -318,7 +318,7 @@ public class JSONDecoder{
         ComplexAttribute complexAttribute = new ComplexAttribute(attributeSchema.getName());
         Map<String, Attribute> subAttributesMap = new HashMap<String, Attribute>();
         List<SCIMAttributeSchema> subAttributeSchemas =
-                ((SCIMAttributeSchema) attributeSchema).getSubAttributes();
+                ((SCIMAttributeSchema) attributeSchema).getSubAttributeSchemas();
 
         for (SCIMAttributeSchema subAttributeSchema : subAttributeSchemas) {
 

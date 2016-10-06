@@ -24,7 +24,7 @@ import org.wso2.charon.core.protocol.SCIMResponse;
 /**
  * Interface for SCIM resource endpoints.
  */
-public interface ResourceEndpoint {
+public interface ResourceManager {
 
     /**
      * Method of resource endpoint which is mapped to HTTP GET request.
@@ -49,7 +49,7 @@ public interface ResourceEndpoint {
     public SCIMResponse create(String scimObjectString, UserManager userManager, String attributes, String excludeAttributes);
 
     /**
-     * Method of the ResourceEndpoint that is mapped to HTTP Delete method..
+     * Method of the ResourceManager that is mapped to HTTP Delete method..
      *
      * @param id
      * @param userManager
@@ -118,11 +118,13 @@ public interface ResourceEndpoint {
      * @param existingId
      * @param scimObjectString
      * @param userManager
+     * @param attributes
+     * @param excludeAttributes
      * @return
      */
 
     public SCIMResponse updateWithPUT(String existingId, String scimObjectString,
-                                      UserManager userManager);
+                                      UserManager userManager, String attributes, String excludeAttributes);
 
     /**
      * @param existingId

@@ -25,6 +25,11 @@ public class SimpleAttribute extends AbstractAttribute {
         throw new CharonException("getSubAttribute method not supported by SimpleAttribute.");
     }
 
+    @Override
+    public void deleteSubAttributes() throws CharonException {
+        throw new CharonException("deleteSubAttributes method not supported by SimpleAttribute.");
+    }
+
     public String getStringValue() throws CharonException {
         if (this.type.equals(SCIMDefinitions.DataType.STRING)) {
             return (String) value;

@@ -41,6 +41,12 @@ public class MultiValuedAttribute extends AbstractAttribute{
         throw new CharonException("getSubAttribute method not supported by MultiValuedAttribute.");
     }
 
+    @Override
+    public void deleteSubAttributes() throws CharonException {
+        //here we delete the complex type sub attributes which act as sub values
+        attributeValues.clear();;
+    }
+
     /**
      * To construct and set a value of a multi-valued attribute, as a complex value containing
      * set of sub attributes.
@@ -57,6 +63,10 @@ public class MultiValuedAttribute extends AbstractAttribute{
 
     public void setAttributePrimitiveValues(List<Object> attributePrimitiveValues) {
         this.attributePrimitiveValues = attributePrimitiveValues;
+    }
+
+    public void setAttributeValue(Attribute attributeValue){
+        attributeValues.add(attributeValue);
     }
 
 }

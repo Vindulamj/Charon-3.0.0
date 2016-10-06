@@ -6,7 +6,7 @@ import org.wso2.charon.core.schema.SCIMDefinitions;
  * SCIM Core Schema Spec.
 */
 
-public abstract class AbstractAttribute implements Attribute {
+public abstract class AbstractAttribute implements Attribute{
 
     //name of the attribute
     protected String name;

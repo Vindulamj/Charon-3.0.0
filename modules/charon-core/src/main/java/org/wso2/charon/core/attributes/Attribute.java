@@ -29,4 +29,6 @@ public interface Attribute extends Serializable {
 
     public Attribute getSubAttribute(String attributeName) throws CharonException;
 
+    public void deleteSubAttributes() throws CharonException;
+
 }

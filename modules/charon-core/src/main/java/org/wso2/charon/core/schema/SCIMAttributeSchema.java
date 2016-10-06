@@ -104,7 +104,10 @@ public class SCIMAttributeSchema implements AttributeSchema {
 
     public void setUniqueness(SCIMDefinitions.Uniqueness uniqueness) { this.uniqueness=uniqueness; }
 
-    public List<SCIMAttributeSchema> getSubAttributes() { return subAttributes ;}
+    @Override
+    public List<SCIMAttributeSchema> getSubAttributeSchemas() {
+        return subAttributes ;
+    }
 
     public void setSubAttributes(ArrayList<SCIMAttributeSchema> subAttributes) { this.subAttributes = subAttributes; }
 

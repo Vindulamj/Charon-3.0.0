@@ -15,7 +15,7 @@ import java.util.Map;
  * This is an abstract layer for all the resource endpoints to abstract out common
  * operations. And an entry point for initiating the charon from the outside.
  */
-public abstract class AbstractResourceManager implements ResourceEndpoint {
+public abstract class AbstractResourceManager implements ResourceManager {
 
     private static JSONEncoder encoder;
 
