@@ -10,3 +10,10 @@ Currently following features are supported.
 - [x] Pagination
 - [x] attributes and exclude attribute support for all operations
 - [x] Update with PUT
+
+Following features are been developed.
+
+##### Users Endpoint
+- Update with PATCH
+- Sorting
+- Filtering
