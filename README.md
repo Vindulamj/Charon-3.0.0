@@ -2,7 +2,7 @@
 
 Currently following features are supported.
 
-##### Users Endpoint
+#### Users Endpoint
 - [x] Create
 - [x] Get
 - [x] Delete
@@ -12,7 +12,7 @@ Currently following features are supported.
 - [x] Update with PUT
 - [x] Filtering including complex filters
 
-Following types of filters are supported.
+#####Following types of filters are supported.
 
 filter=userName eq "bjensen"
 
@@ -47,8 +47,8 @@ filter=userType ne "Employee" and not (emails co "example.com" or
 
 filter=userType eq "Employee" and (emails.type eq "work")
 
-Following features are been developed.
+#####Following features are been developed.
 
-##### Users Endpoint
+#### Users Endpoint
 - Update with PATCH
 - Sorting
