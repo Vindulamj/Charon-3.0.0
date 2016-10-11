@@ -191,13 +191,10 @@ public class SCIMUserManager implements UserManager {
 
     @Override
     public List<User> filterUsers(Node rootNode) {
-        System.out.println(((ExpressionNode)(rootNode).getRightNode().getRightNode().getRightNode()).getAttributeValue());
-/*
-        ExpressionNode en=(ExpressionNode)rootNode;
+     ExpressionNode en=(ExpressionNode)rootNode;
         String attributeValue = en.getAttributeValue();
         String operation  = en.getOperation();
         String value= en.getValue();
-        System.out.println(attributeValue);
         try {
             List<User> list= listUsers();
             List<User> newList =new ArrayList<User>();
@@ -214,7 +211,6 @@ public class SCIMUserManager implements UserManager {
         } catch (CharonException e) {
             e.printStackTrace();
         }
-*/
         return null;
     }
 

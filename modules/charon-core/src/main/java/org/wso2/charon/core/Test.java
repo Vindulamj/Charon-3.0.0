@@ -25,7 +25,7 @@ public class Test {
                "  \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:User\"],\n" +
                "  \"id\":\"23232\",\n"+
                "  \"externalId\": \"701984\",\n" +
-               "  \"userName\": \"Shankar\",\n" +
+               "  \"userName\": \"johan@wso2.com\",\n" +
                "  \"password\": \"testpass\",\n" +
                "  \"name\": {\n" +
                "    \"formatted\": \"Ms. Barbara J Jensen, III\",\n" +
@@ -73,8 +73,8 @@ public class Test {
        //SCIMResponse res= um.updateWithPUT("a713e12b-0364-4d54-b939-6d1230d40251",array,new SCIMUserManager(),null,null);
 
        //-----FILTER AT USER ENDPOINT ---------
-       String filter ="userName eq Employee and not (userName eq Employee or name.familyName eq Employee)";
-       SCIMResponse res= um.listByFilter(filter, new SCIMUserManager(), attributes, null);
+       String filter ="userName eq johan@wso2.com";
+       SCIMResponse res= um.listByFilter(filter, new SCIMUserManager(), null, null);
 
        System.out.println(res.getResponseStatus());
        System.out.println("");
