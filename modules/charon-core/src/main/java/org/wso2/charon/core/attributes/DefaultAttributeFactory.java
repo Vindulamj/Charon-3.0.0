@@ -32,6 +32,7 @@ public class DefaultAttributeFactory {
         attribute.setMultiValued(attributeSchema.getMultiValued());
         attribute.setDescription(attributeSchema.getDescription());
         attribute.setUniqueness(attributeSchema.getUniqueness());
+        attribute.setURI(attributeSchema.getURI());
 
         //Default attribute factory knows about SCIMAttribute schema
         try{

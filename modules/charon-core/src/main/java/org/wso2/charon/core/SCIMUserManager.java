@@ -23,6 +23,7 @@ package org.wso2.charon.core;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Attr;
+import org.wso2.charon.core.attributes.AbstractAttribute;
 import org.wso2.charon.core.attributes.Attribute;
 import org.wso2.charon.core.attributes.ComplexAttribute;
 import org.wso2.charon.core.attributes.SimpleAttribute;
@@ -33,6 +34,7 @@ import org.wso2.charon.core.objects.User;
 import org.wso2.charon.core.schema.SCIMConstants;
 import org.wso2.charon.core.utils.codeutils.ExpressionNode;
 import org.wso2.charon.core.utils.codeutils.Node;
+import org.wso2.charon.core.utils.codeutils.OperationNode;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -189,16 +191,19 @@ public class SCIMUserManager implements UserManager {
 
     @Override
     public List<User> filterUsers(Node rootNode) {
+        //System.out.println(((OperationNode)(rootNode)).getOperation());
+
         ExpressionNode en=(ExpressionNode)rootNode;
         String attributeValue = en.getAttributeValue();
         String operation  = en.getOperation();
         String value= en.getValue();
+        System.out.println(attributeValue);
         try {
             List<User> list= listUsers();
             List<User> newList =new ArrayList<User>();
             for(User user:list){
                 Map<String, Attribute> attributeList= user.getAttributeList();
-                Attribute checkAttribute = attributeList.get(attributeValue);
+                Attribute checkAttribute = attributeList.get("userName");
                 if(checkAttribute != null){
                     if (((SimpleAttribute)checkAttribute).getValue().equals(value)){
                         newList.add(user);
@@ -209,6 +214,7 @@ public class SCIMUserManager implements UserManager {
         } catch (CharonException e) {
             e.printStackTrace();
         }
+
         return null;
     }
 

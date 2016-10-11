@@ -216,7 +216,10 @@ public class UserResourceManager extends AbstractResourceManager {
 
         FilterTreeManager filterTreeManager = null;
         try {
-            filterTreeManager = new FilterTreeManager(filterString);
+            // unless configured returns core-user schema or else returns extended user schema)
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+
+            filterTreeManager = new FilterTreeManager(filterString, schema);
             Node rootNode=filterTreeManager.buildTree();
 
             //obtain the json encoder
@@ -234,9 +237,6 @@ public class UserResourceManager extends AbstractResourceManager {
                     //throw resource not found.
                     throw new NotFoundException(error);
                 }
-
-                // unless configured returns core-user schema or else returns extended user schema)
-                SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
 
                 for(User user:returnedUsers){
                     //perform service provider side validation.

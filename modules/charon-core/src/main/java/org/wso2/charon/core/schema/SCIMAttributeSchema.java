@@ -8,7 +8,8 @@ import java.util.List;
  */
 
 public class SCIMAttributeSchema implements AttributeSchema {
-
+    //unique identifier for the attribute
+    private String URI;
     //name of the attribute
     private String name;
     //data type of the attribute
@@ -35,12 +36,13 @@ public class SCIMAttributeSchema implements AttributeSchema {
     //only applicable for attributes that are of type "reference"
     private ArrayList<SCIMDefinitions.ReferenceType> referenceTypes;
 
-    private SCIMAttributeSchema(String name, SCIMDefinitions.DataType type, Boolean multiValued,
+    private SCIMAttributeSchema(String uri, String name, SCIMDefinitions.DataType type, Boolean multiValued,
                                 String description, Boolean required, Boolean caseExact,
                                 SCIMDefinitions.Mutability mutability, SCIMDefinitions.Returned returned,
                                 SCIMDefinitions.Uniqueness uniqueness, ArrayList<String> canonicalValues,
                                 ArrayList<SCIMDefinitions.ReferenceType> referenceTypes,
                                 ArrayList<SCIMAttributeSchema> subAttributes) {
+        this.URI=uri;
         this.name = name;
         this.type = type;
         this.multiValued = multiValued;
@@ -55,7 +57,7 @@ public class SCIMAttributeSchema implements AttributeSchema {
         this.referenceTypes = referenceTypes;
     }
 
-    public static SCIMAttributeSchema createSCIMAttributeSchema(String name, SCIMDefinitions.DataType type,
+    public static SCIMAttributeSchema createSCIMAttributeSchema(String uri,String name, SCIMDefinitions.DataType type,
                                                                 Boolean multiValued, String description, Boolean required,
                                                                 Boolean caseExact, SCIMDefinitions.Mutability mutability,
                                                                 SCIMDefinitions.Returned returned,
@@ -64,9 +66,15 @@ public class SCIMAttributeSchema implements AttributeSchema {
                                                                 ArrayList<SCIMDefinitions.ReferenceType> referenceTypes,
                                                                 ArrayList<SCIMAttributeSchema> subAttributes){
 
-        return new SCIMAttributeSchema(name, type, multiValued, description, required, caseExact, mutability,
+        return new SCIMAttributeSchema(uri, name, type, multiValued, description, required, caseExact, mutability,
                                         returned, uniqueness, canonicalValues, referenceTypes, subAttributes);
     }
+
+    @Override
+    public void setURI(String URI) { this.URI = URI; }
+
+    @Override
+    public String getURI() { return URI; }
 
     public String getName() { return name; }
 
@@ -128,5 +136,6 @@ public class SCIMAttributeSchema implements AttributeSchema {
     public ArrayList<SCIMDefinitions.ReferenceType> getReferenceTypes() { return referenceTypes; }
 
     public void setReferenceTypes(ArrayList<SCIMDefinitions.ReferenceType> referenceTypes) { this.referenceTypes = referenceTypes; }
+
 
 }

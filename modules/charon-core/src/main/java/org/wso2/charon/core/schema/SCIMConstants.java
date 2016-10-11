@@ -38,14 +38,23 @@ public class SCIMConstants {
     public static class CommonSchemaConstants {
 
         public static final String SCHEMAS = "schemas";
+        public static final String SCHEMAS_URI = "urn:ietf:params:scim:schemas:core:2.0:schemas";
         public static final String ID = "id";
+        public static final String ID_URI = "urn:ietf:params:scim:schemas:core:2.0:id";
         public static final String EXTERNAL_ID = "externalId";
+        public static final String EXTERNAL_ID_URI = "urn:ietf:params:scim:schemas:core:2.0:externalId";
         public static final String META = "meta";
+        public static final String META_URI = "urn:ietf:params:scim:schemas:core:2.0:meta";
         public static final String RESOURCE_TYPE = "resourceType";
+        public static final String RESOURCE_TYPE_URI = "urn:ietf:params:scim:schemas:core:2.0:meta.resourceType";
         public static final String CREATED = "created";
+        public static final String CREATED_URI = "urn:ietf:params:scim:schemas:core:2.0:meta.created";
         public static final String LAST_MODIFIED = "lastModified";
+        public static final String LAST_MODIFIED_URI = "urn:ietf:params:scim:schemas:core:2.0:meta.lastModified";
         public static final String LOCATION = "location";
+        public static final String LOCATION_URI = "urn:ietf:params:scim:schemas:core:2.0:meta.location";
         public static final String VERSION = "version";
+        public static final String VERSION_URI = "urn:ietf:params:scim:schemas:core:2.0:meta.version";
 
         //characteristics of multi valued attribute
         public static final String TYPE = "type";
@@ -81,36 +90,75 @@ public class SCIMConstants {
     public static class UserSchemaConstants {
 
         public static final String USER_NAME = "userName";
-
+        public static final String USER_NAME_URI = "urn:ietf:params:scim:schemas:core:2.0:User:userName";
         public static final String NAME = "name";
+        public static final String NAME_URI = "urn:ietf:params:scim:schemas:core:2.0:User:name";
         public static final String FORMATTED_NAME = "formatted";
+        public static final String FORMATTED_NAME_URI = "urn:ietf:params:scim:schemas:core:2.0:User:name.formatted";
         public static final String FAMILY_NAME = "familyName";
+        public static final String FAMILY_NAME_URI = "urn:ietf:params:scim:schemas:core:2.0:User:name.familyName";
         public static final String GIVEN_NAME = "givenName";
+        public static final String GIVEN_NAME_URI = "urn:ietf:params:scim:schemas:core:2.0:User:name.givenName";
         public static final String MIDDLE_NAME = "middleName";
+        public static final String MIDDLE_NAME_URI = "urn:ietf:params:scim:schemas:core:2.0:User:name.middleName";
         public static final String HONORIFIC_PREFIX = "honorificPrefix";
+        public static final String HONORIFIC_PREFIX_URI = "urn:ietf:params:scim:schemas:core:2.0:User:name.honorificPrefix";
         public static final String HONORIFIC_SUFFIX = "honorificSuffix";
+        public static final String HONORIFIC_SUFFIX_URI = "urn:ietf:params:scim:schemas:core:2.0:User:name.honorificSuffix";
 
         public static final String DISPLAY_NAME = "displayName";
+        public static final String DISPLAY_NAME_URI = "urn:ietf:params:scim:schemas:core:2.0:User:displayName";
         public static final String NICK_NAME = "nickName";
+        public static final String NICK_NAME_URI = "urn:ietf:params:scim:schemas:core:2.0:User:nickName";
         public static final String PROFILE_URL = "profileUrl";
+        public static final String PROFILE_URL_URI = "urn:ietf:params:scim:schemas:core:2.0:User:profileUrl";
         public static final String TITLE = "title";
+        public static final String TITLE_URI = "urn:ietf:params:scim:schemas:core:2.0:User:title";
         public static final String USER_TYPE = "userType";
+        public static final String USER_TYPE_URI = "urn:ietf:params:scim:schemas:core:2.0:User:userType";
         public static final String PREFERRED_LANGUAGE = "preferredLanguage";
+        public static final String PREFERRED_LANGUAGE_URI = "urn:ietf:params:scim:schemas:core:2.0:User:preferredLanguage";
         public static final String LOCALE = "locale";
+        public static final String LOCALE_URI = "urn:ietf:params:scim:schemas:core:2.0:User:locale";
         public static final String TIME_ZONE = "timezone";
+        public static final String TIME_ZONE_URI = "urn:ietf:params:scim:schemas:core:2.0:User:timezone";
         public static final String ACTIVE = "active";
+        public static final String ACTIVE_URI = "urn:ietf:params:scim:schemas:core:2.0:User:active";
         public static final String PASSWORD = "password";
+        public static final String PASSWORD_URI = "urn:ietf:params:scim:schemas:core:2.0:User:password";
+
+        public static final String FORMATTED_ADDRESS = "formatted";
+        public static final String FORMATTED_ADDRESS_URI = "urn:ietf:params:scim:schemas:core:2.0:User:addresses.formatted";
+        public static final String STREET_ADDRESS = "streetAddress";
+        public static final String STREET_ADDRESS_URI = "urn:ietf:params:scim:schemas:core:2.0:User:addresses.streetAddress";
+        public static final String LOCALITY = "locality";
+        public static final String LOCALITY_URI = "urn:ietf:params:scim:schemas:core:2.0:User:addresses.locality";
+        public static final String REGION = "region";
+        public static final String REGION_URI = "urn:ietf:params:scim:schemas:core:2.0:User:addresses.region";
+        public static final String POSTAL_CODE = "postalCode";
+        public static final String POSTAL_CODE_URI = "urn:ietf:params:scim:schemas:core:2.0:User:addresses.postalCode";
+        public static final String COUNTRY = "country";
+        public static final String COUNTRY_URI = "urn:ietf:params:scim:schemas:core:2.0:User:addresses.country";
 
         //Multi-Valued Attributes
         public static final String EMAILS = "emails";
+        public static final String EMAILS_URI = "urn:ietf:params:scim:schemas:core:2.0:User:emails";
         public static final String PHONE_NUMBERS = "phoneNumbers";
+        public static final String PHONE_NUMBERS_URI = "urn:ietf:params:scim:schemas:core:2.0:User:phoneNumbers";
         public static final String IMS = "ims";
+        public static final String IMS_URI = "urn:ietf:params:scim:schemas:core:2.0:User:ims";
         public static final String PHOTOS = "photos";
+        public static final String PHOTOS_URI = "urn:ietf:params:scim:schemas:core:2.0:User:photos";
         public static final String ADDRESSES = "addresses";
+        public static final String ADDRESSES_URI = "urn:ietf:params:scim:schemas:core:2.0:User:addresses";
         public static final String GROUPS = "groups";
+        public static final String GROUP_URI = "urn:ietf:params:scim:schemas:core:2.0:User:groups";
         public static final String ENTITLEMENTS = "entitlements";
+        public static final String ENTITLEMENTS_URI = "urn:ietf:params:scim:schemas:core:2.0:User:entitlements";
         public static final String ROLES = "roles";
+        public static final String ROLES_URI = "urn:ietf:params:scim:schemas:core:2.0:User:roles";
         public static final String X509CERTIFICATES = "x509Certificates";
+        public static final String X509CERTIFICATES_URI = "urn:ietf:params:scim:schemas:core:2.0:User:x509Certificates";
 
         //possible canonical values
         public static final String HOME = "home";
@@ -132,16 +180,53 @@ public class SCIMConstants {
         public static final String PHOTO = "photo";
         public static final String THUMBNAIL = "thumbnail";
 
-        public static final String FORMATTED_ADDRESS = "formatted";
-        public static final String STREET_ADDRESS = "streetAddress";
-        public static final String LOCALITY = "locality";
-        public static final String REGION = "region";
-        public static final String POSTAL_CODE = "postalCode";
-        public static final String COUNTRY = "country";
-
         public static final String DIRECT_MEMBERSHIP = "direct";
         public static final String INDIRECT_MEMBERSHIP = "indirect";
 
+        /*******URIs of sub and multivalued attributes**************/
+
+        public static final String EMAILS_VALUE_URI = "urn:ietf:params:scim:schemas:core:2.0:User:emails.value";
+        public static final String EMAILS_DISPLAY_URI = "urn:ietf:params:scim:schemas:core:2.0:User:emails.display";
+        public static final String EMAILS_TYPE_URI = "urn:ietf:params:scim:schemas:core:2.0:User:emails.type";
+        public static final String EMAILS_PRIMARY_URI = "urn:ietf:params:scim:schemas:core:2.0:User:emails.primary";
+
+        public static final String PHONE_NUMBERS_VALUE_URI = "urn:ietf:params:scim:schemas:core:2.0:User:phoneNumbers.value";
+        public static final String PHONE_NUMBERS_DISPLAY_URI = "urn:ietf:params:scim:schemas:core:2.0:User:phoneNumbers.display";
+        public static final String PHONE_NUMBERS_TYPE_URI = "urn:ietf:params:scim:schemas:core:2.0:User:phoneNumbers.type";
+        public static final String PHONE_NUMBERS_PRIMARY_URI = "urn:ietf:params:scim:schemas:core:2.0:User:phoneNumbers.primary";
+
+        public static final String IMS_VALUE_URI = "urn:ietf:params:scim:schemas:core:2.0:User:ims.value";
+        public static final String IMS_DISPLAY_URI = "urn:ietf:params:scim:schemas:core:2.0:User:ims.display";
+        public static final String IMS_TYPE_URI = "urn:ietf:params:scim:schemas:core:2.0:User:ims.type";
+        public static final String IMS_PRIMARY_URI = "urn:ietf:params:scim:schemas:core:2.0:User:ims.primary";
+
+        public static final String PHOTOS_VALUE_URI = "urn:ietf:params:scim:schemas:core:2.0:User:photos.value";
+        public static final String PHOTOS_DISPLAY_URI = "urn:ietf:params:scim:schemas:core:2.0:User:photos.display";
+        public static final String PHOTOS_TYPE_URI = "urn:ietf:params:scim:schemas:core:2.0:User:photos.type";
+        public static final String PHOTOS_PRIMARY_URI = "urn:ietf:params:scim:schemas:core:2.0:User:photos.primary";
+
+        public static final String ADDRESSES_TYPE_URI = "urn:ietf:params:scim:schemas:core:2.0:User:addresses.type";
+        public static final String ADDRESSES_PRIMARY_URI = "urn:ietf:params:scim:schemas:core:2.0:User:addresses.primary";
+
+        public static final String GROUPS_VALUE_URI = "urn:ietf:params:scim:schemas:core:2.0:User:groups.value";
+        public static final String GROUPS_DISPLAY_URI = "urn:ietf:params:scim:schemas:core:2.0:User:groups.display";
+        public static final String GROUPS_TYPE_URI = "urn:ietf:params:scim:schemas:core:2.0:User:groups.type";
+        public static final String GROUPS_$REF_URI = "urn:ietf:params:scim:schemas:core:2.0:User:groups.$ref";
+
+        public static final String ROLES_VALUE_URI = "urn:ietf:params:scim:schemas:core:2.0:User:roles.value";
+        public static final String ROLES_DISPLAY_URI = "urn:ietf:params:scim:schemas:core:2.0:User:roles.display";
+        public static final String ROLES_TYPE_URI = "urn:ietf:params:scim:schemas:core:2.0:User:roles.type";
+        public static final String ROLES_PRIMARY_URI = "urn:ietf:params:scim:schemas:core:2.0:User:roles.primary";
+
+        public static final String ENTITLEMENTS_VALUE_URI = "urn:ietf:params:scim:schemas:core:2.0:User:entitlements.value";
+        public static final String ENTITLEMENTS_DISPLAY_URI = "urn:ietf:params:scim:schemas:core:2.0:User:entitlements.display";
+        public static final String ENTITLEMENTS_TYPE_URI = "urn:ietf:params:scim:schemas:core:2.0:User:entitlements.type";
+        public static final String ENTITLEMENTS_PRIMARY_URI = "urn:ietf:params:scim:schemas:core:2.0:User:entitlements.primary";
+
+        public static final String X509CERTIFICATES_VALUE_URI = "urn:ietf:params:scim:schemas:core:2.0:User:x509certificates.value";
+        public static final String X509CERTIFICATES_DISPLAY_URI = "urn:ietf:params:scim:schemas:core:2.0:User:x509certificates.display";
+        public static final String X509CERTIFICATES_TYPE_URI = "urn:ietf:params:scim:schemas:core:2.0:User:x509certificates.type";
+        public static final String X509CERTIFICATES_PRIMARY_URI = "urn:ietf:params:scim:schemas:core:2.0:User:x509certificates.primary";
 
         /*******Attributes descriptions of the attributes found in User Schema***************/
 
@@ -263,7 +348,9 @@ public class SCIMConstants {
     public static class GroupSchemaConstants {
 
         public static final String DISPLAY_NAME="displayName";
+        public static final String DISPLAY_NAME_URI = "urn:ietf:params:scim:schemas:core:2.0:Group:displayName";
         public static final String MEMBERS="members";
+        public static final String MEMBERS_URI = "urn:ietf:params:scim:schemas:core:2.0:User:members";
 
         //possible canonical values
         public static final String USER = "User";
@@ -276,30 +363,11 @@ public class SCIMConstants {
         public static final String VALUE_DESC="Identifier of the member of this Group.";
         public static final String $REF_DESC="The URI corresponding to a SCIM resource that is a member of this Group.";
         public static final String TYPE_DESC="A label indicating the type of resource, e.g., 'User' or 'Group'.";
-    }
 
-    public static class EnterpriseUserSchemaConstants {
-
-        public static final String EMPLOYEE_NUMBER="employeeNumber";
-        public static final String COST_CENTER="costCenter";
-        public static final String ORGANIZATION ="organization";
-        public static final String DIVISION="division";
-        public static final String DEPARTMENT="department";
-        public static final String MANAGER="manager";
-        public static final String DISPLAY_NAME="displayName";
-
-        public static final String EMPLOYEE_NUMBER_DESC="Numeric or alphanumeric identifier assigned to a person, typically based on order of hire or " +
-                "association with an organization.";
-        public static final String COST_CENTER_DESC="Identifies the name of a cost center.";
-        public static final String ORGANIZATION_DESC="Identifies the name of an organization.";
-        public static final String DIVISION_DESC="Identifies the name of a division.";
-        public static final String DEPARTMENT_DESC="Identifies the name of a department.";
-        public static final String MANAGER_TYPE_DESC="The User's manager.  A complex type that\n" +
-                "optionally allows service providers to represent organizational\n" +
-                "hierarchy by referencing the 'id' attribute of another User.";
-        public static final String VALUE_DESC="Identifies the name of a cost center.";
-        public static final String $REF_DESC="The URI of the SCIM resource representing the User's manager.  REQUIRED.";
-        public static final String DISPLAY_NAME_DESC="The displayName of the User's manager.OPTIONAL and READ-ONLY.";
+        /*******URIs of sub and multivalued attributes**************/
+        public static final String VALUE_URI = "urn:ietf:params:scim:schemas:core:2.0:Group:members.value";
+        public static final String $REF_URI = "urn:ietf:params:scim:schemas:core:2.0:Group:members.$ref";
+        public static final String TYPE_URI = "urn:ietf:params:scim:schemas:core:2.0:Group:members.type";
     }
 
     public static class OperationalConstants{
@@ -326,33 +394,5 @@ public class SCIMConstants {
 
      /*Constants found in ServiceProviderConfig schema.*/
 
-    public static class ServiceProviderConfigSchemaConstants {
-
-        public static final String DOCUMENTATION_URI="documentationUri";
-
-
-        /*******Attributes descriptions of the attributes found in Group Schema***************/
-
-        public static final String DISPLAY_NAME_DESC="A human-readable name for the Group. REQUIRED.";
-
-    }
-
-
-    public static String identifyFormat(String format) {
-        if (format.contains(APPLICATION_JSON)) {
-            return SCIMConstants.JSON;
-        }
-        else {
-            return null;
-        }
-    }
-
-    public static String identifyContentType(String contentType) {
-        if (contentType.equals(JSON)) {
-            return APPLICATION_JSON;
-        } else {
-            return null;
-        }
-    }
 
 }

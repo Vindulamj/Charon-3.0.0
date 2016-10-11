@@ -2,18 +2,21 @@ package org.wso2.charon.core.utils;
 
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.json.JSONArray;
+import org.wso2.charon.core.attributes.Attribute;
 import org.wso2.charon.core.exceptions.BadRequestException;
 import org.wso2.charon.core.exceptions.CharonException;
 import org.wso2.charon.core.protocol.ResponseCodeConstants;
-import org.wso2.charon.core.schema.ResourceTypeSchema;
-import org.wso2.charon.core.schema.SCIMConstants;
-import org.wso2.charon.core.schema.SCIMDefinitions;
+import org.wso2.charon.core.schema.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
 /*
  * This class acts as an utility class for attributes
  */
@@ -114,6 +117,56 @@ public class AttributeUtil {
         else{
             throw new BadRequestException(ResponseCodeConstants.INVALID_VALUE);
         }
+    }
+
+    /**
+     * Will iterate through <code>{@code SCIMAttributeSchema}</code> objects
+     *
+     *
+     * @param attributeName
+     * @return
+     */
+    public static String getAttributeURI(String attributeName, SCIMResourceTypeSchema schema) throws BadRequestException {
+
+        Iterator<AttributeSchema> attributeSchemas = schema.getAttributesList().iterator();
+        while (attributeSchemas.hasNext()) {
+            AttributeSchema attributeSchema = attributeSchemas.next();
+
+            if (attributeSchema.getName().equals(attributeName) || attributeSchema.getURI().equals(attributeName)) {
+                return attributeSchema.getURI();
+            }
+            // check in sub attributes
+            String subAttributeURI =
+                    checkSCIMSubAttributeURIs(((SCIMAttributeSchema) attributeSchema).getSubAttributeSchemas(),
+                            attributeSchema, attributeName);
+            if (subAttributeURI != null) {
+                return subAttributeURI;
+            }
+        }
+        String error = "Not a valid attribute name/URI";
+        throw new BadRequestException(error,ResponseCodeConstants.INVALID_FILTER);
+    }
+
+    /**
+     * Will iterate through <code>{@code SCIMSubAttributeSchema}</code> objects
+     * @param subAttributes
+     * @param attributeSchema
+     *@param attributeName  @return
+     */
+    private static String checkSCIMSubAttributeURIs(List<SCIMAttributeSchema> subAttributes,
+                                                    AttributeSchema attributeSchema, String attributeName) {
+        if (subAttributes != null) {
+            Iterator<SCIMAttributeSchema> subsIterator = subAttributes.iterator();
+
+            while(subsIterator.hasNext()) {
+                SCIMAttributeSchema subAttributeSchema = subsIterator.next();
+                if((attributeSchema.getName()+"."+subAttributeSchema.getName()).equals(attributeName) ||
+                        subAttributeSchema.getURI().equals(attributeName)) {
+                    return subAttributeSchema.getURI();
+                }
+            }
+        }
+        return null;
     }
 
 }

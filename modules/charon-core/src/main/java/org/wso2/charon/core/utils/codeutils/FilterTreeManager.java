@@ -3,6 +3,8 @@ package org.wso2.charon.core.utils.codeutils;
 import org.wso2.charon.core.exceptions.BadRequestException;
 import org.wso2.charon.core.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.schema.SCIMConstants;
+import org.wso2.charon.core.schema.SCIMResourceTypeSchema;
+import org.wso2.charon.core.utils.AttributeUtil;
 
 import java.io.IOException;
 import java.io.StreamTokenizer;
@@ -29,17 +31,20 @@ public class FilterTreeManager {
     private String symbol;
     private Node root;
     private String filterString;
+    private SCIMResourceTypeSchema schema;
 
     public void setFilterString(String filterString){
         this.filterString=filterString;
     }
 
-    public FilterTreeManager(String filterString) throws IOException {
+    public FilterTreeManager(String filterString, SCIMResourceTypeSchema schema) throws IOException {
+        this.schema = schema;
         setFilterString(filterString);
         input = new StreamTokenizer(new StringReader(filterString));
         //Adding other string possible values
         //TODO:is ths all?
         input.wordChars('@','@');
+        input.wordChars(':',':');
         tokenList = new ArrayList<String>();
         String concatenatedString="";
 
@@ -62,8 +67,10 @@ public class FilterTreeManager {
                     concatenatedString+=" "+input.sval;
                 else{
                     concatenatedString=concatenatedString.trim();
-                    tokenList.add(concatenatedString);
-                    concatenatedString="";
+                    if(!concatenatedString.equals("")){
+                        tokenList.add(concatenatedString);
+                        concatenatedString="";
+                    }
                     tokenList.add(input.sval);
                 }
             }
@@ -171,7 +178,6 @@ public class FilterTreeManager {
                         Pattern.CASE_INSENSITIVE).matcher(filterString).find()||
                 Pattern.compile(Pattern.quote(SCIMConstants.OperationalConstants.LE),
                         Pattern.CASE_INSENSITIVE).matcher(filterString).find())) {
-
             String message = "Given filter operator is not supported.";
             throw new BadRequestException(message, ResponseCodeConstants.INVALID_FILTER);
         }
@@ -243,11 +249,11 @@ public class FilterTreeManager {
      * @param expressionNode
      */
     private void setExpressionNodeValues(String attributeValue, String operation,
-                                         String value, ExpressionNode expressionNode){
-        expressionNode.setAttributeValue(attributeValue.trim());
+                                         String value, ExpressionNode expressionNode) throws BadRequestException {
+        expressionNode.setAttributeValue(AttributeUtil.getAttributeURI(attributeValue.trim(),schema));
         expressionNode.setOperation(operation.trim());
         if(value !=null){
-            expressionNode.setValue(value.trim());
+            expressionNode.setValue( value.trim());
         }
     }
 

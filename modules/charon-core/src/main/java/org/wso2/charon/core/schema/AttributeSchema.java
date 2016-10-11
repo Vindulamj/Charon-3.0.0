@@ -9,6 +9,10 @@ In such defines as the 'attributes' attribute in Resource Schema Representation 
  */
 public interface AttributeSchema {
 
+    public void setURI(String URI);
+
+    public String getURI();
+
     public String getName();
 
     public void setName(String name);

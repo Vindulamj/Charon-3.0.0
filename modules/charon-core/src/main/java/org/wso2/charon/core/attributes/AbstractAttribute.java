@@ -8,6 +8,8 @@ import org.wso2.charon.core.schema.SCIMDefinitions;
 
 public abstract class AbstractAttribute implements Attribute{
 
+    //unique identifier for the attribute
+    protected String URI;
     //name of the attribute
     protected String name;
     //data type of the attribute
@@ -26,6 +28,10 @@ public abstract class AbstractAttribute implements Attribute{
     protected SCIMDefinitions.Returned returned;
     //A SCIM defined value that specifies the uniqueness level of an attribute.
     protected SCIMDefinitions.Uniqueness uniqueness;
+
+    public String getURI() { return URI; }
+
+    public void setURI(String URI) { this.URI = URI; }
 
     public String getName() {
         return name;
