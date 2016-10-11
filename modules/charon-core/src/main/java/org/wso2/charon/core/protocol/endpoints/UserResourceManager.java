@@ -228,9 +228,6 @@ public class UserResourceManager extends AbstractResourceManager {
             if (userManager != null) {
                 returnedUsers = userManager.filterUsers(rootNode);
 
-                //TODO: Are we having this method support from user core
-                totalResults =userManager.getUserCount();
-
                 //if user not found, return an error in relevant format.
                 if (returnedUsers == null || returnedUsers.isEmpty()) {
                     String error = "No filter results are found";

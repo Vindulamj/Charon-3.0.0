@@ -25,7 +25,7 @@ public class Test {
                "  \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:User\"],\n" +
                "  \"id\":\"23232\",\n"+
                "  \"externalId\": \"701984\",\n" +
-               "  \"userName\": \"jayan@example.com\",\n" +
+               "  \"userName\": \"Shankar\",\n" +
                "  \"password\": \"testpass\",\n" +
                "  \"name\": {\n" +
                "    \"formatted\": \"Ms. Barbara J Jensen, III\",\n" +
@@ -50,7 +50,7 @@ public class Test {
                "    }\n" +
                "  ]}";
 
-       String attributes="emails.value,name.familyName";
+       String attributes="userName";
        String excludeAttributes="externalId,emails.value";
 
        //----CREATE USER --------
@@ -64,7 +64,7 @@ public class Test {
        //SCIMResponse res= um.delete("cf712155-e974-42ae-9e57-6c42f7bbadad",new SCIMUserManager());
 
        //-----LIST USER  ---------
-       //SCIMResponse res= um.list(new SCIMUserManager(),null,null);
+       //SCIMResponse res= um.list(new SCIMUserManager(),attributes,null);
 
        //-----LIST USER WITH PAGINATION ---------
        //SCIMResponse res= um.listWithPagination(1,7,new SCIMUserManager(),null,null);
@@ -73,7 +73,7 @@ public class Test {
        //SCIMResponse res= um.updateWithPUT("a713e12b-0364-4d54-b939-6d1230d40251",array,new SCIMUserManager(),null,null);
 
        //-----FILTER AT USER ENDPOINT ---------
-       SCIMResponse res= um.listByFilter("userName pr ", new SCIMUserManager(), null, null);
+       SCIMResponse res= um.listByFilter("userName eq Shankar", new SCIMUserManager(), attributes, null);
 
        System.out.println(res.getResponseStatus());
        System.out.println("");

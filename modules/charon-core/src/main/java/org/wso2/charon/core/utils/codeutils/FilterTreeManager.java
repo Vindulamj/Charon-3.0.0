@@ -12,7 +12,15 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
+ * This class is basically for creating a binary tree which preserves the precedence order with simple
+ * filter (eg : userName eq vindula) expressions as terminals of the tree and all the logical operators
+ * (and, or, not)as the non-terminals of the tree.
  *
+ * All terminals are filter expressions hence denoted by ExpressionNodes and all non terminal nodes are operators hence
+ * denoted by OperatorNodes..
+ *
+ * More details on the concept can be found here :
+ * https://unnikked.ga/how-to-build-a-boolean-expression-evaluator-518e9e068a65#.8fmexpvy7
  */
 public class FilterTreeManager {
 
@@ -29,6 +37,9 @@ public class FilterTreeManager {
     public FilterTreeManager(String filterString) throws IOException {
         setFilterString(filterString);
         input = new StreamTokenizer(new StringReader(filterString));
+        //Adding other string possible values
+        //TODO:is ths all?
+        input.wordChars('@','@');
         tokenList = new ArrayList<String>();
         String concatenatedString="";
 
@@ -63,11 +74,20 @@ public class FilterTreeManager {
         }
     }
 
+    /**
+     * Builds the binary tree from the filterString
+     * @return
+     * @throws BadRequestException
+     */
     public Node buildTree() throws BadRequestException {
         expression();
         return root;
     }
 
+    /**
+     * We build the parser using the recursive descent parser technique.
+     * @throws BadRequestException
+     */
     private void expression() throws BadRequestException {
         term();
         while (symbol.equals(String.valueOf(SCIMConstants.OperationalConstants.OR))) {
@@ -79,6 +99,10 @@ public class FilterTreeManager {
         }
     }
 
+    /**
+     * We build the parser using the recursive descent parser technique.
+     * @throws BadRequestException
+     */
     private void term() throws BadRequestException {
         factor();
         while (symbol.equals(String.valueOf(SCIMConstants.OperationalConstants.AND))) {
@@ -90,6 +114,10 @@ public class FilterTreeManager {
         }
     }
 
+    /**
+     * We build the parser using the recursive descent parser technique.
+     * @throws BadRequestException
+     */
     private void factor() throws BadRequestException {
         symbol = nextSymbol();
         if (symbol.equals(String.valueOf(SCIMConstants.OperationalConstants.NOT))) {
@@ -114,6 +142,12 @@ public class FilterTreeManager {
         }
     }
 
+    /**
+     * Validate the simple filter and build a ExpressionNode
+     * @param filterString
+     * @param expressionNode
+     * @throws BadRequestException
+     */
     private void validateAndBuildFilterExpression(String filterString, ExpressionNode expressionNode)
             throws BadRequestException {
         //verify filter string. validation should be case insensitive
@@ -201,7 +235,13 @@ public class FilterTreeManager {
         }
     }
 
-
+    /**
+     * create a expression node from the given values
+     * @param attributeValue
+     * @param operation
+     * @param value
+     * @param expressionNode
+     */
     private void setExpressionNodeValues(String attributeValue, String operation,
                                          String value, ExpressionNode expressionNode){
         expressionNode.setAttributeValue(attributeValue.trim());
@@ -211,8 +251,13 @@ public class FilterTreeManager {
         }
     }
 
+    /**
+     * returns the first item in the list and rearrange the list
+     * @return
+     */
     public String nextSymbol(){
         if(tokenList.size()==0){
+            //no tokens are present in the list anymore/at all
             return String.valueOf(-1);
         }
         else{

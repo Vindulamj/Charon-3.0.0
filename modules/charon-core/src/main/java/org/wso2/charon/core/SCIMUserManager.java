@@ -31,11 +31,13 @@ import org.wso2.charon.core.exceptions.NotFoundException;
 import org.wso2.charon.core.extensions.UserManager;
 import org.wso2.charon.core.objects.User;
 import org.wso2.charon.core.schema.SCIMConstants;
+import org.wso2.charon.core.utils.codeutils.ExpressionNode;
 import org.wso2.charon.core.utils.codeutils.Node;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class SCIMUserManager implements UserManager {
 
@@ -187,8 +189,23 @@ public class SCIMUserManager implements UserManager {
 
     @Override
     public List<User> filterUsers(Node rootNode) {
+        ExpressionNode en=(ExpressionNode)rootNode;
+        String attributeValue = en.getAttributeValue();
+        String operation  = en.getOperation();
+        String value= en.getValue();
         try {
-            return listUsers();
+            List<User> list= listUsers();
+            List<User> newList =new ArrayList<User>();
+            for(User user:list){
+                Map<String, Attribute> attributeList= user.getAttributeList();
+                Attribute checkAttribute = attributeList.get(attributeValue);
+                if(checkAttribute != null){
+                    if (((SimpleAttribute)checkAttribute).getValue().equals(value)){
+                        newList.add(user);
+                    }
+                }
+            }
+            return newList;
         } catch (CharonException e) {
             e.printStackTrace();
         }
