@@ -302,6 +302,28 @@ public class SCIMConstants {
         public static final String DISPLAY_NAME_DESC="The displayName of the User's manager.OPTIONAL and READ-ONLY.";
     }
 
+    public static class OperationalConstants{
+
+        /*SCIM filter types*/
+        public static final String EQ=" eq ";
+        public static final String NE=" ne ";
+        public static final String CO=" co ";
+        public static final String SW=" sw ";
+        public static final String EW=" ew ";
+        public static final String PR=" pr";   //this does not need to have a white space at the end
+        public static final String GT=" gt ";
+        public static final String GE=" ge ";
+        public static final String LT=" lt ";
+        public static final String LE=" le ";
+
+        /*SCIM logical operators*/
+        public static final String AND="and";
+        public static final String OR="or";
+        public static final String NOT="not";
+        public static final String LEFT="(";
+        public static final String RIGHT=")";
+    }
+
      /*Constants found in ServiceProviderConfig schema.*/
 
     public static class ServiceProviderConfigSchemaConstants {

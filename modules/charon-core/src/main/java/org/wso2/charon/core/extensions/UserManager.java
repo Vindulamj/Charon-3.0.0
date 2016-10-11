@@ -4,6 +4,7 @@ import org.wso2.charon.core.exceptions.CharonException;
 import org.wso2.charon.core.exceptions.ConflictException;
 import org.wso2.charon.core.exceptions.NotFoundException;
 import org.wso2.charon.core.objects.User;
+import org.wso2.charon.core.utils.codeutils.Node;
 
 import java.util.List;
 
@@ -44,4 +45,6 @@ public interface UserManager {
     public int getUserCount();
 
     public User updateUser(User validatedUser);
+
+    public List<User> filterUsers(Node rootNode);
 }

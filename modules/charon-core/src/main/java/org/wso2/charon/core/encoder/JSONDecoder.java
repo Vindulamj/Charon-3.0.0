@@ -293,7 +293,7 @@ public class JSONDecoder {
 
 
     /**
-     * To build a complex type value of a Multi Valued Attribute. (eg. Email with value,type,primary as sub attributes
+     * To buildTree a complex type value of a Multi Valued Attribute. (eg. Email with value,type,primary as sub attributes
      *
      * @param attributeSchema
      * @param jsonObject

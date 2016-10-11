@@ -21,6 +21,8 @@ import org.json.JSONArray;
 import org.wso2.charon.core.extensions.UserManager;
 import org.wso2.charon.core.protocol.SCIMResponse;
 
+import java.io.IOException;
+
 /**
  * Interface for SCIM resource endpoints.
  */
@@ -70,13 +72,15 @@ public interface ResourceManager {
 
     /**
      * Method that maps to HTTP GET with URL query parameter: "filter=filterString"
-     * This is to filter a sub set of resources mating the filter string
+     * This is to filter a sub set of resources matching the filter string
      *
      * @param filterString
      * @param userManager
-     * @param format       @return
+     * @param attributes
+     * @param  excludeAttributes
      */
-    public SCIMResponse listByFilter(String filterString, UserManager userManager, String format);
+    public SCIMResponse listByFilter(String filterString, UserManager userManager,
+                                     String attributes, String excludeAttributes) throws IOException;
 
     /**
      * Method that maps to HTTP GET with URL query parameter: "sortBy=attributeName&sortOrder=ascending"

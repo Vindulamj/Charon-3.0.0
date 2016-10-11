@@ -1,5 +1,6 @@
 package org.wso2.charon.core.protocol.endpoints;
 
+import org.wso2.charon.core.SCIMUserManager;
 import org.wso2.charon.core.encoder.JSONDecoder;
 import org.wso2.charon.core.encoder.JSONEncoder;
 import org.wso2.charon.core.exceptions.AbstractCharonException;
@@ -91,4 +92,6 @@ public abstract class AbstractResourceManager implements ResourceManager {
         ResponseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER,SCIMConstants.APPLICATION_JSON);
         return new SCIMResponse(exception.getStatus(), encoder.encodeSCIMException(exception), ResponseHeaders);
     }
+
+
 }

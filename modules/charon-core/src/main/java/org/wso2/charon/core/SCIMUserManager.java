@@ -31,6 +31,7 @@ import org.wso2.charon.core.exceptions.NotFoundException;
 import org.wso2.charon.core.extensions.UserManager;
 import org.wso2.charon.core.objects.User;
 import org.wso2.charon.core.schema.SCIMConstants;
+import org.wso2.charon.core.utils.codeutils.Node;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -182,6 +183,16 @@ public class SCIMUserManager implements UserManager {
             e.printStackTrace();
             return null;
         }
+    }
+
+    @Override
+    public List<User> filterUsers(Node rootNode) {
+        try {
+            return listUsers();
+        } catch (CharonException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 

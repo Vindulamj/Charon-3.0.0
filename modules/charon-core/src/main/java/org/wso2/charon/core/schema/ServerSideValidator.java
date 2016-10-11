@@ -34,7 +34,7 @@ public class ServerSideValidator extends AbstractValidator{
         scimObject.setCreatedDate(AttributeUtil.parseDateTime(AttributeUtil.formatDateTime(date)));
         //creates date and the last modified are the same if not updated.
         scimObject.setLastModified(AttributeUtil.parseDateTime(AttributeUtil.formatDateTime(date)));
-        //set display name for complex multivalued attribute
+        //set display names for complex multivalued attributes
         setDisplayNameInComplexMultiValuedAttributes(scimObject,resourceSchema);
         //set location and resourceType
         if (resourceSchema.isSchemaAvailable(SCIMConstants.USER_CORE_SCHEMA_URI)){
@@ -152,6 +152,8 @@ public class ServerSideValidator extends AbstractValidator{
             //edit last modified date
             Date date = new Date();
             validatedObject.setLastModified(date);
+            //set display names for complex multivalued attributes
+            setDisplayNameInComplexMultiValuedAttributes(newObject,resourceSchema);
             //check for required attributes.
             validateSCIMObjectForRequiredAttributes(validatedObject, resourceSchema);
 

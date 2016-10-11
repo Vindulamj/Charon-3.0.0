@@ -2,8 +2,6 @@ package org.wso2.charon.core.protocol.endpoints;
 
 
 import org.wso2.charon.core.attributes.Attribute;
-import org.wso2.charon.core.attributes.MultiValuedAttribute;
-import org.wso2.charon.core.attributes.SimpleAttribute;
 import org.wso2.charon.core.encoder.JSONDecoder;
 import org.wso2.charon.core.encoder.JSONEncoder;
 import org.wso2.charon.core.exceptions.*;
@@ -17,7 +15,10 @@ import org.wso2.charon.core.schema.*;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
 import org.wso2.charon.core.utils.CopyUtil;
+import org.wso2.charon.core.utils.codeutils.FilterTreeManager;
+import org.wso2.charon.core.utils.codeutils.Node;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -197,9 +198,83 @@ public class UserResourceManager extends AbstractResourceManager {
         return null;
     }
 
-    public SCIMResponse listByFilter(String filterString, UserManager userManager, String format) {
-        return null;
+    /**
+     * Method that maps to HTTP GET with URL query parameter: "filter=filterString"
+     * This is to filter a sub set of resources matching the filter string
+     *
+     * @param filterString
+     * @param userManager
+     * @param attributes
+     * @param  excludeAttributes
+     * @return
+     */
+    @Override
+    public SCIMResponse listByFilter(String filterString, UserManager userManager,
+                                     String attributes, String excludeAttributes) {
+
+        JSONEncoder encoder = null;
+
+        FilterTreeManager filterTreeManager = null;
+        try {
+            filterTreeManager = new FilterTreeManager(filterString);
+            Node rootNode=filterTreeManager.buildTree();
+
+            //obtain the json encoder
+            encoder = getEncoder();
+
+            List<User> returnedUsers;
+            int totalResults=0;
+            //API user should pass a UserManager storage to UserResourceEndpoint.
+            if (userManager != null) {
+                returnedUsers = userManager.filterUsers(rootNode);
+
+                //TODO: Are we having this method support from user core
+                totalResults =userManager.getUserCount();
+
+                //if user not found, return an error in relevant format.
+                if (returnedUsers == null || returnedUsers.isEmpty()) {
+                    String error = "No filter results are found";
+                    //throw resource not found.
+                    throw new NotFoundException(error);
+                }
+
+                // unless configured returns core-user schema or else returns extended user schema)
+                SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+
+                for(User user:returnedUsers){
+                    //perform service provider side validation.
+                    ServerSideValidator.validateRetrievedSCIMObject(user, schema, attributes, excludeAttributes);
+                }
+                //create a listed resource object out of the returned users list.
+                ListedResource listedResource = createListedResource(returnedUsers);
+                //convert the listed resource into specific format.
+                String encodedListedResource = encoder.encodeSCIMObject(listedResource);
+                //if there are any http headers to be added in the response header.
+                Map<String, String> ResponseHeaders = new HashMap<String, String>();
+                ResponseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
+                return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedListedResource, ResponseHeaders);
+
+            } else {
+                String error = "Provided user manager handler is null.";
+                //throw internal server error.
+                throw new InternalErrorException(error);
+            }
+        } catch (BadRequestException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        }catch (IOException e) {
+            String error = "Error in tokenization of the input filter";
+            CharonException charonException =new CharonException(error);
+            return AbstractResourceManager.encodeSCIMException(charonException);
+        } catch (CharonException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (NotFoundException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (InternalErrorException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        }
     }
+
+
 
     public SCIMResponse listBySort(String sortBy, String sortOrder, UserManager userManager, String format) {
         return null;

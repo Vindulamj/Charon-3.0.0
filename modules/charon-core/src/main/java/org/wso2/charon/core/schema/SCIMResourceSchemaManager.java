@@ -18,7 +18,7 @@
 package org.wso2.charon.core.schema;
 
 /*
-* This is to check for extension schema for the user and build a
+* This is to check for extension schema for the user and buildTree a
 * custom user schema with it. Unless a extension is defined,
 * core-user schema need to be returned.
 */
