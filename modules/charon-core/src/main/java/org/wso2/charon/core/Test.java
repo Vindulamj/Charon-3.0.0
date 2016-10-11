@@ -73,7 +73,7 @@ public class Test {
        //SCIMResponse res= um.updateWithPUT("a713e12b-0364-4d54-b939-6d1230d40251",array,new SCIMUserManager(),null,null);
 
        //-----FILTER AT USER ENDPOINT ---------
-       String filter ="userType ne Employee and (not (emails co example.com) or emails.value co example.org)";
+       String filter ="userName eq Employee and not (userName eq Employee or name.familyName eq Employee)";
        SCIMResponse res= um.listByFilter(filter, new SCIMUserManager(), attributes, null);
 
        System.out.println(res.getResponseStatus());

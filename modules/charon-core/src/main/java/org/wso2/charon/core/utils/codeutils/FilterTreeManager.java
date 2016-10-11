@@ -129,7 +129,6 @@ public class FilterTreeManager {
         symbol = nextSymbol();
         if (symbol.equals(String.valueOf(SCIMConstants.OperationalConstants.NOT))) {
             OperationNode not = new OperationNode(SCIMConstants.OperationalConstants.NOT);
-            symbol = nextSymbol();
             factor();
             not.setRightNode(root);
             root = not;
