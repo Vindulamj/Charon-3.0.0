@@ -144,7 +144,7 @@ public class AttributeUtil {
             }
         }
         String error = "Not a valid attribute name/URI";
-        throw new BadRequestException(error,ResponseCodeConstants.INVALID_FILTER);
+        throw new BadRequestException(error,ResponseCodeConstants.INVALID_VALUE);
     }
 
     /**

@@ -390,6 +390,9 @@ public class SCIMConstants {
         public static final String NOT="not";
         public static final String LEFT="(";
         public static final String RIGHT=")";
+
+        public static final String ASCENDING = "ascending";
+        public static final String DESCENDING= "descending";
     }
 
      /*Constants found in ServiceProviderConfig schema.*/

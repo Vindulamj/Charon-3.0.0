@@ -14,6 +14,7 @@ import org.wso2.charon.core.protocol.SCIMResponse;
 import org.wso2.charon.core.schema.*;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.wso2.charon.core.utils.AttributeUtil;
 import org.wso2.charon.core.utils.CopyUtil;
 import org.wso2.charon.core.utils.codeutils.FilterTreeManager;
 import org.wso2.charon.core.utils.codeutils.Node;
@@ -271,10 +272,85 @@ public class UserResourceManager extends AbstractResourceManager {
         }
     }
 
+    /**
+     * Method that maps to HTTP GET with URL query parameter: "sortBy=attributeName&sortOrder=ascending"
+     * This is to sort the resources in the given criteria
+     *
+     * @param sortBy
+     * @param sortOrder
+     * @param usermanager
+     * @param attributes
+     * @param excludeAttributes
+     */
+    @Override
+    public SCIMResponse listBySort(String sortBy, String sortOrder, UserManager usermanager,
+                                   String attributes, String excludeAttributes) {
+        try {
+            //check whether provided sortOrder is valid or not
+            if(sortOrder != null ){
+                if(!(sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.ASCENDING)
+                        || sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.DESCENDING))){
+                    String error = " Invalid sortOrder value is specified";
+                    throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
+                }
+            }
+            //If a value for "sortBy" is provided and no "sortOrder" is specified, "sortOrder" SHALL default to ascending.
+            if(sortOrder == null && sortBy != null){
+                sortOrder = SCIMConstants.OperationalConstants.ASCENDING;
+            }
+            JSONEncoder encoder = null;
+            //obtain the json encoder
+            encoder = getEncoder();
 
+            List<User> returnedUsers;
 
-    public SCIMResponse listBySort(String sortBy, String sortOrder, UserManager userManager, String format) {
-        return null;
+            //API user should pass a UserManager storage to UserResourceEndpoint.
+            if (usermanager != null) {
+                // unless configured returns core-user schema or else returns extended user schema)
+                SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+
+                String sortByAttributeURI = null;
+
+                if(sortBy != null){
+                    sortByAttributeURI = AttributeUtil.getAttributeURI(sortBy,schema);
+                }
+                returnedUsers = usermanager.sortUsers(sortByAttributeURI, sortOrder.toLowerCase());
+
+                //if user not found, return an error in relevant format.
+                if (returnedUsers == null || returnedUsers.isEmpty()) {
+                    String error = "Users not found in the user store.";
+                    //throw resource not found.
+                    throw new NotFoundException(error);
+                }
+
+                for(User user:returnedUsers){
+                    //perform service provider side validation.
+                    ServerSideValidator.validateRetrievedSCIMObject(user, schema, attributes, excludeAttributes);
+                }
+                //create a listed resource object out of the returned users list.
+                ListedResource listedResource = createListedResource(returnedUsers);
+                //convert the listed resource into specific format.
+                String encodedListedResource = encoder.encodeSCIMObject(listedResource);
+                //if there are any http headers to be added in the response header.
+                Map<String, String> ResponseHeaders = new HashMap<String, String>();
+                ResponseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
+                return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedListedResource, ResponseHeaders);
+
+            } else {
+                String error = "Provided user manager handler is null.";
+                //log the error as well.
+                //throw internal server error.
+                throw new InternalErrorException(error);
+            }
+        } catch (CharonException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (NotFoundException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (InternalErrorException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (BadRequestException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        }
     }
 
     /**

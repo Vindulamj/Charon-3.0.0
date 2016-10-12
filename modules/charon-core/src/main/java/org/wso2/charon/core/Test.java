@@ -10,7 +10,7 @@ import org.wso2.charon.core.schema.SCIMConstants;
 import java.util.HashMap;
 
 /**
- * This class is only for testing purpose
+ * This class is only for testing purpose.
  */
 public class Test {
 
@@ -48,13 +48,29 @@ public class Test {
                "      \"value\": \"uu@jensen.org\",\n" +
                "      \"type\": \"work\"\n" +
                "    }\n" +
-               "  ]}";
+               "  ],\n"+
+               "  \"addresses\": [\n"+
+               "    { \n"+
+               "        \"type\": \"work\",\n"+
+               "        \"streetAddress\": \"100 Universal City Plaza\",\n"+
+               "        \"locality\": \"Hollywood\",\n"+
+               "        \"region\": \"CA\",\n"+
+               "        \"postalCode\": \"91608\",\n"+
+               "        \"country\": \"USA\",\n"+
+               "        \"formatted\": \"100 Universal City Plaza Hollywood, CA 91608 USA\",\n"+
+               "        \"primary\": true\n"+
+               "    }\n"+
+               "]}";
 
-       String attributes="userName";
+
+
+
+
+       String attributes="addresses.country";
        String excludeAttributes="externalId,emails.value";
 
        //----CREATE USER --------
-       //SCIMResponse res=um.create(array,new SCIMUserManager(),null,null);
+      // SCIMResponse res=um.create(array,new SCIMUserManager(),attributes,null);
 
 
        //-----GET USER  ---------
@@ -74,7 +90,10 @@ public class Test {
 
        //-----FILTER AT USER ENDPOINT ---------
        String filter ="userName eq johan@wso2.com";
-       SCIMResponse res= um.listByFilter(filter, new SCIMUserManager(), null, null);
+       //SCIMResponse res= um.listByFilter(filter, new SCIMUserManager(), null, null);
+
+       //-----LIST USERS WITH SORT ---------
+       SCIMResponse res= um.listBySort(null,"AsCEnding",new SCIMUserManager(),attributes,null);
 
        System.out.println(res.getResponseStatus());
        System.out.println("");

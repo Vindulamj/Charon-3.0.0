@@ -89,10 +89,11 @@ public interface ResourceManager {
      * @param sortBy
      * @param sortOrder
      * @param usermanager
-     * @param format      @return
+     * @param attributes
+     * @param excludeAttributes
      */
     public SCIMResponse listBySort(String sortBy, String sortOrder, UserManager usermanager,
-                                   String format);
+                                   String attributes, String excludeAttributes);
 
     /**
      * Method that maps to HTTP GET with URL query parameter: "startIndex=1&count=10"

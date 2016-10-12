@@ -47,4 +47,6 @@ public interface UserManager {
     public User updateUser(User validatedUser);
 
     public List<User> filterUsers(Node rootNode);
+
+    public List<User> sortUsers(String sortBy, String sortOrder);
 }

@@ -214,6 +214,17 @@ public class SCIMUserManager implements UserManager {
         return null;
     }
 
+    @Override
+    public List<User> sortUsers(String sortBy, String sortOrder) {
+        //let the user core to handle the sorting
+        System.out.println(sortOrder);
+        try {
+            return  listUsers();
+        } catch (CharonException e) {
+            return null;
+        }
+    }
+
 
 }
 

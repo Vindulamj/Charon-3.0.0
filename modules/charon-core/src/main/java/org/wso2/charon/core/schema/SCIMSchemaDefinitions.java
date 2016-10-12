@@ -313,7 +313,7 @@ public class SCIMSchemaDefinitions {
         public static final SCIMAttributeSchema ADDRESSES_PRIMARY =
                 SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.UserSchemaConstants.ADDRESSES_PRIMARY_URI,
                         SCIMConstants.CommonSchemaConstants.PRIMARY,
-                        SCIMDefinitions.DataType.STRING, false, SCIMConstants.UserSchemaConstants.ADDRESSES_PRIMARY_DESC, false, false,
+                        SCIMDefinitions.DataType.BOOLEAN, false, SCIMConstants.UserSchemaConstants.ADDRESSES_PRIMARY_DESC, false, false,
                         SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null, null);
 
