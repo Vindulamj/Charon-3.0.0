@@ -2,7 +2,7 @@
 
 Currently following features are supported.
 
-##### Users Endpoint
+#### Users Endpoint
 - [x] Create
 - [x] Get
 - [x] Delete
@@ -12,8 +12,43 @@ Currently following features are supported.
 - [x] Update with PUT
 - [x] Filtering including complex filters
 
-Following features are been developed.
+#####Following types of filters are supported.
 
-##### Users Endpoint
+filter=userName eq "bjensen"
+
+filter=name.familyName co "O'Malley"
+
+filter=userName sw "J"
+
+filter=urn:ietf:params:scim:schemas:core:2.0:User:userName sw "J"
+
+filter=title pr
+
+filter=meta.lastModified gt "2011-05-13T04:42:34Z"
+
+filter=meta.lastModified ge "2011-05-13T04:42:34Z"
+
+filter=meta.lastModified lt "2011-05-13T04:42:34Z"
+
+filter=meta.lastModified le "2011-05-13T04:42:34Z"
+
+filter=title pr and userType eq "Employee"
+
+filter=title pr or userType eq "Intern"
+
+filter=
+ schemas eq "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User"
+
+filter=userType eq "Employee" and (emails co "example.com" or
+  emails.value co "example.org")
+
+filter=userType ne "Employee" and not (emails co "example.com" or
+  emails.value co "example.org")
+
+filter=userType eq "Employee" and (emails.type eq "work")
+
+#####Following features are been developed.
+
+#### Users Endpoint
 - Update with PATCH
 - Sorting
