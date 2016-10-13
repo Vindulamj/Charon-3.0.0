@@ -16,7 +16,6 @@ Currently following features are supported.
 #### /Groups Endpoint
 - [x] Create
 
-
 #### /Me Endpoint
 - [x] Create
 - [x] Get
