@@ -28,8 +28,10 @@ import org.wso2.charon.core.attributes.Attribute;
 import org.wso2.charon.core.attributes.ComplexAttribute;
 import org.wso2.charon.core.attributes.SimpleAttribute;
 import org.wso2.charon.core.exceptions.CharonException;
+import org.wso2.charon.core.exceptions.ConflictException;
 import org.wso2.charon.core.exceptions.NotFoundException;
 import org.wso2.charon.core.extensions.UserManager;
+import org.wso2.charon.core.objects.Group;
 import org.wso2.charon.core.objects.User;
 import org.wso2.charon.core.schema.AttributeSchema;
 import org.wso2.charon.core.schema.SCIMConstants;
@@ -226,6 +228,23 @@ public class SCIMUserManager implements UserManager {
         } catch (CharonException e) {
             return null;
         }
+    }
+
+    @Override
+    public Group createGroup(Group group) throws CharonException, ConflictException {
+        //TODO: Get the E-Tag(version) and add as a attribute of the cretated user
+        try {
+            FileOutputStream fileOut =
+                    new FileOutputStream("/home/vindula/Desktop/Charon/GroupStorage/"+group.getId()+".ser");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(group);
+            out.close();
+            fileOut.close();
+            System.out.printf("Serialized data is saved in /home/vindula/Desktop/Charon/GroupStorage/"+group.getId()+".ser\n\n");
+        }catch(IOException i) {
+            i.printStackTrace();
+        }
+        return group;
     }
 
 

@@ -82,10 +82,6 @@ public class Test {
                "  }\n" +
                "}";
 
-
-
-
-
        String attributes="wso2Extension.employeeNumber";
        String excludeAttributes="externalId,emails.value";
 
