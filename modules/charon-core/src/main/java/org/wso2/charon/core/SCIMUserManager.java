@@ -31,6 +31,7 @@ import org.wso2.charon.core.exceptions.CharonException;
 import org.wso2.charon.core.exceptions.NotFoundException;
 import org.wso2.charon.core.extensions.UserManager;
 import org.wso2.charon.core.objects.User;
+import org.wso2.charon.core.schema.AttributeSchema;
 import org.wso2.charon.core.schema.SCIMConstants;
 import org.wso2.charon.core.utils.codeutils.ExpressionNode;
 import org.wso2.charon.core.utils.codeutils.Node;
@@ -38,6 +39,7 @@ import org.wso2.charon.core.utils.codeutils.OperationNode;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -54,6 +56,7 @@ public class SCIMUserManager implements UserManager {
     }
 
     public User createUser(User user) throws CharonException {
+
         //TODO: Get the E-Tag(version) and add as a attribute of the cretated user
         try {
             FileOutputStream fileOut =

@@ -158,6 +158,9 @@ public class JSONEncoder {
             } else if (attributeValue instanceof MultiValuedAttribute) {
                 encodeMultiValuedAttribute((MultiValuedAttribute) attributeValue, subObject);
             }
+            else if (attributeValue instanceof ComplexAttribute) {
+                encodeComplexAttribute((ComplexAttribute) attributeValue, subObject);
+            }
             rootObject.put(complexAttribute.getName(), subObject);
         }
 

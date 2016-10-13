@@ -2,6 +2,8 @@ package org.wso2.charon.core.protocol.endpoints;
 
 
 import org.wso2.charon.core.attributes.Attribute;
+import org.wso2.charon.core.attributes.ComplexAttribute;
+import org.wso2.charon.core.attributes.SimpleAttribute;
 import org.wso2.charon.core.encoder.JSONDecoder;
 import org.wso2.charon.core.encoder.JSONEncoder;
 import org.wso2.charon.core.exceptions.*;
@@ -18,6 +20,7 @@ import org.wso2.charon.core.utils.AttributeUtil;
 import org.wso2.charon.core.utils.CopyUtil;
 import org.wso2.charon.core.utils.codeutils.FilterTreeManager;
 import org.wso2.charon.core.utils.codeutils.Node;
+import sun.java2d.pipe.SpanShapeRenderer;
 
 import java.io.IOException;
 import java.util.*;
@@ -102,10 +105,8 @@ public class UserResourceManager extends AbstractResourceManager {
             //obtain the schema corresponding to user
             // unless configured returns core-user schema or else returns extended user schema)
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
-
             //decode the SCIM User object, encoded in the submitted payload.
             User user = (User) decoder.decodeResource(scimObjectString, schema, new User());
-
             //validate the created user.
             ServerSideValidator.validateCreatedSCIMObject(user, schema);
 

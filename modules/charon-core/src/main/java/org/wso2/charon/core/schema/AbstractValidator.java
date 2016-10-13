@@ -122,7 +122,6 @@ public abstract class AbstractValidator {
             if (attribute != null) {
                 List<SCIMAttributeSchema> subAttributesSchemaList =
                         ((SCIMAttributeSchema) attributeSchema).getSubAttributeSchemas();
-
                 if (subAttributesSchemaList != null && !subAttributesSchemaList.isEmpty()) {
                     for (SCIMAttributeSchema subAttributeSchema : subAttributesSchemaList) {
                         if (subAttributeSchema.getMutability()==SCIMDefinitions.Mutability.READ_ONLY) {

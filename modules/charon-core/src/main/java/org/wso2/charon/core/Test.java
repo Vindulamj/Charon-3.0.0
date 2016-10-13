@@ -1,7 +1,10 @@
 package org.wso2.charon.core;
 
+import org.wso2.charon.core.config.SCIMUserSchemaExtensionBuilder;
 import org.wso2.charon.core.encoder.JSONDecoder;
 import org.wso2.charon.core.encoder.JSONEncoder;
+import org.wso2.charon.core.exceptions.CharonException;
+import org.wso2.charon.core.exceptions.InternalErrorException;
 import org.wso2.charon.core.protocol.SCIMResponse;
 import org.wso2.charon.core.protocol.endpoints.AbstractResourceManager;
 import org.wso2.charon.core.protocol.endpoints.UserResourceManager;
@@ -21,6 +24,17 @@ public class Test {
        HashMap hmp=new HashMap<String,String>();
        hmp.put(SCIMConstants.USER_ENDPOINT,"http://localhost:8080/scim/v2/Users");
        um.setEndpointURLMap(hmp);
+       //-----Extension User schema support------
+       SCIMUserSchemaExtensionBuilder extensionBuilder= new SCIMUserSchemaExtensionBuilder();
+       try {
+           extensionBuilder.buildUserSchemaExtension("/home/vindula/Desktop/Charon/Charon-3.0/scim-schema-extension.config");
+       } catch (CharonException e) {
+           e.printStackTrace();
+       } catch (InternalErrorException e) {
+           e.printStackTrace();
+       }
+
+
        String array ="{\n" +
                "  \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:User\"],\n" +
                "  \"id\":\"23232\",\n"+
@@ -60,17 +74,23 @@ public class Test {
                "        \"formatted\": \"100 Universal City Plaza Hollywood, CA 91608 USA\",\n"+
                "        \"primary\": true\n"+
                "    }\n"+
-               "]}";
+               "]," +
+               "  \"wso2Extension\": {\n" +
+               "    \"employeeNumber\": {\n" +
+               "        \"costCenter\": \"ODEL\" \n" +
+               "      }\n" +
+               "  }\n" +
+               "}";
 
 
 
 
 
-       String attributes="addresses.country";
+       String attributes="wso2Extension.employeeNumber";
        String excludeAttributes="externalId,emails.value";
 
        //----CREATE USER --------
-      // SCIMResponse res=um.create(array,new SCIMUserManager(),attributes,null);
+       SCIMResponse res=um.create(array,new SCIMUserManager(),null,null);
 
 
        //-----GET USER  ---------
@@ -90,10 +110,11 @@ public class Test {
 
        //-----FILTER AT USER ENDPOINT ---------
        String filter ="userName eq johan@wso2.com";
-       //SCIMResponse res= um.listByFilter(filter, new SCIMUserManager(), null, null);
+       //SCIMResponse res= um.listByFilter(filter, new SCIMUserManager(), attributes, null);
 
        //-----LIST USERS WITH SORT ---------
-       SCIMResponse res= um.listBySort(null,"AsCEnding",new SCIMUserManager(),attributes,null);
+       //SCIMResponse res= um.listBySort(null,"AsCEnding",new SCIMUserManager(),attributes,null);
+
 
        System.out.println(res.getResponseStatus());
        System.out.println("");

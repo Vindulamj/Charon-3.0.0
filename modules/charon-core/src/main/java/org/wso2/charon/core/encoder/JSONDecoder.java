@@ -2,6 +2,7 @@ package org.wso2.charon.core.encoder;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jcp.xml.dsig.internal.SignerOutputStream;
 import org.json.*;
 import org.wso2.charon.core.attributes.*;
 import org.wso2.charon.core.exceptions.BadRequestException;
@@ -57,6 +58,7 @@ public class JSONDecoder {
             for (AttributeSchema attributeSchema : attributeSchemas) {
                 //obtain the user defined value for given key- attribute schema name
                 Object attributeValObj = decodedJsonObj.opt(attributeSchema.getName());
+
                 SCIMDefinitions.DataType attributeSchemaDataType = attributeSchema.getType();
 
                 if (attributeSchemaDataType.equals(STRING) || attributeSchemaDataType.equals(BINARY) ||
@@ -107,7 +109,9 @@ public class JSONDecoder {
                             throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
                         }
                     } else if (attributeSchema.getMultiValued() == false) {
+
                         if (attributeValObj instanceof JSONObject || attributeValObj == null) {
+
                             if (attributeValObj == null) {
                                 continue;
                             }
@@ -234,7 +238,6 @@ public class JSONDecoder {
     private ComplexAttribute buildComplexAttribute(AttributeSchema complexAttributeSchema,
                                                    JSONObject jsonObject)
             throws BadRequestException, CharonException {
-
         ComplexAttribute complexAttribute = new ComplexAttribute(complexAttributeSchema.getName());
         Map<String, Attribute> subAttributesMap = new HashMap<String, Attribute>();
         //list of sub attributes of the complex attribute
@@ -243,9 +246,9 @@ public class JSONDecoder {
 
         //iterate through the complex attribute schema and extract the sub attributes.
         for (AttributeSchema subAttributeSchema : subAttributeSchemas) {
-
             //obtain the user defined value for given key- attribute schema name
             Object attributeValObj = jsonObject.opt(subAttributeSchema.getName());
+
             SCIMDefinitions.DataType subAttributeSchemaType = subAttributeSchema.getType();
 
             if (subAttributeSchemaType.equals(STRING) || subAttributeSchemaType.equals(BINARY) ||
@@ -283,8 +286,9 @@ public class JSONDecoder {
             }
 
             if (subAttributeSchemaType.equals(COMPLEX)) {
-                logger.error("Complex attribute can not have complex sub attributes");
-                throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+               ComplexAttribute complexSubAttribute =
+                       buildComplexAttribute(subAttributeSchema, (JSONObject) attributeValObj);
+                subAttributesMap.put(complexSubAttribute.getName(),complexSubAttribute);
             }
         }
         complexAttribute.setSubAttributesList(subAttributesMap);

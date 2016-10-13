@@ -23,6 +23,11 @@ package org.wso2.charon.core.schema;
 * core-user schema need to be returned.
 */
 
+import org.wso2.charon.core.config.SCIMUserSchemaExtensionBuilder;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class SCIMResourceSchemaManager {
 	
 	private static SCIMResourceSchemaManager manager = new SCIMResourceSchemaManager();
@@ -39,8 +44,35 @@ public class SCIMResourceSchemaManager {
 	 */
 	public SCIMResourceTypeSchema getUserResourceSchema() {
 
-		//TODO:check for the extension schema in the config file and construct a custom schema with them included
-		// returning the core user schema
+
+		SCIMAttributeSchema schemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
+		if(schemaExtension != null){
+			return   SCIMResourceTypeSchema.createSCIMResourceSchema(
+					new ArrayList<String>(Arrays.asList(SCIMConstants.USER_CORE_SCHEMA_URI)),
+					SCIMSchemaDefinitions.ID, SCIMSchemaDefinitions.EXTERNAL_ID, SCIMSchemaDefinitions.META,
+					SCIMSchemaDefinitions.SCIMUserSchemaDefinition.USERNAME,
+					SCIMSchemaDefinitions.SCIMUserSchemaDefinition.NAME,
+					SCIMSchemaDefinitions.SCIMUserSchemaDefinition.DISPLAY_NAME,
+					SCIMSchemaDefinitions.SCIMUserSchemaDefinition.NICK_NAME,
+					SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PROFILE_URL,
+					SCIMSchemaDefinitions.SCIMUserSchemaDefinition.TITLE,
+					SCIMSchemaDefinitions.SCIMUserSchemaDefinition.USER_TYPE,
+					SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PREFERRED_LANGUAGE,
+					SCIMSchemaDefinitions.SCIMUserSchemaDefinition.LOCALE,
+					SCIMSchemaDefinitions.SCIMUserSchemaDefinition.TIME_ZONE,
+					SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ACTIVE,
+					SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PASSWORD,
+					SCIMSchemaDefinitions.SCIMUserSchemaDefinition.EMAILS,
+					SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PHONE_NUMBERS,
+					SCIMSchemaDefinitions.SCIMUserSchemaDefinition.IMS,
+					SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PHOTOS,
+					SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ADDRESSES,
+					SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUPS,
+					SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ENTITLEMENTS,
+					SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES,
+					SCIMSchemaDefinitions.SCIMUserSchemaDefinition.X509CERTIFICATES,
+					schemaExtension);
+		}
 		return SCIMSchemaDefinitions.SCIM_USER_SCHEMA;
 	}
 
