@@ -22,9 +22,50 @@ import java.util.Map;
  */
 
 public class GroupResourceManager extends AbstractResourceManager {
+
+    /**
+     * Retrieves a group resource given an unique group id. Mapped to HTTP GET request.
+     *
+     * @param id          - unique resource id
+     * @param userManager
+     * @param attributes
+     * @param excludeAttributes
+     * @return SCIM response to be returned.
+     */
     @Override
     public SCIMResponse get(String id, UserManager userManager, String attributes, String excludeAttributes) {
-        return null;
+        JSONEncoder encoder = null;
+        try {
+            //obtain the correct encoder according to the format requested.
+            encoder = getEncoder();
+
+            //API user should pass a UserManager storage to UserResourceEndpoint.
+            //retrieve the user from the provided storage.
+            Group group = ((UserManager) userManager).getGroup(id);
+
+            //TODO:needs a validator to see that the User returned by the custom user manager
+            // adheres to SCIM spec.
+
+            //if user not found, return an error in relevant format.
+            if (group == null) {
+                String message = "Group not found in the user store.";
+                throw new NotFoundException(message);
+            }
+            ServerSideValidator.validateRetrievedSCIMObject(group, SCIMSchemaDefinitions.SCIM_GROUP_SCHEMA
+                    ,attributes,excludeAttributes);
+            //convert the user into specific format.
+            String encodedGroup = encoder.encodeSCIMObject(group);
+            //if there are any http headers to be added in the response header.
+            Map<String, String> httpHeaders = new HashMap<String, String>();
+            httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
+            return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedGroup, httpHeaders);
+        } catch (NotFoundException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (BadRequestException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (CharonException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        }
     }
 
     /**

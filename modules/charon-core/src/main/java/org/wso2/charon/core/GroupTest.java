@@ -41,11 +41,14 @@ public class GroupTest {
                 "     ]\n"+
                 "     }";
 
-        String attributes="wso2Extension.employeeNumber";
+        String attributes="id";
         String excludeAttributes="externalId,emails.value";
 
         //----CREATE Group--------
-        SCIMResponse res=um.create(array,new SCIMUserManager(),null,null);
+        //SCIMResponse res=um.create(array,new SCIMUserManager(),null,null);
+
+        //-----GET GROUP ---------
+        SCIMResponse res= um.get("c2fa9b6d-5865-4378-948a-f349b64d1544",new SCIMUserManager(),attributes,null);
 
 
         System.out.println(res.getResponseStatus());
