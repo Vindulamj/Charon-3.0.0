@@ -13,6 +13,9 @@ Currently following features are supported.
 - [x] Sorting
 - [x] Filtering including complex filters
 
+#### /Groups Endpoint
+- [x] Create
+
 #### /Me Endpoint
 - [x] Create
 - [x] Get
