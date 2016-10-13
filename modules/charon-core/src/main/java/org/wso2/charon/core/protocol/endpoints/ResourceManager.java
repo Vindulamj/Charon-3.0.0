@@ -60,17 +60,6 @@ public interface ResourceManager {
     public SCIMResponse delete(String id,UserManager userManager);
 
     /**
-     * Method that maps to HTTP GET with URL query parameter: "attributes=attributeName"
-     * This is to list resources with the given attribute name
-     *
-     * @param searchAttribute
-     * @param userManager
-     * @param format          @return
-     */
-    public SCIMResponse listByAttribute(String searchAttribute, UserManager userManager,
-                                        String format);
-
-    /**
      * Method that maps to HTTP GET with URL query parameter: "filter=filterString"
      * This is to filter a sub set of resources matching the filter string
      *

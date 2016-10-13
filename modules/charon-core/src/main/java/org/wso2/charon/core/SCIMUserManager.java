@@ -281,6 +281,35 @@ public class SCIMUserManager implements UserManager {
             throw new NotFoundException();
         }
     }
+
+    @Override
+    public List<Group> listGroups() throws CharonException {
+        final File folder = new File("/home/vindula/Desktop/Charon/GroupStorage/");
+        List<Group> userList=new ArrayList<Group>();
+        for (final File fileEntry : folder.listFiles()) {
+            if (fileEntry.isDirectory()) {
+                //listFilesForFolder(fileEntry);
+            } else {
+                Group e = null;
+                try {
+                    FileInputStream fileIn = new FileInputStream("/home/vindula/Desktop/Charon/GroupStorage/"+fileEntry.getName());
+                    ObjectInputStream in = new ObjectInputStream(fileIn);
+                    e = (Group) in.readObject();
+                    in.close();
+                    fileIn.close();
+                } catch (FileNotFoundException e1) {
+                    e1.printStackTrace();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                } catch (ClassNotFoundException e1) {
+                    e1.printStackTrace();
+                }
+                userList.add(e);
+            }
+
+        }
+        return userList;
+    }
 }
 
 

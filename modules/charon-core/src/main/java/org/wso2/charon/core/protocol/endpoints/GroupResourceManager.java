@@ -1,18 +1,20 @@
 package org.wso2.charon.core.protocol.endpoints;
 
+import org.wso2.charon.core.attributes.Attribute;
 import org.wso2.charon.core.encoder.JSONDecoder;
 import org.wso2.charon.core.encoder.JSONEncoder;
 import org.wso2.charon.core.exceptions.*;
 import org.wso2.charon.core.extensions.UserManager;
 import org.wso2.charon.core.objects.Group;
+import org.wso2.charon.core.objects.ListedResource;
+import org.wso2.charon.core.objects.User;
 import org.wso2.charon.core.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.protocol.SCIMResponse;
-import org.wso2.charon.core.schema.SCIMConstants;
-import org.wso2.charon.core.schema.SCIMSchemaDefinitions;
-import org.wso2.charon.core.schema.ServerSideValidator;
+import org.wso2.charon.core.schema.*;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -160,11 +162,6 @@ public class GroupResourceManager extends AbstractResourceManager {
     }
 
     @Override
-    public SCIMResponse listByAttribute(String searchAttribute, UserManager userManager, String format) {
-        return null;
-    }
-
-    @Override
     public SCIMResponse listByFilter(String filterString, UserManager userManager, String attributes, String excludeAttributes) throws IOException {
         return null;
     }
@@ -181,7 +178,52 @@ public class GroupResourceManager extends AbstractResourceManager {
 
     @Override
     public SCIMResponse list(UserManager userManager, String attributes, String excludeAttributes) {
-        return null;
+        JSONEncoder encoder = null;
+        try {
+            //obtain the json encoder
+            encoder = getEncoder();
+
+            List<Group> returnedGroups;
+            //API group should pass a UserManager storage to GroupResourceEndpoint.
+            if (userManager != null) {
+                returnedGroups = userManager.listGroups();
+
+                //if groups not found, return an error in relevant format.
+                if (returnedGroups == null || returnedGroups.isEmpty()) {
+                    String error = "Groups not found in the user store.";
+                    //throw resource not found.
+                    throw new NotFoundException(error);
+                }
+
+                for(Group group: returnedGroups){
+                    //perform service provider side validation.
+                    ServerSideValidator.validateRetrievedSCIMObject(group, SCIMSchemaDefinitions.SCIM_GROUP_SCHEMA,
+                            attributes, excludeAttributes);
+                }
+                //create a listed resource object out of the returned groups list.
+                ListedResource listedResource = createListedResource(returnedGroups);
+                //convert the listed resource into specific format.
+                String encodedListedResource = encoder.encodeSCIMObject(listedResource);
+                //if there are any http headers to be added in the response header.
+                Map<String, String> ResponseHeaders = new HashMap<String, String>();
+                ResponseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
+                return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedListedResource, ResponseHeaders);
+
+            } else {
+                String error = "Provided user manager handler is null.";
+                //log the error as well.
+                //throw internal server error.
+                throw new InternalErrorException(error);
+            }
+        } catch (CharonException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (NotFoundException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (InternalErrorException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (BadRequestException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        }
     }
 
     @Override
@@ -193,4 +235,23 @@ public class GroupResourceManager extends AbstractResourceManager {
     public SCIMResponse updateWithPATCH(String existingId, String scimObjectString, String inputFormat, String outputFormat, UserManager userManager) {
         return null;
     }
+
+    /**
+     * Creates the Listed Resource.
+     *
+     * @param groups
+     * @return
+     */
+    public ListedResource createListedResource(List<Group> groups)
+            throws CharonException, NotFoundException {
+        ListedResource listedResource = new ListedResource();
+        listedResource.setSchema(SCIMConstants.LISTED_RESOURCE_CORE_SCHEMA_URI);
+        listedResource.setTotalResults(groups.size());
+        for (Group group : groups) {
+            Map<String, Attribute> userAttributes = group.getAttributeList();
+            listedResource.setResources(userAttributes);
+        }
+        return listedResource;
+    }
+
 }

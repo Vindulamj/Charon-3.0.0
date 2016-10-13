@@ -58,4 +58,6 @@ public interface UserManager {
     public Group getGroup(String id);
 
     public void deleteGroup(String id) throws NotFoundException, CharonException;
+
+    public List<Group> listGroups() throws CharonException;
 }

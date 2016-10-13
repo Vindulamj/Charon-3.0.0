@@ -48,11 +48,13 @@ public class GroupTest {
         //SCIMResponse res=um.create(array,new SCIMUserManager(),null,null);
 
         //-----GET GROUP ---------
-        SCIMResponse res= um.get("c2fa9b6d-5865-4378-948a-f349b64d1544",new SCIMUserManager(),null,excludeAttributes);
+        //SCIMResponse res= um.get("c2fa9b6d-5865-4378-948a-f349b64d1544",new SCIMUserManager(),null,excludeAttributes);
 
         //-----DELETE GROUP  ---------
         //SCIMResponse res= um.delete("c2fa9b6d-5865-4378-948a-f349b64d1544",new SCIMUserManager());
 
+        //-----LIST USER  ---------
+        SCIMResponse res= um.list(new SCIMUserManager(),attributes,null);
 
         System.out.println(res.getResponseStatus());
         System.out.println("");

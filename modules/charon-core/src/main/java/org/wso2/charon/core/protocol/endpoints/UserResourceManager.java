@@ -196,10 +196,6 @@ public class UserResourceManager extends AbstractResourceManager {
     }
 
 
-    public SCIMResponse listByAttribute(String searchAttribute, UserManager userManager, String format) {
-        return null;
-    }
-
     /**
      * Method that maps to HTTP GET with URL query parameter: "filter=filterString"
      * This is to filter a sub set of resources matching the filter string
