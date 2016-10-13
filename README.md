@@ -17,6 +17,7 @@ Currently following features are supported.
 - [x] Create
 - [x] Get
 - [x] Delete
+- [x] List
 
 #### /Me Endpoint
 - [x] Create
