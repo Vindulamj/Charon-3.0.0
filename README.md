@@ -20,6 +20,18 @@ Currently following features are supported.
 - [x] attributes and exclude attribute support for all operations
 - [x] Update with PUT
 
+#### EnterpriseUser
+- [x] Create
+- [x] Get
+- [x] Delete
+- [x] List
+- [x] Pagination
+- [x] attributes and exclude attribute support for all operations
+- [x] Update with PUT
+- [x] Sorting
+- [x] Filtering including complex filters
+
+
 #####Following types of filters are supported.
 
 filter=userName eq "bjensen"
