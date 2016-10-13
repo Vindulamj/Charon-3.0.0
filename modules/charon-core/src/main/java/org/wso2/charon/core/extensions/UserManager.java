@@ -56,4 +56,6 @@ public interface UserManager {
     public Group createGroup(Group group) throws CharonException, ConflictException;
 
     public Group getGroup(String id);
+
+    public void deleteGroup(String id) throws NotFoundException, CharonException;
 }

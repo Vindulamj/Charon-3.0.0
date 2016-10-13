@@ -265,6 +265,22 @@ public class SCIMUserManager implements UserManager {
         }
         return e;
     }
+
+    @Override
+    public void deleteGroup(String id) throws NotFoundException {
+        try{
+            File file = new File("/home/vindula/Desktop/Charon/GroupStorage/"+id+".ser");
+
+            if(file.delete()){
+                System.out.println(file.getName() + " is deleted!");
+            }else {
+                throw new CharonException("Error occurred while deleting");
+
+            }
+        }catch(Exception e){
+            throw new NotFoundException();
+        }
+    }
 }
 
 
