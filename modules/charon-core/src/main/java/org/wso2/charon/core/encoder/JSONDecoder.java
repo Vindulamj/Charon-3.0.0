@@ -7,6 +7,7 @@ import org.json.*;
 import org.wso2.charon.core.attributes.*;
 import org.wso2.charon.core.exceptions.BadRequestException;
 import org.wso2.charon.core.exceptions.CharonException;
+import org.wso2.charon.core.exceptions.InternalErrorException;
 import org.wso2.charon.core.objects.AbstractSCIMObject;
 import org.wso2.charon.core.objects.SCIMObject;
 import org.wso2.charon.core.protocol.ResponseCodeConstants;
@@ -43,7 +44,7 @@ public class JSONDecoder {
      * @return SCIMObject
      */
     public SCIMObject decodeResource(String scimResourceString, ResourceTypeSchema resourceSchema,
-                                     AbstractSCIMObject scimObject) throws BadRequestException, CharonException {
+                                     AbstractSCIMObject scimObject) throws BadRequestException, CharonException, InternalErrorException {
         try {
             //decode the string into json representation
             JSONObject decodedJsonObj = new JSONObject(new JSONTokener(scimResourceString));
@@ -58,7 +59,6 @@ public class JSONDecoder {
             for (AttributeSchema attributeSchema : attributeSchemas) {
                 //obtain the user defined value for given key- attribute schema name
                 Object attributeValObj = decodedJsonObj.opt(attributeSchema.getName());
-
                 SCIMDefinitions.DataType attributeSchemaDataType = attributeSchema.getType();
 
                 if (attributeSchemaDataType.equals(STRING) || attributeSchemaDataType.equals(BINARY) ||
@@ -109,9 +109,7 @@ public class JSONDecoder {
                             throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
                         }
                     } else if (attributeSchema.getMultiValued() == false) {
-
                         if (attributeValObj instanceof JSONObject || attributeValObj == null) {
-
                             if (attributeValObj == null) {
                                 continue;
                             }
@@ -237,7 +235,7 @@ public class JSONDecoder {
      */
     private ComplexAttribute buildComplexAttribute(AttributeSchema complexAttributeSchema,
                                                    JSONObject jsonObject)
-            throws BadRequestException, CharonException {
+            throws BadRequestException, CharonException, InternalErrorException {
         ComplexAttribute complexAttribute = new ComplexAttribute(complexAttributeSchema.getName());
         Map<String, Attribute> subAttributesMap = new HashMap<String, Attribute>();
         //list of sub attributes of the complex attribute
@@ -250,7 +248,6 @@ public class JSONDecoder {
             Object attributeValObj = jsonObject.opt(subAttributeSchema.getName());
 
             SCIMDefinitions.DataType subAttributeSchemaType = subAttributeSchema.getType();
-
             if (subAttributeSchemaType.equals(STRING) || subAttributeSchemaType.equals(BINARY) ||
                     subAttributeSchemaType.equals(BOOLEAN) || subAttributeSchemaType.equals(DATE_TIME) ||
                     subAttributeSchemaType.equals(DECIMAL) || subAttributeSchemaType.equals(INTEGER) ||
@@ -284,12 +281,60 @@ public class JSONDecoder {
                     }
                 }
             }
+            //this case is only valid for the extension
+            else if(complexAttributeSchema.getName().equals(SCIMResourceSchemaManager.getInstance().getExtensionName())){
+                if (subAttributeSchemaType.equals(COMPLEX)) {
+                    if(subAttributeSchema.getMultiValued() ==true){
+                        if(attributeValObj instanceof JSONArray || attributeValObj !=null){
+                            MultiValuedAttribute multiValuedAttribute = new MultiValuedAttribute(subAttributeSchema.getName());
 
-            if (subAttributeSchemaType.equals(COMPLEX)) {
-               ComplexAttribute complexSubAttribute =
-                       buildComplexAttribute(subAttributeSchema, (JSONObject) attributeValObj);
-                subAttributesMap.put(complexSubAttribute.getName(),complexSubAttribute);
+                            List<Attribute> complexAttributeValues = new ArrayList<Attribute>();
+                            JSONArray attributeValues = (JSONArray)attributeValObj;
+                            //iterate through JSONArray and create the list of string values.
+                            for (int i = 0; i < attributeValues.length(); i++) {
+                                Object attributeValue = attributeValues.get(i);
+                                if (attributeValue instanceof JSONObject) {
+                                    JSONObject complexAttributeValue = (JSONObject) attributeValue;
+                                    complexAttributeValues.add(buildComplexValue(subAttributeSchema, complexAttributeValue));
+                                } else {
+                                    String error = "Unknown JSON representation for the MultiValued attribute " +
+                                            subAttributeSchema.getName() + " which has data type as " + subAttributeSchema.getType();
+                                    throw new BadRequestException(error, ResponseCodeConstants.INVALID_SYNTAX);
+                                }
+                                multiValuedAttribute.setAttributeValues(complexAttributeValues);
+
+                                MultiValuedAttribute complexMultiValuedSubAttribute = (MultiValuedAttribute)
+                                        DefaultAttributeFactory.createAttribute(subAttributeSchema,
+                                                multiValuedAttribute);
+                                subAttributesMap.put(complexMultiValuedSubAttribute.getName(),complexMultiValuedSubAttribute);
+
+                            }
+                        }else{
+                            logger.error("Error decoding the extension sub attribute");
+                            throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                        }
+                    }
+                    else{
+                        if(attributeValObj instanceof JSONObject || attributeValObj ==null){
+                            if(attributeValObj == null){
+                                continue;
+                            }
+                            ComplexAttribute complexSubAttribute =
+                                    buildComplexAttribute(subAttributeSchema, (JSONObject) attributeValObj);
+                            subAttributesMap.put(complexSubAttribute.getName(),complexSubAttribute);
+                        }
+                        else{
+                            logger.error("Error decoding the extension sub attribute");
+                            throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                        }
+                    }
+                }
             }
+            else{
+                String error = "Complex attribute can not have complex sub attributes";
+                throw new InternalErrorException(error);
+            }
+
         }
         complexAttribute.setSubAttributesList(subAttributesMap);
         return (ComplexAttribute) DefaultAttributeFactory.createAttribute(complexAttributeSchema, complexAttribute);
@@ -297,7 +342,7 @@ public class JSONDecoder {
 
 
     /**
-     * To buildTree a complex type value of a Multi Valued Attribute. (eg. Email with value,type,primary as sub attributes
+     * To build a complex type value of a Multi Valued Attribute. (eg. Email with value,type,primary as sub attributes
      *
      * @param attributeSchema
      * @param jsonObject
@@ -312,7 +357,6 @@ public class JSONDecoder {
                 ((SCIMAttributeSchema) attributeSchema).getSubAttributeSchemas();
 
         for (SCIMAttributeSchema subAttributeSchema : subAttributeSchemas) {
-
             Object subAttributeValue = jsonObject.opt(subAttributeSchema.getName());
             //setting up a name for the complex attribute for the reference purpose
             if (subAttributeSchema.getName().equals(SCIMConstants.CommonSchemaConstants.VALUE)) {
