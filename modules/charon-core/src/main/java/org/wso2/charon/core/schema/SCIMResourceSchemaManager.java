@@ -76,4 +76,21 @@ public class SCIMResourceSchemaManager {
 		return SCIMSchemaDefinitions.SCIM_USER_SCHEMA;
 	}
 
+	public Boolean isExtensionSet(){
+		int numOfCoreAttributes = SCIMSchemaDefinitions.SCIM_USER_SCHEMA.getAttributesList().size();
+
+		SCIMAttributeSchema schemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
+		if(schemaExtension != null){
+			return true;
+		}
+		else{
+			return  false;
+		}
+	}
+
+	public String getExtensionName(){
+		SCIMAttributeSchema schemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
+		return schemaExtension.getName();
+	}
+
 }

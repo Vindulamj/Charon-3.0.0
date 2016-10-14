@@ -78,7 +78,8 @@ public class Test {
                "  \"wso2Extension\": {\n" +
                "    \"employeeNumber\": {\n" +
                "        \"costCenter\": \"ODEL\" \n" +
-               "      }\n" +
+               "      },\n" +
+               "    \"sister\": \"Dushani\",\n" +
                "  }\n" +
                "}";
 

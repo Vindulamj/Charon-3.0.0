@@ -23,8 +23,7 @@ public class GroupTest {
 
         String array ="{\n" +
                 "     \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:Group\"],\n" +
-                "     \"id\": \"e9e30dba-f08f-4109-8486-d5c6a331660a\",\n" +
-                "     \"displayName\": \"Tour Guides\",\n" +
+                "     \"displayName\": \"Doctors\",\n" +
                 "     \"members\": [\n" +
                 "       {\n" +
                 "         \"value\": \"2819c223-7f76-453a-919d-413861904646\",\n" +
@@ -54,7 +53,7 @@ public class GroupTest {
         //SCIMResponse res= um.delete("c2fa9b6d-5865-4378-948a-f349b64d1544",new SCIMUserManager());
 
         //-----LIST USER  ---------
-        SCIMResponse res= um.list(new SCIMUserManager(),attributes,null);
+        SCIMResponse res= um.list(new SCIMUserManager(),null,null);
 
         System.out.println(res.getResponseStatus());
         System.out.println("");

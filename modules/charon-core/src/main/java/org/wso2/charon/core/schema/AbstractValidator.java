@@ -8,6 +8,7 @@ import org.wso2.charon.core.exceptions.BadRequestException;
 import org.wso2.charon.core.exceptions.CharonException;
 import org.wso2.charon.core.objects.AbstractSCIMObject;
 import org.wso2.charon.core.protocol.ResponseCodeConstants;
+import org.wso2.charon.core.protocol.endpoints.AbstractResourceManager;
 import org.wso2.charon.core.utils.CopyUtil;
 
 import java.util.*;
@@ -119,41 +120,55 @@ public abstract class AbstractValidator {
             }
             //check for readonly sub attributes.
             AbstractAttribute attribute = (AbstractAttribute) attributeList.get(attributeSchema.getName());
-            if (attribute != null) {
-                List<SCIMAttributeSchema> subAttributesSchemaList =
-                        ((SCIMAttributeSchema) attributeSchema).getSubAttributeSchemas();
-                if (subAttributesSchemaList != null && !subAttributesSchemaList.isEmpty()) {
-                    for (SCIMAttributeSchema subAttributeSchema : subAttributesSchemaList) {
-                        if (subAttributeSchema.getMutability()==SCIMDefinitions.Mutability.READ_ONLY) {
-                            if (attribute instanceof ComplexAttribute) {
-                                if (attribute.getSubAttribute(subAttributeSchema.getName()) != null) {
-                                    String error = "Readonly sub attribute: " + subAttributeSchema.getName()
-                                            + " is set in the SCIM Attribute: " + attribute.getName() +
-                                            ". Removing it.";
-                                    ((ComplexAttribute) attribute).removeSubAttribute(subAttributeSchema.getName());
-                                }
-                            } else if (attribute instanceof MultiValuedAttribute) {
-                                List<Attribute> values =
-                                        ((MultiValuedAttribute) attribute).getAttributeValues();
-                                for (Attribute value : values) {
-                                    if (value instanceof ComplexAttribute) {
-                                        if (value.getSubAttribute(subAttributeSchema.getName()) != null) {
-                                            String error = "Readonly sub attribute: " + subAttributeSchema.getName()
-                                                    + " is set in the SCIM Attribute: " + attribute.getName() +
-                                                    ". Removing it.";
-                                            ((ComplexAttribute) value).removeSubAttribute(subAttributeSchema.getName());
+            removeAnyReadOnlySubAttributes(attribute,attributeSchema);
+        }
+    }
 
-                                        }
+    private static void removeAnyReadOnlySubAttributes(Attribute attribute,
+                                                       AttributeSchema attributeSchema) throws CharonException {
+        if (attribute != null) {
+            List<SCIMAttributeSchema> subAttributesSchemaList =
+                    ((SCIMAttributeSchema) attributeSchema).getSubAttributeSchemas();
+            if (subAttributesSchemaList != null && !subAttributesSchemaList.isEmpty()) {
+                for (SCIMAttributeSchema subAttributeSchema : subAttributesSchemaList) {
+                    if (subAttributeSchema.getMutability()==SCIMDefinitions.Mutability.READ_ONLY) {
+                        if (attribute instanceof ComplexAttribute) {
+                            if (attribute.getSubAttribute(subAttributeSchema.getName()) != null) {
+                                String error = "Readonly sub attribute: " + subAttributeSchema.getName()
+                                        + " is set in the SCIM Attribute: " + attribute.getName() +
+                                        ". Removing it.";
+                                ((ComplexAttribute) attribute).removeSubAttribute(subAttributeSchema.getName());
+                            }
+                        } else if (attribute instanceof MultiValuedAttribute) {
+                            List<Attribute> values =
+                                    ((MultiValuedAttribute) attribute).getAttributeValues();
+                            for (Attribute value : values) {
+                                if (value instanceof ComplexAttribute) {
+                                    if (value.getSubAttribute(subAttributeSchema.getName()) != null) {
+                                        String error = "Readonly sub attribute: " + subAttributeSchema.getName()
+                                                + " is set in the SCIM Attribute: " + attribute.getName() +
+                                                ". Removing it.";
+                                        ((ComplexAttribute) value).removeSubAttribute(subAttributeSchema.getName());
+
                                     }
                                 }
                             }
                         }
                     }
-                }
+                    //A this point only extension schema can have this situation.
+                    //Otherwise no complex attribute can complex sub attributes.
+                    if(subAttributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)){
+                        //check for readonly sub-sub attributes in extension.
+                        //get attributes from schema.
+                        Map<String,Attribute> subAttributeList=((ComplexAttribute)attribute).getSubAttributesList();
+                        for(Attribute subSubAttribute : subAttributeList.values()){
+                            removeAnyReadOnlySubAttributes(subSubAttribute,subAttributeSchema);
+                        }
+                        }
 
+                }
             }
         }
-
     }
 
     /**

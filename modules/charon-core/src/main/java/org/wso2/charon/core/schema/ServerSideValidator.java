@@ -5,6 +5,7 @@ import org.wso2.charon.core.exceptions.BadRequestException;
 import org.wso2.charon.core.exceptions.CharonException;
 import org.wso2.charon.core.exceptions.NotFoundException;
 import org.wso2.charon.core.objects.AbstractSCIMObject;
+import org.wso2.charon.core.objects.User;
 import org.wso2.charon.core.protocol.endpoints.AbstractResourceManager;
 import org.wso2.charon.core.utils.AttributeUtil;
 
@@ -158,10 +159,7 @@ public class ServerSideValidator extends AbstractValidator{
             validateSCIMObjectForRequiredAttributes(validatedObject, resourceSchema);
 
         return validatedObject;
-        //TODO: if user object, validate name
     }
-
-
 }
 
 
