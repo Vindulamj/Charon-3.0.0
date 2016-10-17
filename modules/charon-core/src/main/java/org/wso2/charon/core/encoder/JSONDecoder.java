@@ -281,15 +281,24 @@ public class JSONDecoder {
                     }
                 }
             }
-            //this case is only valid for the extension
+            //this case is only valid for the extension schema
+            //As according to the spec we have complex attribute inside complex attribute only for extension,
+            //we need to treat it separately
             else if(complexAttributeSchema.getName().equals(SCIMResourceSchemaManager.getInstance().getExtensionName())){
                 if (subAttributeSchemaType.equals(COMPLEX)) {
                     if(subAttributeSchema.getMultiValued() ==true){
                         if(attributeValObj instanceof JSONArray || attributeValObj !=null){
                             MultiValuedAttribute multiValuedAttribute = new MultiValuedAttribute(subAttributeSchema.getName());
+                            JSONArray attributeValues = null;
 
                             List<Attribute> complexAttributeValues = new ArrayList<Attribute>();
-                            JSONArray attributeValues = (JSONArray)attributeValObj;
+                            try{
+                                attributeValues = (JSONArray)attributeValObj;
+                            }
+                            catch (Exception e){
+                                logger.error("Error decoding the extension");
+                                throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                            }
                             //iterate through JSONArray and create the list of string values.
                             for (int i = 0; i < attributeValues.length(); i++) {
                                 Object attributeValue = attributeValues.get(i);
@@ -419,9 +428,9 @@ public class JSONDecoder {
 
             }
         }
-            complexAttribute.setSubAttributesList(subAttributesMap);
-            return (ComplexAttribute) DefaultAttributeFactory.createAttribute(attributeSchema,
-                    complexAttribute);
+        complexAttribute.setSubAttributesList(subAttributesMap);
+        return (ComplexAttribute) DefaultAttributeFactory.createAttribute(attributeSchema,
+                complexAttribute);
 
     }
 }

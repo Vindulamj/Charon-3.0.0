@@ -8,9 +8,9 @@ import org.wso2.charon.core.exceptions.BadRequestException;
 import org.wso2.charon.core.exceptions.CharonException;
 import org.wso2.charon.core.objects.AbstractSCIMObject;
 import org.wso2.charon.core.protocol.ResponseCodeConstants;
-import org.wso2.charon.core.protocol.endpoints.AbstractResourceManager;
 import org.wso2.charon.core.utils.CopyUtil;
 
+import javax.management.AttributeList;
 import java.util.*;
 
 public abstract class AbstractValidator {
@@ -123,7 +123,12 @@ public abstract class AbstractValidator {
             removeAnyReadOnlySubAttributes(attribute,attributeSchema);
         }
     }
-
+    /**
+     * Check for readonlySubAttributes and remove them if they have been modified. - (create method)
+     * @param attribute
+     * @param attributeSchema
+     * @throws CharonException
+     */
     private static void removeAnyReadOnlySubAttributes(Attribute attribute,
                                                        AttributeSchema attributeSchema) throws CharonException {
         if (attribute != null) {
@@ -727,6 +732,91 @@ public abstract class AbstractValidator {
             }
 
         }
+    }
+
+    /**
+     * This method is basically for adding display sub attribute to multivalued attributes
+     * which has 'display' as a sub attribute in the respective attribute schema
+     *
+     * @param scimObject
+     * @param resourceSchema
+     * @throws CharonException
+     * @throws BadRequestException
+     */
+    protected static void setDisplayNameInComplexMultiValuedAttributes(
+            AbstractSCIMObject scimObject, SCIMResourceTypeSchema resourceSchema) throws CharonException, BadRequestException {
+
+        Map<String, Attribute> attributeList=scimObject.getAttributeList();
+        ArrayList<AttributeSchema> attributeSchemaList=resourceSchema.getAttributesList();
+
+        for(AttributeSchema attributeSchema : attributeSchemaList){
+
+            if(attributeSchema.getMultiValued() && attributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)){
+                if(attributeSchema.getSubAttributeSchema(SCIMConstants.CommonSchemaConstants.DISPLAY) != null){
+
+                    if(attributeList.containsKey(attributeSchema.getName())){
+                        Attribute multiValuedAttribute = attributeList.get(attributeSchema.getName());
+                        setDisplayNameInComplexMultiValuedSubAttributes(multiValuedAttribute, attributeSchema);
+                    }
+                }
+            }
+            //this is only valid for extension schema
+            else if(attributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)){
+                List<SCIMAttributeSchema> subAttributeSchemaList=attributeSchema.getSubAttributeSchemas();
+                for(AttributeSchema subAttributeSchema : subAttributeSchemaList){
+                    if(subAttributeSchema.getMultiValued() &&
+                            subAttributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)){
+                        if(subAttributeSchema.getSubAttributeSchema(SCIMConstants.CommonSchemaConstants.DISPLAY) != null){
+                            Attribute extensionAttribute = attributeList.get(attributeSchema.getName());
+
+                            if((((ComplexAttribute)extensionAttribute).
+                                    getSubAttribute(subAttributeSchema.getName()))!=null){
+                                Attribute multiValuedAttribute = (attributeList.get(attributeSchema.getName()))
+                                        .getSubAttribute(subAttributeSchema.getName());
+                                setDisplayNameInComplexMultiValuedSubAttributes(multiValuedAttribute, subAttributeSchema);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static void setDisplayNameInComplexMultiValuedSubAttributes(Attribute multiValuedAttribute,
+                                                                        AttributeSchema attributeSchema) throws CharonException, BadRequestException {
+        List<Attribute> subValuesList = ((MultiValuedAttribute)(multiValuedAttribute)).getAttributeValues();
+
+        for(Attribute subValue : subValuesList) {
+            System.out.println(attributeSchema.getName());
+            for (AttributeSchema subAttributeSchema : attributeSchema.getSubAttributeSchemas()) {
+                if (subAttributeSchema.getName().equals(SCIMConstants.CommonSchemaConstants.VALUE)) {
+
+                    if (!subAttributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)
+                            && !subAttributeSchema.getMultiValued()) {
+                        //take the value from the value sub attribute and put is as display attribute
+                        SimpleAttribute simpleAttribute = new SimpleAttribute(
+                                SCIMConstants.CommonSchemaConstants.DISPLAY,
+                                ((SimpleAttribute) (subValue.getSubAttribute(subAttributeSchema.getName()))).getValue());
+                        AttributeSchema subSchema = attributeSchema.getSubAttributeSchema(SCIMConstants.CommonSchemaConstants.DISPLAY);
+                        simpleAttribute = (SimpleAttribute) DefaultAttributeFactory.createAttribute(subSchema, simpleAttribute);
+                        ((ComplexAttribute) (subValue)).setSubAttribute(simpleAttribute);
+                    } else if (!subAttributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)
+                            && subAttributeSchema.getMultiValued()) {
+
+                        Attribute valueSubAttribute = (MultiValuedAttribute) (subValue.getSubAttribute(subAttributeSchema.getName()));
+                        Object displayValue = ((MultiValuedAttribute) (valueSubAttribute)).getAttributePrimitiveValues().get(0);
+                        //if multiple values are available, get the first value and put it as display name
+                        SimpleAttribute simpleAttribute = new SimpleAttribute(
+                                SCIMConstants.CommonSchemaConstants.DISPLAY, displayValue);
+                        AttributeSchema subSchema = attributeSchema.getSubAttributeSchema(SCIMConstants.CommonSchemaConstants.DISPLAY);
+                        simpleAttribute = (SimpleAttribute) DefaultAttributeFactory.createAttribute(subSchema, simpleAttribute);
+                        ((ComplexAttribute) (subValue)).setSubAttribute(simpleAttribute);
+
+                    }
+                }
+            }
+        }
+
     }
 
 }

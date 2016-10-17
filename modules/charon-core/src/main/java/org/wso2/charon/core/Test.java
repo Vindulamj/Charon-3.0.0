@@ -34,7 +34,6 @@ public class Test {
            e.printStackTrace();
        }
 
-
        String array ="{\n" +
                "  \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:User\"],\n" +
                "  \"id\":\"23232\",\n"+
@@ -76,10 +75,10 @@ public class Test {
                "    }\n"+
                "]," +
                "  \"wso2Extension\": {\n" +
-               "    \"employeeNumber\": {\n" +
-               "        \"costCenter\": [\"ODEL\",\"FashionBug\"], \n" +
-               "        \"saleCenter\": \"NoLimit\" \n" +
-               "      },\n" +
+               "    \"employeeNumber\": [{\n" +
+               "        \"value\": [\"ODEL\",\"FashionBug\"], \n" +
+               "        \"display\": \"NoLimit\" \n" +
+               "      }],\n" +
                "    \"sister\": \"Dushani\",\n" +
                "    \"owners\": [\"Sakitha\",\"Milinda\"],\n" +
                "    \"dogs\": [\n" +
