@@ -53,7 +53,7 @@ public class ResponseCodeConstants {
     public static final String DESC_PAYLOAD_TOO_LARGE = "{\"maxOperations\": 1000,\"maxPayloadSize\": 1048576}";
 
     public static final int CODE_INTERNAL_ERROR = 500;
-    public static final String DESC_INTERNAL_ERROR = "An internal error. Implementers SHOULD provide descriptive debugging advice.";
+    public static final String DESC_INTERNAL_ERROR = "An internal error.";
 
     public static final int CODE_NOT_IMPLEMENTED = 501;
     public static final String DESC_NOT_IMPLEMENTED = "Service provider does not support the request operation.";

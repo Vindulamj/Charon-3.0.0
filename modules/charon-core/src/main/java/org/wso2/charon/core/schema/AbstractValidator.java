@@ -6,6 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.wso2.charon.core.attributes.*;
 import org.wso2.charon.core.exceptions.BadRequestException;
 import org.wso2.charon.core.exceptions.CharonException;
+import org.wso2.charon.core.exceptions.PreConditionFailedException;
 import org.wso2.charon.core.objects.AbstractSCIMObject;
 import org.wso2.charon.core.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.utils.CopyUtil;
@@ -783,20 +784,27 @@ public abstract class AbstractValidator {
     }
 
     private static void setDisplayNameInComplexMultiValuedSubAttributes(Attribute multiValuedAttribute,
-                                                                        AttributeSchema attributeSchema) throws CharonException, BadRequestException {
+                                                                        AttributeSchema attributeSchema) throws CharonException,
+            BadRequestException {
         List<Attribute> subValuesList = ((MultiValuedAttribute)(multiValuedAttribute)).getAttributeValues();
 
         for(Attribute subValue : subValuesList) {
-            System.out.println(attributeSchema.getName());
+
             for (AttributeSchema subAttributeSchema : attributeSchema.getSubAttributeSchemas()) {
                 if (subAttributeSchema.getName().equals(SCIMConstants.CommonSchemaConstants.VALUE)) {
 
                     if (!subAttributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)
                             && !subAttributeSchema.getMultiValued()) {
                         //take the value from the value sub attribute and put is as display attribute
-                        SimpleAttribute simpleAttribute = new SimpleAttribute(
-                                SCIMConstants.CommonSchemaConstants.DISPLAY,
-                                ((SimpleAttribute) (subValue.getSubAttribute(subAttributeSchema.getName()))).getValue());
+                        SimpleAttribute simpleAttribute = null ;
+                        try{
+                            simpleAttribute = new SimpleAttribute(
+                                    SCIMConstants.CommonSchemaConstants.DISPLAY,
+                                    ((SimpleAttribute) (subValue.getSubAttribute(subAttributeSchema.getName()))).getValue());
+                        }catch (Exception e){
+                            String error = "Can not set display attribute value without a value attribute value.";
+                            throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX,error);
+                        }
                         AttributeSchema subSchema = attributeSchema.getSubAttributeSchema(SCIMConstants.CommonSchemaConstants.DISPLAY);
                         simpleAttribute = (SimpleAttribute) DefaultAttributeFactory.createAttribute(subSchema, simpleAttribute);
                         ((ComplexAttribute) (subValue)).setSubAttribute(simpleAttribute);
@@ -804,8 +812,14 @@ public abstract class AbstractValidator {
                             && subAttributeSchema.getMultiValued()) {
 
                         Attribute valueSubAttribute = (MultiValuedAttribute) (subValue.getSubAttribute(subAttributeSchema.getName()));
-                        Object displayValue = ((MultiValuedAttribute) (valueSubAttribute)).getAttributePrimitiveValues().get(0);
-                        //if multiple values are available, get the first value and put it as display name
+                        Object displayValue = null;
+                        try {
+                             displayValue = ((MultiValuedAttribute) (valueSubAttribute)).getAttributePrimitiveValues().get(0);
+                        }catch (Exception e){
+                            String error = "Can not set display attribute value without a value attribute value.";
+                            throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX,error);
+                    }
+                            //if multiple values are available, get the first value and put it as display name
                         SimpleAttribute simpleAttribute = new SimpleAttribute(
                                 SCIMConstants.CommonSchemaConstants.DISPLAY, displayValue);
                         AttributeSchema subSchema = attributeSchema.getSubAttributeSchema(SCIMConstants.CommonSchemaConstants.DISPLAY);

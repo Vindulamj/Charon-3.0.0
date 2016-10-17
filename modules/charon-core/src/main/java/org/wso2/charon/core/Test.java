@@ -76,17 +76,19 @@ public class Test {
                "]," +
                "  \"wso2Extension\": {\n" +
                "    \"employeeNumber\": [{\n" +
-               "        \"value\": [\"ODEL\",\"FashionBug\"], \n" +
+               "        \"value\": \"ODEL\", \n" +
                "        \"display\": \"NoLimit\" \n" +
                "      }],\n" +
                "    \"sister\": \"Dushani\",\n" +
                "    \"owners\": [\"Sakitha\",\"Milinda\"],\n" +
                "    \"dogs\": [\n" +
                "    {\n" +
-               "        \"boss\": \"micky\" \n" +
+               "        \"boss\": \"micky\", \n" +
+               "        \"value\": \"lisa\" \n" +
                "    },\n" +
                "    {\n" +
-               "        \"boss\": \"lisa\" \n" +
+               "        \"boss\": \"lisa\", \n" +
+               "        \"value\": \"lisa\" \n" +
                "    }\n" +
                "      ]\n" +
                "  }\n" +

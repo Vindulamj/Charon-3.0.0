@@ -246,7 +246,6 @@ public class JSONDecoder {
         for (AttributeSchema subAttributeSchema : subAttributeSchemas) {
             //obtain the user defined value for given key- attribute schema name
             Object attributeValObj = jsonObject.opt(subAttributeSchema.getName());
-
             SCIMDefinitions.DataType subAttributeSchemaType = subAttributeSchema.getType();
             if (subAttributeSchemaType.equals(STRING) || subAttributeSchemaType.equals(BINARY) ||
                     subAttributeSchemaType.equals(BOOLEAN) || subAttributeSchemaType.equals(DATE_TIME) ||
