@@ -3,6 +3,7 @@ package org.wso2.charon.core.schema;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.w3c.dom.Attr;
 import org.wso2.charon.core.attributes.*;
 import org.wso2.charon.core.exceptions.BadRequestException;
 import org.wso2.charon.core.exceptions.CharonException;
@@ -41,34 +42,66 @@ public abstract class AbstractValidator {
             }
             //check for required sub attributes.
             AbstractAttribute attribute = (AbstractAttribute) attributeList.get(attributeSchema.getName());
-            if (attribute != null) {
-                List<SCIMAttributeSchema> subAttributesSchemaList =
-                        ((SCIMAttributeSchema) attributeSchema).getSubAttributeSchemas();
+            validateSCIMObjectForRequiredSubAttributes(attribute, attributeSchema);
+        }
+    }
 
-                if (subAttributesSchemaList != null) {
-                    for (SCIMAttributeSchema subAttributeSchema : subAttributesSchemaList) {
-                        if (subAttributeSchema.getRequired()) {
+    /**
+     * Validate SCIMObject for required sub attributes given the object and the corresponding schema.
+     *
+     * @param attribute
+     * @param attributeSchema
+     * @throws CharonException
+     * @throws BadRequestException
+     */
+    private static void validateSCIMObjectForRequiredSubAttributes(AbstractAttribute attribute,
+                                                                   AttributeSchema attributeSchema) throws CharonException, BadRequestException {
+        if (attribute != null) {
+            List<SCIMAttributeSchema> subAttributesSchemaList =
+                    ((SCIMAttributeSchema) attributeSchema).getSubAttributeSchemas();
 
-                            if (attribute instanceof ComplexAttribute) {
-                                if (attribute.getSubAttribute(subAttributeSchema.getName()) == null) {
-                                    String error = "Required sub attribute: " + subAttributeSchema.getName()
-                                            + " is missing in the SCIM Attribute: " + attribute.getName();
-                                    throw new BadRequestException(error,ResponseCodeConstants.INVALID_VALUE);
-                                }
-                            } else if (attribute instanceof MultiValuedAttribute) {
-                                List<Attribute> values =
-                                        ((MultiValuedAttribute) attribute).getAttributeValues();
-                                for (Attribute value : values) {
-                                    if (value instanceof ComplexAttribute) {
-                                        if (value.getSubAttribute(subAttributeSchema.getName()) == null) {
-                                            String error = "Required sub attribute: " + subAttributeSchema.getName()
-                                                    + ", is missing in the SCIM Attribute: " + attribute.getName();
-                                            throw new BadRequestException(error,ResponseCodeConstants.INVALID_VALUE);
-                                        }
+            if (subAttributesSchemaList != null) {
+                for (SCIMAttributeSchema subAttributeSchema : subAttributesSchemaList) {
+                    if (subAttributeSchema.getRequired()) {
+
+                        if (attribute instanceof ComplexAttribute) {
+                            if (attribute.getSubAttribute(subAttributeSchema.getName()) == null) {
+                                String error = "Required sub attribute: " + subAttributeSchema.getName()
+                                        + " is missing in the SCIM Attribute: " + attribute.getName();
+                                throw new BadRequestException(error,ResponseCodeConstants.INVALID_VALUE);
+                            }
+                        } else if (attribute instanceof MultiValuedAttribute) {
+                            List<Attribute> values =
+                                    ((MultiValuedAttribute) attribute).getAttributeValues();
+                            for (Attribute value : values) {
+                                if (value instanceof ComplexAttribute) {
+                                    if (value.getSubAttribute(subAttributeSchema.getName()) == null) {
+                                        String error = "Required sub attribute: " + subAttributeSchema.getName()
+                                                + ", is missing in the SCIM Attribute: " + attribute.getName();
+                                        throw new BadRequestException(error,ResponseCodeConstants.INVALID_VALUE);
                                     }
                                 }
                             }
                         }
+                    }
+                    //Following is only applicable for extension schema validation.
+                    AbstractAttribute subAttribute = null;
+                    if(attribute instanceof ComplexAttribute){
+                        subAttribute = (AbstractAttribute)((ComplexAttribute)attribute).getSubAttribute
+                                (subAttributeSchema.getName());
+                    }
+                    else if(attribute instanceof MultiValuedAttribute){
+                        List<Attribute> subAttributeList = ((MultiValuedAttribute)attribute).getAttributeValues();
+                        for(Attribute subAttrbte : subAttributeList){
+                            if(subAttrbte.getName().equals(subAttributeSchema.getName())){
+                                subAttribute = (AbstractAttribute) subAttrbte;
+                            }
+                        }
+                    }
+                    List<SCIMAttributeSchema> subSubAttributesSchemaList =
+                            ((SCIMAttributeSchema) subAttributeSchema).getSubAttributeSchemas();
+                    if(subSubAttributesSchemaList != null){
+                        validateSCIMObjectForRequiredSubAttributes(subAttribute,subAttributeSchema);
                     }
                 }
             }

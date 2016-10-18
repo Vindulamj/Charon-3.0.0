@@ -286,7 +286,10 @@ public class JSONDecoder {
             else if(complexAttributeSchema.getName().equals(SCIMResourceSchemaManager.getInstance().getExtensionName())){
                 if (subAttributeSchemaType.equals(COMPLEX)) {
                     if(subAttributeSchema.getMultiValued() ==true){
-                        if(attributeValObj instanceof JSONArray || attributeValObj !=null){
+                        if(attributeValObj instanceof JSONArray || attributeValObj ==null){
+                            if(attributeValObj == null){
+                                continue;
+                            }
                             MultiValuedAttribute multiValuedAttribute = new MultiValuedAttribute(subAttributeSchema.getName());
                             JSONArray attributeValues = null;
 
