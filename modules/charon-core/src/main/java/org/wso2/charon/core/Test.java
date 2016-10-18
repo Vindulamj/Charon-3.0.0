@@ -38,7 +38,7 @@ public class Test {
                "  \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:User\"],\n" +
                "  \"id\":\"23232\",\n"+
                "  \"externalId\": \"701984\",\n" +
-               "  \"userName\": \"johan@wso2.com\",\n" +
+               "  \"urn:ietf:params:scim:schemas:core:2.0:User:userName\": \"johan@wso2.com\",\n" +
                "  \"password\": \"testpass\",\n" +
                "  \"name\": {\n" +
                "    \"formatted\": \"Ms. Barbara J Jensen, III\",\n" +
@@ -74,7 +74,7 @@ public class Test {
                "        \"primary\": true\n"+
                "    }\n"+
                "]," +
-               "  \"wso2Extension\": {\n" +
+               "  \"urn:scim:schemas:extension:wso2:1.0:wso2Extension\": {\n" +
                "    \"employeeNumber\": [{\n" +
                "        \"value\": \"ODEL\", \n" +
                "        \"display\": \"NoLimit\" \n" +

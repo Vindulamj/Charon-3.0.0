@@ -48,7 +48,7 @@ public class SCIMResourceSchemaManager {
 		SCIMAttributeSchema schemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
 		if(schemaExtension != null){
 			return   SCIMResourceTypeSchema.createSCIMResourceSchema(
-					new ArrayList<String>(Arrays.asList(SCIMConstants.USER_CORE_SCHEMA_URI)),
+					new ArrayList<String>(Arrays.asList(SCIMConstants.USER_CORE_SCHEMA_URI,schemaExtension.getURI())),
 					SCIMSchemaDefinitions.ID, SCIMSchemaDefinitions.EXTERNAL_ID, SCIMSchemaDefinitions.META,
 					SCIMSchemaDefinitions.SCIMUserSchemaDefinition.USERNAME,
 					SCIMSchemaDefinitions.SCIMUserSchemaDefinition.NAME,

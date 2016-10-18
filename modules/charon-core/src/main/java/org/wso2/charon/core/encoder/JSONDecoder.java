@@ -59,6 +59,10 @@ public class JSONDecoder {
             for (AttributeSchema attributeSchema : attributeSchemas) {
                 //obtain the user defined value for given key- attribute schema name
                 Object attributeValObj = decodedJsonObj.opt(attributeSchema.getName());
+                if(attributeValObj == null){
+                    //user may define the attribute by its fully qualified URI
+                    attributeValObj = decodedJsonObj.opt(attributeSchema.getURI());
+                }
                 SCIMDefinitions.DataType attributeSchemaDataType = attributeSchema.getType();
 
                 if (attributeSchemaDataType.equals(STRING) || attributeSchemaDataType.equals(BINARY) ||

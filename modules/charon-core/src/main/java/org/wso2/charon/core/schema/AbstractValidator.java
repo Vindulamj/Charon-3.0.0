@@ -119,6 +119,7 @@ public abstract class AbstractValidator {
         List<String> resourceSchemaList = resourceSchema.getSchemasList();
         //get the scim object schema list
         List<String> objectSchemaList = scimObject.getSchemaList();
+
         for (String schema : resourceSchemaList) {
             //check for schema.
             if (!objectSchemaList.contains(schema)) {
