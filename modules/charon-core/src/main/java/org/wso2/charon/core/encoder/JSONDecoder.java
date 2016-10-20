@@ -289,6 +289,14 @@ public class JSONDecoder {
             //we need to treat it separately
             else if(complexAttributeSchema.getName().equals(SCIMResourceSchemaManager.getInstance().getExtensionName())){
                 if (subAttributeSchemaType.equals(COMPLEX)) {
+                    //check for user defined extension's schema violation
+                    List<SCIMAttributeSchema> subList = subAttributeSchema.getSubAttributeSchemas();
+                    for(AttributeSchema attributeSchema : subList){
+                        if(attributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)){
+                            String error = "Complex attribute can not have complex sub attributes";
+                            throw new InternalErrorException(error);
+                        }
+                    }
                     if(subAttributeSchema.getMultiValued() ==true){
                         if(attributeValObj instanceof JSONArray || attributeValObj ==null){
                             if(attributeValObj == null){

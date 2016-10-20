@@ -204,7 +204,7 @@ public abstract class AbstractValidator {
                         for(Attribute subSubAttribute : subAttributeList.values()){
                             removeAnyReadOnlySubAttributes(subSubAttribute,subAttributeSchema);
                         }
-                        }
+                    }
 
                 }
             }
@@ -219,7 +219,7 @@ public abstract class AbstractValidator {
      * @param requestedExcludingAttributes
      */
     public static void removeAttributesOnReturn(AbstractSCIMObject scimObject, String requestedAttributes,
-                                                String requestedExcludingAttributes) {
+                                                String requestedExcludingAttributes) throws CharonException {
         List<String> requestedAttributesList = null;
         List<String> requestedExcludingAttributesList = null;
 
@@ -303,8 +303,46 @@ public abstract class AbstractValidator {
                         subAttributeTemporyList.add(subAttribute);
                     }
                     for(Attribute subAttribute : subAttributeTemporyList){
-                        removeSubAttributesOnReturn(subAttribute, attribute, requestedAttributes, requestedExcludingAttributes,
-                                requestedAttributesList, requestedExcludingAttributesList,scimObject);
+                        if(subAttribute.getType().equals(SCIMDefinitions.DataType.COMPLEX)){
+                            //this applicable for extension schema only
+                            if(subAttribute.getMultiValued()){
+
+                                    List<Attribute> valuesList = ((MultiValuedAttribute)subAttribute).getAttributeValues();
+
+                                    for (Attribute subSubValue : valuesList) {
+                                        Map<String, Attribute> subValuesSubAttributeList = ((ComplexAttribute) subSubValue).getSubAttributesList();
+                                        ArrayList<Attribute> valuesSubSubAttributeTemporyList = new ArrayList<Attribute>();
+                                        //as we are deleting the attributes form the list, list size will change,
+                                        //hence need to traverse on a copy
+                                        for (Attribute subSubSimpleAttribute : subValuesSubAttributeList.values()) {
+                                            valuesSubSubAttributeTemporyList.add(subSubSimpleAttribute);
+                                        }
+                                        for (Attribute subSubSimpleAttribute : valuesSubSubAttributeTemporyList) {
+                                            removeValuesSubSubAttributeOnReturn(attribute, subAttribute, subSubValue, subSubSimpleAttribute,
+                                                    requestedAttributes, requestedExcludingAttributes,
+                                                    requestedAttributesList, requestedExcludingAttributesList, scimObject);
+                                        }
+                                    }
+                            }
+                            else{
+                                ArrayList<Attribute> subSubAttributeTemporyList= new ArrayList<Attribute>();
+                                Map<String, Attribute> subSubAttributeList = ((ComplexAttribute)subAttribute).getSubAttributesList();
+                                for (Attribute subSubAttribute : subSubAttributeList.values()) {
+                                    subSubAttributeTemporyList.add(subSubAttribute);
+                                }
+                                for(Attribute subSubAttribute : subSubAttributeTemporyList){
+                                    removeSubSubAttributesOnReturn(attribute, subAttribute, subSubAttribute,
+                                            requestedAttributes, requestedExcludingAttributes,
+                                            requestedAttributesList, requestedExcludingAttributesList,scimObject);
+                                }
+                            }
+                            removeSubAttributesOnReturn(subAttribute, attribute, requestedAttributes, requestedExcludingAttributes,
+                                    requestedAttributesList, requestedExcludingAttributesList,scimObject);
+                        }
+                        else{
+                            removeSubAttributesOnReturn(subAttribute, attribute, requestedAttributes, requestedExcludingAttributes,
+                                    requestedAttributesList, requestedExcludingAttributesList,scimObject);
+                        }
                     }
                 }
             }
@@ -347,7 +385,8 @@ public abstract class AbstractValidator {
                         || subAttribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST))
                         && (!requestedAttributesList.contains(
                         attribute.getName()+"."+subAttribute.getName()) &&
-                        !requestedAttributesList.contains(attribute.getName()))){
+                        !requestedAttributesList.contains(attribute.getName())&&
+                        !isSubSubAttributeExistsInList(requestedAttributesList, attribute, subAttribute))){
                     scimObject.deleteSubAttribute(attribute.getName(),subAttribute.getName());
                 }
             }
@@ -366,6 +405,51 @@ public abstract class AbstractValidator {
             }
         }
     }
+
+    private static void removeSubSubAttributesOnReturn(Attribute attribute, Attribute subAttribute, Attribute subSubAttribute, String requestedAttributes,
+                                                       String requestedExcludingAttributes, List<String> requestedAttributesList,
+                                                       List<String> requestedExcludingAttributesList, AbstractSCIMObject scimObject) throws CharonException {
+        //check for never/request attributes.
+        if (subSubAttribute.getReturned().equals(SCIMDefinitions.Returned.NEVER)) {
+            scimObject.deleteSubSubAttribute(subSubAttribute.getName(), subAttribute.getName(), attribute.getName());
+        }
+        //if the returned property is request, need to check whether is it specifically requested by the user.
+        // If so return it.
+        if(requestedAttributes ==null && requestedExcludingAttributes == null){
+            if (subSubAttribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST)){
+                scimObject.deleteSubSubAttribute(subSubAttribute.getName(), subAttribute.getName(), attribute.getName());
+            }
+        }
+        else{
+            //A request should only contains either attributes or exclude attribute params. Not the both
+            if(requestedAttributes !=null){
+                //if attributes are set, delete all the request and default attributes
+                // and add only the requested attributes
+                if ((subSubAttribute.getReturned().equals(SCIMDefinitions.Returned.DEFAULT)
+                        || subSubAttribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST))
+                        && (!requestedAttributesList.contains(
+                        attribute.getName()+"."+ subAttribute.getName()+"."+ subSubAttribute.getName()) &&
+                        !requestedAttributesList.contains(attribute.getName()) &&
+                        !requestedAttributesList.contains(attribute.getName()+"."+ subAttribute.getName()))){
+                    scimObject.deleteSubSubAttribute(subSubAttribute.getName(), subAttribute.getName(), attribute.getName());
+                }
+            }
+            else if(requestedExcludingAttributes !=null){
+                //removing attributes which has returned as request. This is because no request is made
+                if (subSubAttribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST)) {
+                    scimObject.deleteSubSubAttribute(subSubAttribute.getName(), subAttribute.getName(), attribute.getName());
+                }
+                //if exclude attribute is set, set of exclude attributes need to be
+                // removed from the default set of attributes
+                if ((subSubAttribute.getReturned().equals(SCIMDefinitions.Returned.DEFAULT))
+                        && requestedExcludingAttributesList.contains(
+                        attribute.getName()+"."+subAttribute.getName()+"."+subSubAttribute.getName())){
+                    scimObject.deleteSubSubAttribute(subSubAttribute.getName(), subAttribute.getName(), attribute.getName());
+                }
+            }
+        }
+    }
+
 
     /**
      * This method is to remove any defined and requested sub attributes and include requested sub attributes
@@ -406,7 +490,8 @@ public abstract class AbstractValidator {
                         || subSimpleAttribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST))
                         && (!requestedAttributesList.contains(
                         attribute.getName()+"."+subSimpleAttribute.getName()) &&
-                        !requestedAttributesList.contains(attribute.getName()))){
+                        !requestedAttributesList.contains(attribute.getName()) &&
+                        !isSubSubAttributeExistsInList(requestedAttributesList, attribute, subSimpleAttribute))){
                     scimObject.deleteValuesSubAttribute(attribute.getName(),
                             subAttribute.getName(), subSimpleAttribute.getName());
                 }
@@ -431,6 +516,57 @@ public abstract class AbstractValidator {
 
     }
 
+    private static void removeValuesSubSubAttributeOnReturn(Attribute attribute, Attribute subAttribute, Attribute subValue,
+                                                            Attribute subSimpleAttribute,
+                                                            String requestedAttributes, String requestedExcludingAttributes,
+                                                            List<String> requestedAttributesList,
+                                                            List<String> requestedExcludingAttributesList,
+                                                            AbstractSCIMObject scimObject){
+
+
+        if(subSimpleAttribute.getReturned().equals(SCIMDefinitions.Returned.NEVER)){
+            scimObject.deleteSubValuesSubAttribute(attribute.getName(),
+                    subAttribute.getName(),subValue.getName(),subSimpleAttribute.getName());
+        }
+        if(requestedAttributes ==null && requestedExcludingAttributes == null){
+            if (attribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST)){
+                scimObject.deleteSubValuesSubAttribute(attribute.getName(),
+                        subAttribute.getName(),subValue.getName(),subSimpleAttribute.getName());
+            }
+        }
+        else{
+            //A request should only contains either attributes or exclude attribute params. Not the both
+            if(requestedAttributes !=null){
+                //if attributes are set, delete all the request and default attributes
+                // and add only the requested attributes
+                if ((subSimpleAttribute.getReturned().equals(SCIMDefinitions.Returned.DEFAULT)
+                        || subSimpleAttribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST))
+                        && (!requestedAttributesList.contains(
+                        attribute.getName()+"."+subAttribute.getName()+"."+subSimpleAttribute.getName()) &&
+                        !requestedAttributesList.contains(attribute.getName()) &&
+                        !requestedAttributesList.contains(attribute.getName()+"."+subAttribute.getName()))){
+                    scimObject.deleteSubValuesSubAttribute(attribute.getName(),
+                            subAttribute.getName(),subValue.getName(),subSimpleAttribute.getName());
+                }
+            }
+            else if(requestedExcludingAttributes !=null){
+                //removing attributes which has returned as request. This is because no request is made
+                if (subSimpleAttribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST)) {
+                    scimObject.deleteSubValuesSubAttribute(attribute.getName(),
+                            subAttribute.getName(),subValue.getName(),subSimpleAttribute.getName());
+                }
+                //if exclude attribute is set, set of exclude attributes need to be
+                // removed from the default set of attributes
+                if ((subSimpleAttribute.getReturned().equals(SCIMDefinitions.Returned.DEFAULT))
+                        && requestedExcludingAttributesList.contains(
+                        attribute.getName()+"."+subAttribute.getName()+"."+subSimpleAttribute.getName())){
+                    scimObject.deleteSubValuesSubAttribute(attribute.getName(),
+                            subAttribute.getName(),subValue.getName(),subSimpleAttribute.getName());
+                }
+            }
+        }
+    }
+
     /**
      * This checks whether, within the 'requestedAttributes', is there a sub attribute of the 'attribute'.
      * If so we should not delete the 'attribute'
@@ -453,10 +589,15 @@ public abstract class AbstractValidator {
                             return true;
                         }
                     }
-
+                    //this case is only valid for extension schema
+                    if(subAttribute.getType().equals(SCIMDefinitions.DataType.COMPLEX)){
+                        boolean isSubSubAttributeExists = isSubSubAttributeExistsInList(requestedAttributes, attribute, subAttribute);
+                        if(isSubSubAttributeExists){
+                            return true;
+                        }
+                    }
                 }
             }
-
         }
         else if(attribute instanceof ComplexAttribute){
             //complex attributes have sub attribute map, hence need conversion to arraylist
@@ -465,6 +606,61 @@ public abstract class AbstractValidator {
             if(subAttributes != null){
                 for(Attribute subAttribute : subAttributes){
                     if(requestedAttributes.contains(attribute.getName()+"."+subAttribute.getName())){
+                        return true;
+                    }
+                    //this case is only valid for extension schema
+                    if(subAttribute.getType().equals(SCIMDefinitions.DataType.COMPLEX)){
+                        boolean isSubSubAttributeExists = isSubSubAttributeExistsInList(requestedAttributes, attribute, subAttribute);
+                        if(isSubSubAttributeExists){
+                            return true;
+                        }
+                    }
+                }
+            }
+            else{
+                return false;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * This checks whether, within the 'requestedAttributes', is there a sub attribute of the 'subAttribute'.
+     * If so we should not delete the 'attribute'
+     * This case is only applicable for extension
+     *
+     * @param requestedAttributes
+     * @param grandParentAttribute
+     * @param parentAttribute
+     * @return
+     */
+    private static boolean isSubSubAttributeExistsInList(List<String> requestedAttributes,
+                                                         Attribute grandParentAttribute, Attribute parentAttribute) {
+        ArrayList<Attribute> subAttributes = null;
+        if(parentAttribute instanceof MultiValuedAttribute){
+            subAttributes = (ArrayList<Attribute>)
+                    ((MultiValuedAttribute)parentAttribute).getAttributeValues();
+            if(subAttributes != null){
+                for(Attribute subAttribute : subAttributes){
+                    ArrayList<Attribute> subSimpleAttributes =new ArrayList<Attribute>((
+                            (ComplexAttribute)subAttribute).getSubAttributesList().values());
+                    for(Attribute subSimpleAttribute : subSimpleAttributes){
+                        if(requestedAttributes.contains(grandParentAttribute.getName()+"."+
+                                parentAttribute.getName()+"."+subSimpleAttribute.getName())){
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        else if(parentAttribute instanceof ComplexAttribute){
+            //complex attributes have sub attribute map, hence need conversion to arraylist
+            subAttributes = new ArrayList<Attribute>
+                    (((HashMap)(((ComplexAttribute)parentAttribute).getSubAttributesList())).values());
+            if(subAttributes != null){
+                for(Attribute subAttribute : subAttributes){
+                    if(requestedAttributes.contains(grandParentAttribute.getName()+"."+
+                            parentAttribute.getName()+"."+subAttribute.getName())){
                         return true;
                     }
                 }
@@ -848,12 +1044,12 @@ public abstract class AbstractValidator {
                         Attribute valueSubAttribute = (MultiValuedAttribute) (subValue.getSubAttribute(subAttributeSchema.getName()));
                         Object displayValue = null;
                         try {
-                             displayValue = ((MultiValuedAttribute) (valueSubAttribute)).getAttributePrimitiveValues().get(0);
+                            displayValue = ((MultiValuedAttribute) (valueSubAttribute)).getAttributePrimitiveValues().get(0);
                         }catch (Exception e){
                             String error = "Can not set display attribute value without a value attribute value.";
                             throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX,error);
-                    }
-                            //if multiple values are available, get the first value and put it as display name
+                        }
+                        //if multiple values are available, get the first value and put it as display name
                         SimpleAttribute simpleAttribute = new SimpleAttribute(
                                 SCIMConstants.CommonSchemaConstants.DISPLAY, displayValue);
                         AttributeSchema subSchema = attributeSchema.getSubAttributeSchema(SCIMConstants.CommonSchemaConstants.DISPLAY);

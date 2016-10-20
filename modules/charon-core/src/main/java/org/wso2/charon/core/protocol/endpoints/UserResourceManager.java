@@ -20,7 +20,6 @@ import org.wso2.charon.core.utils.AttributeUtil;
 import org.wso2.charon.core.utils.CopyUtil;
 import org.wso2.charon.core.utils.codeutils.FilterTreeManager;
 import org.wso2.charon.core.utils.codeutils.Node;
-import sun.java2d.pipe.SpanShapeRenderer;
 
 import java.io.IOException;
 import java.util.*;

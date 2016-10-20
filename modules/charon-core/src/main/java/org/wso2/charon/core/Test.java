@@ -75,10 +75,10 @@ public class Test {
                "    }\n"+
                "]," +
                "  \"urn:scim:schemas:extension:wso2:1.0:wso2Extension\": {\n" +
-               "    \"employeeNumber\": [{\n" +
+               "    \"employeeNumber\":{\n" +
                "        \"value\": \"ODEL\", \n" +
                "        \"display\": \"NoLimit\" \n" +
-               "      }],\n" +
+               "      },\n" +
                "    \"sister\": \"Dushani\",\n" +
                "    \"owners\": [\"Sakitha\",\"Milinda\"],\n" +
                "    \"dogs\": [\n" +
@@ -94,11 +94,11 @@ public class Test {
                "  }\n" +
                "}";
 
-       String attributes="wso2Extension.employeeNumber";
-       String excludeAttributes="externalId,emails.value";
+       String attributes="wso2Extension.employeeNumber,wso2Extension.dogs";
+       String excludeAttributes="externalId,emails.value,wso2Extension.employeeNumber,wso2Extension.dogs";
 
        //----CREATE USER --------
-       SCIMResponse res=um.create(array,new SCIMUserManager(),null,null);
+       SCIMResponse res=um.create(array,new SCIMUserManager(),null,excludeAttributes);
 
 
        //-----GET USER  ---------

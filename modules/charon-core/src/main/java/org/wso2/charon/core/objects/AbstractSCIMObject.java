@@ -8,6 +8,7 @@ import org.wso2.charon.core.schema.ResourceTypeSchema;
 import org.wso2.charon.core.schema.SCIMConstants;
 import org.wso2.charon.core.schema.SCIMSchemaDefinitions;
 
+import javax.print.AttributeException;
 import java.util.*;
 
 /**
@@ -96,6 +97,24 @@ public class AbstractSCIMObject implements SCIMObject{
     }
 
     /**
+     * This deletion method is only applicable for extension schema
+     * Deleting a sub attribute of complex attribute is the responsibility of an attribute holder.
+     *
+     * @param grandParentAttribute
+     * @param parentAttribute
+     * @param childAttribute
+     */
+    public void deleteSubSubAttribute(String childAttribute, String parentAttribute, String grandParentAttribute)
+            throws CharonException {
+        if (attributeList.containsKey(grandParentAttribute)) {
+            ComplexAttribute grandParent = (ComplexAttribute) attributeList.get(grandParentAttribute);
+            Attribute parent = ((ComplexAttribute) grandParent).getSubAttribute(parentAttribute);
+            ((ComplexAttribute)(parent)).removeSubAttribute(childAttribute);
+
+        }
+    }
+
+    /**
      * Deleting a sub value's sub attribute of multivalued attribute is the responsibility of an attribute holder.
      *
      */
@@ -109,6 +128,23 @@ public class AbstractSCIMObject implements SCIMObject{
                     break;
                 }
             }
+        }
+
+    }
+
+    public void deleteSubValuesSubAttribute(String grandParentAttribute, String parentAttribute,
+                                            String subValue, String childAttribute) {
+        if(attributeList.containsKey(grandParentAttribute)){
+            ComplexAttribute grandParent = (ComplexAttribute) attributeList.get(grandParentAttribute);
+            Map<String, Attribute> subAttributeList = grandParent.getSubAttributesList();
+            MultiValuedAttribute parent = (MultiValuedAttribute) subAttributeList.get(parentAttribute);
+            List<Attribute> parentAttributeList = parent.getAttributeValues();
+            for(Attribute parentsSubValue : parentAttributeList){
+                if(subValue.equals(parentsSubValue.getName())){
+                    ((ComplexAttribute)parentsSubValue).removeSubAttribute(childAttribute);
+                }
+            }
+
         }
 
     }
