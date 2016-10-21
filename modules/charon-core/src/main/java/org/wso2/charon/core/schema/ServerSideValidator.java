@@ -94,7 +94,8 @@ public class ServerSideValidator extends AbstractValidator{
             setDisplayNameInComplexMultiValuedAttributes(newObject,resourceSchema);
             //check for required attributes.
             validateSCIMObjectForRequiredAttributes(validatedObject, resourceSchema);
-
+            //check for schema list
+            validateSchemaList(validatedObject, resourceSchema);
         return validatedObject;
     }
 }

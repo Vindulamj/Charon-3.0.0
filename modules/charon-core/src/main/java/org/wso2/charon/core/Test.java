@@ -38,10 +38,10 @@ public class Test {
                "  \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:User\"],\n" +
                "  \"id\":\"23232\",\n"+
                "  \"externalId\": \"701984\",\n" +
-               "  \"urn:ietf:params:scim:schemas:core:2.0:User:userName\": \"johan@wso2.com\",\n" +
+               "  \"urn:ietf:params:scim:schemas:core:2.0:User:userName\": \"bigboss@wso2.com\",\n" +
                "  \"password\": \"testpass\",\n" +
                "  \"name\": {\n" +
-               "    \"formatted\": \"Ms. Barbara J Jensen, III\",\n" +
+               "    \"formatted\": \"Msdsd. Barbara J Jensen, III\",\n" +
                "    \"familyName\": \"Sachini\",\n" +
                "    \"givenName\": \"VJ\",\n" +
                "    \"middleName\": \"Jane\",\n" +
@@ -53,7 +53,7 @@ public class Test {
                "  \"profileUrl\": \"https://login.example.com/bjensen\",\n" +
                "  \"emails\": [\n" +
                "    {\n" +
-               "      \"value\": \"yy@example.com\",\n" +
+               "      \"value\": \"yysd@example.com\",\n" +
                "      \"type\": \"work\",\n" +
                "      \"primary\": true\n" +
                "    },\n" +
@@ -79,8 +79,8 @@ public class Test {
                "        \"value\": \"ODEL\", \n" +
                "        \"display\": \"NoLimit\" \n" +
                "      },\n" +
-               "    \"sister\": \"Dushani\",\n" +
-               "    \"owners\": [\"Sakitha\",\"Milinda\"],\n" +
+               "    \"sister\": \"Dushanis\",\n" +
+               "    \"owners\": [\"Sakditha\",\"Mildinda\"],\n" +
                "    \"dogs\": [\n" +
                "    {\n" +
                "        \"boss\": \"micky\", \n" +
@@ -98,7 +98,7 @@ public class Test {
        String excludeAttributes="externalId,emails.value,wso2Extension.employeeNumber.display";
 
        //----CREATE USER --------
-       SCIMResponse res=um.create(array,new SCIMUserManager(), attributes, null);
+       //SCIMResponse res=um.create(array,new SCIMUserManager(), attributes, null);
 
 
        //-----GET USER  ---------
@@ -114,7 +114,7 @@ public class Test {
        //SCIMResponse res= um.listWithPagination(1,7,new SCIMUserManager(),null,null);
 
        //-----UPDATE USER VIA PUT ---------
-       //SCIMResponse res= um.updateWithPUT("a713e12b-0364-4d54-b939-6d1230d40251",array,new SCIMUserManager(),null,null);
+       SCIMResponse res= um.updateWithPUT("f38508e0-40f7-4a74-b2a1-1b602939b172",array,new SCIMUserManager(),null,null);
 
        //-----FILTER AT USER ENDPOINT ---------
        String filter ="userName eq johan@wso2.com";

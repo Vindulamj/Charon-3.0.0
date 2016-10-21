@@ -3,16 +3,13 @@ package org.wso2.charon.core.schema;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.w3c.dom.Attr;
 import org.wso2.charon.core.attributes.*;
 import org.wso2.charon.core.exceptions.BadRequestException;
 import org.wso2.charon.core.exceptions.CharonException;
-import org.wso2.charon.core.exceptions.PreConditionFailedException;
 import org.wso2.charon.core.objects.AbstractSCIMObject;
 import org.wso2.charon.core.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.utils.CopyUtil;
 
-import javax.management.AttributeList;
 import java.util.*;
 
 public abstract class AbstractValidator {
@@ -727,142 +724,214 @@ public abstract class AbstractValidator {
         Map<String, Attribute> newAttributeList = newObject.getAttributeList();
 
         for (AttributeSchema attributeSchema : attributeSchemaList) {
-            if(attributeSchema.getMutability().equals(SCIMDefinitions.Mutability.READ_ONLY)){
-                if(newAttributeList.containsKey(attributeSchema.getName()) &&
-                        oldAttributeList.containsKey(attributeSchema.getName())){
+            if (attributeSchema.getMutability().equals(SCIMDefinitions.Mutability.READ_ONLY)) {
+                if (newAttributeList.containsKey(attributeSchema.getName()) &&
+                        oldAttributeList.containsKey(attributeSchema.getName())) {
                     String error = "Read only attribute: " + attributeSchema.getName() +
                             " is set from consumer in the SCIM Object. " +
                             "Removing it and updating from previous value.";
                     logger.debug(error);
                     newObject.deleteAttribute(attributeSchema.getName());
-                    newObject.setAttribute((Attribute)(CopyUtil.deepCopy(oldObject.getAttribute(attributeSchema.getName()))));
-                }
-                else if(newAttributeList.containsKey(attributeSchema.getName()) &&
-                        !oldAttributeList.containsKey(attributeSchema.getName())){
+                    newObject.setAttribute((Attribute) (CopyUtil.deepCopy(oldObject.getAttribute(attributeSchema.getName()))));
+                } else if (newAttributeList.containsKey(attributeSchema.getName()) &&
+                        !oldAttributeList.containsKey(attributeSchema.getName())) {
                     String error = "Read only attribute: " + attributeSchema.getName() +
                             " is set from consumer in the SCIM Object. " + "Removing it.";
                     logger.debug(error);
                     newObject.deleteAttribute(attributeSchema.getName());
+                } else if (!newAttributeList.containsKey(attributeSchema.getName()) &&
+                        oldAttributeList.containsKey(attributeSchema.getName())) {
+                    newObject.setAttribute((Attribute) (CopyUtil.deepCopy(oldObject.getAttribute(attributeSchema.getName()))));
                 }
-                else if(!newAttributeList.containsKey(attributeSchema.getName()) &&
-                        oldAttributeList.containsKey(attributeSchema.getName())){
-                    newObject.setAttribute((Attribute)(CopyUtil.deepCopy(oldObject.getAttribute(attributeSchema.getName()))));
-                }
-            }
-            else if(attributeSchema.getMutability().equals(SCIMDefinitions.Mutability.IMMUTABLE)){
-                if(newAttributeList.containsKey(attributeSchema.getName()) &&
-                        oldAttributeList.containsKey(attributeSchema.getName())){
+            } else if (attributeSchema.getMutability().equals(SCIMDefinitions.Mutability.IMMUTABLE)) {
+                if (newAttributeList.containsKey(attributeSchema.getName()) &&
+                        oldAttributeList.containsKey(attributeSchema.getName())) {
                     checkForSameValues(oldAttributeList, newAttributeList, attributeSchema);
 
-                }
-                else if(!newAttributeList.containsKey(attributeSchema.getName()) &&
-                        oldAttributeList.containsKey(attributeSchema.getName())){
-                    newObject.setAttribute((Attribute)(CopyUtil.deepCopy(oldObject.getAttribute(attributeSchema.getName()))));
+                } else if (!newAttributeList.containsKey(attributeSchema.getName()) &&
+                        oldAttributeList.containsKey(attributeSchema.getName())) {
+                    newObject.setAttribute((Attribute) (CopyUtil.deepCopy(oldObject.getAttribute(attributeSchema.getName()))));
                 }
             }
+            checkIfReadOnlyAndImmutableSubAttributesModified(newAttributeList, oldAttributeList, attributeSchema);
+        }
+        return newObject;
+    }
 
-            //check for sub attributes.
-            AbstractAttribute newAttribute = (AbstractAttribute) newAttributeList.get(attributeSchema.getName());
-            AbstractAttribute oldAttribute = (AbstractAttribute) oldAttributeList.get(attributeSchema.getName());
-            List<SCIMAttributeSchema> subAttributeSchemaList= attributeSchema.getSubAttributeSchemas();
+    /**
+     * check for read only and immutable sub attributes which has been modified on update request
+     * @param newAttributeList
+     * @param oldAttributeList
+     * @param attributeSchema
+     * @throws BadRequestException
+     * @throws CharonException
+     */
+    private static void checkIfReadOnlyAndImmutableSubAttributesModified(Map<String, Attribute> newAttributeList,
+                                                                         Map<String, Attribute> oldAttributeList,
+                                                                         AttributeSchema attributeSchema)
+            throws BadRequestException, CharonException {
 
-            if(subAttributeSchemaList != null ){
-                if(newAttribute !=null && oldAttribute != null){
-                    if(attributeSchema.getMultiValued()){
-                        //this is complex multivalued case
-                        List<Attribute> newSubValuesList = ((MultiValuedAttribute)newAttribute).getAttributeValues();
-                        List<Attribute> oldSubValuesList = ((MultiValuedAttribute)oldAttribute).getAttributeValues();
+        //check for sub attributes.
+        AbstractAttribute newAttribute = (AbstractAttribute) newAttributeList.get(attributeSchema.getName());
+        AbstractAttribute oldAttribute = (AbstractAttribute) oldAttributeList.get(attributeSchema.getName());
+        List<SCIMAttributeSchema> subAttributeSchemaList= attributeSchema.getSubAttributeSchemas();
 
-                        for(Attribute subValue : newSubValuesList){
-                            if(isListContains((((ComplexAttribute)subValue).getName()),oldSubValuesList)){
-                                checkForReadOnlyAndImmutableInComplexAttributes(subValue,getRelatedSubValue(subValue,oldSubValuesList),subAttributeSchemaList);
-                            }
-                            else{
-                                if(attributeSchema.getMutability().equals(SCIMDefinitions.Mutability.IMMUTABLE)){
-                                    throw new BadRequestException(ResponseCodeConstants.MUTABILITY);
-                                }
-                            }
-                        }
+        if(subAttributeSchemaList != null ){
+            if(attributeSchema.getName().equals(SCIMResourceSchemaManager.getInstance().getExtensionName())){
+                checkIfReadOnlyAndImmutableExtensionAttributesModified(subAttributeSchemaList, newAttribute, oldAttribute);
+            }
+            if(newAttribute !=null && oldAttribute != null){
+                if(attributeSchema.getMultiValued()){
+                    //this is complex multivalued case
+                    List<Attribute> newSubValuesList = ((MultiValuedAttribute)newAttribute).getAttributeValues();
+                    List<Attribute> oldSubValuesList = ((MultiValuedAttribute)oldAttribute).getAttributeValues();
+                    //if size aren't equal, they do not preserver immutable quality
+                    if(newSubValuesList.size()!=oldSubValuesList.size() &&
+                            attributeSchema.getMutability().equals(SCIMDefinitions.Mutability.IMMUTABLE)){
+                        throw new BadRequestException(ResponseCodeConstants.MUTABILITY);
                     }
-                    else {
-                        //A complex attribute itself can not be immutable if it's sub variables are not immutable
-                        checkForReadOnlyAndImmutableInComplexAttributes(newAttribute, oldAttribute, subAttributeSchemaList);
+                    //no need to check sub attributes of sub values separately for equality, stop at the sub value level
+                    for(Attribute subValue : newSubValuesList){
+                        if(!isListContains((((ComplexAttribute)subValue).getName()),oldSubValuesList) &&
+                                attributeSchema.getMutability().equals(SCIMDefinitions.Mutability.IMMUTABLE)){
+                            throw new BadRequestException(ResponseCodeConstants.MUTABILITY);
+                        }
                     }
                 }
-                else if(newAttribute ==null && oldAttribute != null) {
-                    if (attributeSchema.getMultiValued()) {
-                        List<Attribute> oldSubValuesList = ((MultiValuedAttribute) oldAttribute).getAttributeValues();
-                        Attribute clonedMultiValuedAttribute=(Attribute) CopyUtil.deepCopy(oldAttribute);
-                        clonedMultiValuedAttribute.deleteSubAttributes();
+                else {
+                    //A complex attribute itself can not be immutable if it's sub variables are not immutable
+                    checkForReadOnlyAndImmutableInComplexAttributes(newAttribute, oldAttribute, subAttributeSchemaList);
+                }
+            }
+            else if(newAttribute ==null && oldAttribute != null) {
+                if (attributeSchema.getMultiValued()) {
+                    List<Attribute> oldSubValuesList = ((MultiValuedAttribute) oldAttribute).getAttributeValues();
+                    Attribute clonedMultiValuedAttribute=(Attribute) CopyUtil.deepCopy(oldAttribute);
+                    clonedMultiValuedAttribute.deleteSubAttributes();
 
-                        for (Attribute subValue : oldSubValuesList) {
-                            Attribute clonedSubValue=(Attribute) CopyUtil.deepCopy(subValue);
-                            clonedSubValue.deleteSubAttributes();
+                    for (Attribute subValue : oldSubValuesList) {
+                        Attribute clonedSubValue=(Attribute) CopyUtil.deepCopy(subValue);
+                        clonedSubValue.deleteSubAttributes();
 
-                            for (AttributeSchema subAttributeSchema : subAttributeSchemaList) {
-                                if (subAttributeSchema.getMutability().equals(SCIMDefinitions.Mutability.READ_ONLY)
-                                        || subAttributeSchema.getMutability().equals(SCIMDefinitions.Mutability.IMMUTABLE)) {
-                                    if(((ComplexAttribute)subValue).isSubAttributeExist(subAttributeSchema.getName())){
-                                        Attribute clonedSubValuesAttribute=(Attribute) CopyUtil.deepCopy(
-                                                ((ComplexAttribute)subValue).getSubAttribute(subAttributeSchema.getName()));
-                                        ((ComplexAttribute)clonedSubValue).setSubAttribute(clonedSubValuesAttribute);
-                                    }
-                                }
-                            }
-                            ((MultiValuedAttribute)(clonedMultiValuedAttribute)).setAttributeValue(clonedSubValue);
-                        }
-                    }
-                    else {
-                        Map<String, Attribute> oldSubAttributeList = ((ComplexAttribute) (oldAttribute)).getSubAttributesList();
-                        Attribute clonedAttribute=(Attribute) CopyUtil.deepCopy(oldAttribute);
-                        clonedAttribute.deleteSubAttributes();
                         for (AttributeSchema subAttributeSchema : subAttributeSchemaList) {
-
                             if (subAttributeSchema.getMutability().equals(SCIMDefinitions.Mutability.READ_ONLY)
                                     || subAttributeSchema.getMutability().equals(SCIMDefinitions.Mutability.IMMUTABLE)) {
-                                if (oldSubAttributeList.containsKey(subAttributeSchema.getName())) {
-                                    ((ComplexAttribute)(clonedAttribute)).setSubAttribute(
-                                            (Attribute) CopyUtil.deepCopy(oldSubAttributeList.get(subAttributeSchema.getName())));
+                                if(((ComplexAttribute)subValue).isSubAttributeExist(subAttributeSchema.getName())){
+                                    Attribute clonedSubValuesAttribute=(Attribute) CopyUtil.deepCopy(
+                                            ((ComplexAttribute)subValue).getSubAttribute(subAttributeSchema.getName()));
+                                    ((ComplexAttribute)clonedSubValue).setSubAttribute(clonedSubValuesAttribute);
                                 }
                             }
                         }
-                        newAttributeList.put(clonedAttribute.getName(),clonedAttribute);
+                        ((MultiValuedAttribute)(clonedMultiValuedAttribute)).setAttributeValue(clonedSubValue);
                     }
                 }
-                else if(newAttribute !=null && oldAttribute == null){
-                    if(attributeSchema.getMultiValued()) {
-                        if (attributeSchema.getMultiValued()) {
-                            List<Attribute> newSubValuesList = ((MultiValuedAttribute) newAttribute).getAttributeValues();
+                else {
+                    Map<String, Attribute> oldSubAttributeList = ((ComplexAttribute) (oldAttribute)).getSubAttributesList();
+                    Attribute clonedAttribute=(Attribute) CopyUtil.deepCopy(oldAttribute);
+                    clonedAttribute.deleteSubAttributes();
+                    for (AttributeSchema subAttributeSchema : subAttributeSchemaList) {
 
-                            for (Attribute subValue : newSubValuesList) {
-                                for (AttributeSchema subAttributeSchema : subAttributeSchemaList) {
-                                    if (subAttributeSchema.getMutability().equals(SCIMDefinitions.Mutability.READ_ONLY)) {
-                                        ((ComplexAttribute) (subValue)).removeSubAttribute(subAttributeSchema.getName());
-                                    }
+                        if (subAttributeSchema.getMutability().equals(SCIMDefinitions.Mutability.READ_ONLY)
+                                || subAttributeSchema.getMutability().equals(SCIMDefinitions.Mutability.IMMUTABLE)) {
+                            if (oldSubAttributeList.containsKey(subAttributeSchema.getName())) {
+                                ((ComplexAttribute)(clonedAttribute)).setSubAttribute(
+                                        (Attribute) CopyUtil.deepCopy(oldSubAttributeList.get(subAttributeSchema.getName())));
+                            }
+                        }
+                    }
+                    newAttributeList.put(clonedAttribute.getName(),clonedAttribute);
+                }
+            }
+            else if(newAttribute !=null && oldAttribute == null){
+                if(attributeSchema.getMultiValued()) {
+                    if (attributeSchema.getMultiValued()) {
+                        List<Attribute> newSubValuesList = ((MultiValuedAttribute) newAttribute).getAttributeValues();
+
+                        for (Attribute subValue : newSubValuesList) {
+                            for (AttributeSchema subAttributeSchema : subAttributeSchemaList) {
+                                if (subAttributeSchema.getMutability().equals(SCIMDefinitions.Mutability.READ_ONLY)) {
+                                    ((ComplexAttribute) (subValue)).removeSubAttribute(subAttributeSchema.getName());
                                 }
                             }
                         }
                     }
-                    else{
-                        //this is complex attribute case
-                        Map<String,Attribute> newSubAttributeList= ((ComplexAttribute)(newAttribute)).getSubAttributesList();
+                }
+                else{
+                    //this is complex attribute case
+                    Map<String,Attribute> newSubAttributeList= ((ComplexAttribute)(newAttribute)).getSubAttributesList();
 
-                        for(AttributeSchema subAttributeSchema : subAttributeSchemaList) {
+                    for(AttributeSchema subAttributeSchema : subAttributeSchemaList) {
 
-                            if (subAttributeSchema.getMutability().equals(SCIMDefinitions.Mutability.READ_ONLY)) {
-                                if (newSubAttributeList.containsKey(subAttributeSchema.getName())){
-                                    String error = "Read only attribute: " + subAttributeSchema.getName() +
-                                            " is set from consumer in the SCIM Object. Removing it.";
-                                    logger.debug(error);
-                                    ((ComplexAttribute) newAttribute).removeSubAttribute(subAttributeSchema.getName());
-                                }
+                        if (subAttributeSchema.getMutability().equals(SCIMDefinitions.Mutability.READ_ONLY)) {
+                            if (newSubAttributeList.containsKey(subAttributeSchema.getName())){
+                                String error = "Read only attribute: " + subAttributeSchema.getName() +
+                                        " is set from consumer in the SCIM Object. Removing it.";
+                                logger.debug(error);
+                                ((ComplexAttribute) newAttribute).removeSubAttribute(subAttributeSchema.getName());
                             }
                         }
                     }
                 }
             }
         }
-        return newObject;
+    }
+
+    /**
+     * check for read only and immutable attributes in extension schema which has been modified on update request
+     *
+     * @param subAttributeSchemaList
+     * @param newAttribute
+     * @param oldAttribute
+     * @throws CharonException
+     * @throws BadRequestException
+     */
+    private static void checkIfReadOnlyAndImmutableExtensionAttributesModified(
+            List<SCIMAttributeSchema> subAttributeSchemaList, AbstractAttribute newAttribute,
+            AbstractAttribute oldAttribute) throws CharonException, BadRequestException {
+
+        Map<String,Attribute> newAttributeList = ((ComplexAttribute)newAttribute).getSubAttributesList();
+        Map<String,Attribute> oldAttributeList = ((ComplexAttribute)oldAttribute).getSubAttributesList();
+
+        for (AttributeSchema attributeSchema : subAttributeSchemaList) {
+            if (attributeSchema.getMutability().equals(SCIMDefinitions.Mutability.READ_ONLY)) {
+                if (newAttributeList.containsKey(attributeSchema.getName()) &&
+                        oldAttributeList.containsKey(attributeSchema.getName())) {
+                    String error = "Read only attribute: " + attributeSchema.getName() +
+                            " is set from consumer in the SCIM Object. " +
+                            "Removing it and updating from previous value.";
+                    logger.debug(error);
+                    ((ComplexAttribute) newAttribute).removeSubAttribute(attributeSchema.getName());
+                    ((ComplexAttribute) newAttribute).setSubAttribute(
+                            (Attribute)(CopyUtil.deepCopy((
+                                    (ComplexAttribute)oldAttribute).getSubAttribute(attributeSchema.getName()))));
+                } else if (newAttributeList.containsKey(attributeSchema.getName()) &&
+                        !oldAttributeList.containsKey(attributeSchema.getName())) {
+                    String error = "Read only attribute: " + attributeSchema.getName() +
+                            " is set from consumer in the SCIM Object. " + "Removing it.";
+                    logger.debug(error);
+                    ((ComplexAttribute) newAttribute).removeSubAttribute(attributeSchema.getName());
+                } else if (!newAttributeList.containsKey(attributeSchema.getName()) &&
+                        oldAttributeList.containsKey(attributeSchema.getName())) {
+                    ((ComplexAttribute) newAttribute).setSubAttribute(
+                            (Attribute)(CopyUtil.deepCopy((
+                                    (ComplexAttribute)oldAttribute).getSubAttribute(attributeSchema.getName()))));
+                }
+            } else if (attributeSchema.getMutability().equals(SCIMDefinitions.Mutability.IMMUTABLE)) {
+                if (newAttributeList.containsKey(attributeSchema.getName()) &&
+                        oldAttributeList.containsKey(attributeSchema.getName())) {
+                    checkForSameValues(oldAttributeList, newAttributeList, attributeSchema);
+
+                } else if (!newAttributeList.containsKey(attributeSchema.getName()) &&
+                        oldAttributeList.containsKey(attributeSchema.getName())) {
+                    ((ComplexAttribute) newAttribute).setSubAttribute(
+                            (Attribute)(CopyUtil.deepCopy((
+                                    (ComplexAttribute)oldAttribute).getSubAttribute(attributeSchema.getName()))));                }
+            }
+            if(attributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)){
+                checkIfReadOnlyAndImmutableSubAttributesModified(newAttributeList, oldAttributeList, attributeSchema);
+            }
+        }
     }
 
     /**
@@ -1046,6 +1115,15 @@ public abstract class AbstractValidator {
         }
     }
 
+    /**
+     * set the displayname sub attribute in complex type multi valued attribute
+     * eg. display name of emails
+     *
+     * @param multiValuedAttribute
+     * @param attributeSchema
+     * @throws CharonException
+     * @throws BadRequestException
+     */
     private static void setDisplayNameInComplexMultiValuedSubAttributes(Attribute multiValuedAttribute,
                                                                         AttributeSchema attributeSchema) throws CharonException,
             BadRequestException {

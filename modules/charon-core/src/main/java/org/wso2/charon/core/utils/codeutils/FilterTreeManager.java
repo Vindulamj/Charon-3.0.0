@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
  * (and, or, not)as the non-terminals of the tree.
  *
  * All terminals are filter expressions hence denoted by ExpressionNodes and all non terminal nodes are operators hence
- * denoted by OperatorNodes..
+ * denoted by OperatorNodes.
  *
  * More details on the concept can be found here :
  * https://unnikked.ga/how-to-build-a-boolean-expression-evaluator-518e9e068a65#.8fmexpvy7
