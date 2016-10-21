@@ -94,11 +94,11 @@ public class Test {
                "  }\n" +
                "}";
 
-       String attributes="wso2Extension.employeeNumber,wso2Extension.dogs";
-       String excludeAttributes="externalId,emails.value,wso2Extension.employeeNumber,wso2Extension.dogs";
+       String attributes="wso2Extension.sister";
+       String excludeAttributes="externalId,emails.value,wso2Extension.employeeNumber.display";
 
        //----CREATE USER --------
-       SCIMResponse res=um.create(array,new SCIMUserManager(),null,excludeAttributes);
+       SCIMResponse res=um.create(array,new SCIMUserManager(), attributes, null);
 
 
        //-----GET USER  ---------

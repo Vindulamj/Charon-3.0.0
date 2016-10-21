@@ -406,6 +406,22 @@ public abstract class AbstractValidator {
         }
     }
 
+    /**
+     * This method is to remove any defined and requested sub attributes and include requested sub attributes
+     * from complex attributes.
+     *
+     * This is applicable for extension schema only
+     *
+     * @param attribute
+     * @param subAttribute
+     * @param subSubAttribute
+     * @param requestedAttributes
+     * @param requestedExcludingAttributes
+     * @param requestedAttributesList
+     * @param requestedExcludingAttributesList
+     * @param scimObject
+     * @throws CharonException
+     */
     private static void removeSubSubAttributesOnReturn(Attribute attribute, Attribute subAttribute, Attribute subSubAttribute, String requestedAttributes,
                                                        String requestedExcludingAttributes, List<String> requestedAttributesList,
                                                        List<String> requestedExcludingAttributesList, AbstractSCIMObject scimObject) throws CharonException {
@@ -430,7 +446,8 @@ public abstract class AbstractValidator {
                         && (!requestedAttributesList.contains(
                         attribute.getName()+"."+ subAttribute.getName()+"."+ subSubAttribute.getName()) &&
                         !requestedAttributesList.contains(attribute.getName()) &&
-                        !requestedAttributesList.contains(attribute.getName()+"."+ subAttribute.getName()))){
+                        !requestedAttributesList.contains(attribute.getName()+"."+ subAttribute.getName()) &&
+                        !subSubAttribute.getReturned().equals(SCIMDefinitions.Returned.ALWAYS))){
                     scimObject.deleteSubSubAttribute(subSubAttribute.getName(), subAttribute.getName(), attribute.getName());
                 }
             }
@@ -516,6 +533,22 @@ public abstract class AbstractValidator {
 
     }
 
+    /**
+     * This method is to remove any defined and requested sub attributes and include requested sub attributes
+     * from multivalued attributes
+     *
+     * This is only applicable for extension schema
+     *
+     * @param attribute
+     * @param subAttribute
+     * @param subValue
+     * @param subSimpleAttribute
+     * @param requestedAttributes
+     * @param requestedExcludingAttributes
+     * @param requestedAttributesList
+     * @param requestedExcludingAttributesList
+     * @param scimObject
+     */
     private static void removeValuesSubSubAttributeOnReturn(Attribute attribute, Attribute subAttribute, Attribute subValue,
                                                             Attribute subSimpleAttribute,
                                                             String requestedAttributes, String requestedExcludingAttributes,
