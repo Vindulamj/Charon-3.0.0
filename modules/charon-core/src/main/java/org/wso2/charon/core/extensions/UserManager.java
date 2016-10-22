@@ -1,5 +1,6 @@
 package org.wso2.charon.core.extensions;
 
+import org.wso2.charon.core.exceptions.BadRequestException;
 import org.wso2.charon.core.exceptions.CharonException;
 import org.wso2.charon.core.exceptions.ConflictException;
 import org.wso2.charon.core.exceptions.NotFoundException;
@@ -22,7 +23,7 @@ public interface UserManager {
      * @param user User resource to be created in the user store of service provider.
      * @return newly created SCIM User resource sent back to the client in the response.
      */
-    public User createUser(User user) throws CharonException, ConflictException;
+    public User createUser(User user) throws CharonException, ConflictException, BadRequestException;
 
     /**
      * Obtains the user given the id.

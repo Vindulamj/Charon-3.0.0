@@ -24,8 +24,12 @@ public class ServerSideValidator extends AbstractValidator{
     public static void validateCreatedSCIMObject(AbstractSCIMObject scimObject, SCIMResourceTypeSchema resourceSchema)
             throws CharonException, BadRequestException, NotFoundException {
 
+        //set display names for complex multivalued attributes
+        setDisplayNameInComplexMultiValuedAttributes(scimObject,resourceSchema);
+        //check for required attributes
+        validateSCIMObjectForRequiredAttributes(scimObject, resourceSchema);
+        //remove any read only attributes
         removeAnyReadOnlyAttributes(scimObject,resourceSchema);
-
         //add created and last modified dates
         String id = UUID.randomUUID().toString();
         scimObject.setId(id);
@@ -34,8 +38,6 @@ public class ServerSideValidator extends AbstractValidator{
         scimObject.setCreatedDate(AttributeUtil.parseDateTime(AttributeUtil.formatDateTime(date)));
         //creates date and the last modified are the same if not updated.
         scimObject.setLastModified(AttributeUtil.parseDateTime(AttributeUtil.formatDateTime(date)));
-        //set display names for complex multivalued attributes
-        setDisplayNameInComplexMultiValuedAttributes(scimObject,resourceSchema);
         //set location and resourceType
         if (resourceSchema.isSchemaAvailable(SCIMConstants.USER_CORE_SCHEMA_URI)){
             String location = createLocationHeader(AbstractResourceManager.getResourceEndpointURL(
@@ -48,8 +50,6 @@ public class ServerSideValidator extends AbstractValidator{
             scimObject.setLocation(location);
             scimObject.setResourceType(SCIMConstants.GROUP);
         }
-        //TODO:Are we supporting version ? (E-tag-resource versioning)
-        validateSCIMObjectForRequiredAttributes(scimObject, resourceSchema);
         validateSchemaList(scimObject, resourceSchema);
     }
 
@@ -82,6 +82,11 @@ public class ServerSideValidator extends AbstractValidator{
             throws CharonException, BadRequestException {
 
             AbstractSCIMObject validatedObject = null;
+            //set display names for complex multivalued attributes
+            setDisplayNameInComplexMultiValuedAttributes(newObject,resourceSchema);
+            //check for required attributes.
+            validateSCIMObjectForRequiredAttributes(newObject, resourceSchema);
+
             validatedObject = checkIfReadOnlyAndImmutableAttributesModified(oldObject, newObject, resourceSchema);
             //copy meta attribute from old to new
             validatedObject.setAttribute(oldObject.getAttribute(SCIMConstants.CommonSchemaConstants.META));
@@ -90,12 +95,9 @@ public class ServerSideValidator extends AbstractValidator{
             //edit last modified date
             Date date = new Date();
             validatedObject.setLastModified(date);
-            //set display names for complex multivalued attributes
-            setDisplayNameInComplexMultiValuedAttributes(newObject,resourceSchema);
-            //check for required attributes.
-            validateSCIMObjectForRequiredAttributes(validatedObject, resourceSchema);
             //check for schema list
             validateSchemaList(validatedObject, resourceSchema);
+
         return validatedObject;
     }
 }

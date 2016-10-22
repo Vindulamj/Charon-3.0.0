@@ -558,7 +558,8 @@ public class UserResourceManager extends AbstractResourceManager {
         }
     }
 
-    public SCIMResponse updateWithPATCH(String existingId, String scimObjectString, String inputFormat, String outputFormat, UserManager userManager) {
+    public SCIMResponse updateWithPATCH(String existingId, String scimObjectString, UserManager userManager,
+                                        String attributes, String excludeAttributes) {
         return null;
     }
 

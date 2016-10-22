@@ -41,7 +41,7 @@ public class Test {
                "  \"urn:ietf:params:scim:schemas:core:2.0:User:userName\": \"bigboss@wso2.com\",\n" +
                "  \"password\": \"testpass\",\n" +
                "  \"name\": {\n" +
-               "    \"formatted\": \"Msdsd. Barbara J Jensen, III\",\n" +
+               "    \"formatted\": \"Ms. Barbara J Jensen, III\",\n" +
                "    \"familyName\": \"Sachini\",\n" +
                "    \"givenName\": \"VJ\",\n" +
                "    \"middleName\": \"Jane\",\n" +
@@ -84,11 +84,11 @@ public class Test {
                "    \"dogs\": [\n" +
                "    {\n" +
                "        \"boss\": \"micky\", \n" +
-               "        \"value\": \"lisa\" \n" +
+               "        \"value\": \"li1sa\" \n" +
                "    },\n" +
                "    {\n" +
                "        \"boss\": \"lisa\", \n" +
-               "        \"value\": \"lisa\" \n" +
+               "        \"value\": \"lisaa\" \n" +
                "    }\n" +
                "      ]\n" +
                "  }\n" +
@@ -98,7 +98,7 @@ public class Test {
        String excludeAttributes="externalId,emails.value,wso2Extension.employeeNumber.display";
 
        //----CREATE USER --------
-       //SCIMResponse res=um.create(array,new SCIMUserManager(), attributes, null);
+       //SCIMResponse res=um.create(array,new SCIMUserManager(),null, null);
 
 
        //-----GET USER  ---------
@@ -122,6 +122,9 @@ public class Test {
 
        //-----LIST USERS WITH SORT ---------
        //SCIMResponse res= um.listBySort(null,"AsCEnding",new SCIMUserManager(),attributes,null);
+
+       //-----UPDATE USERS WITH PATCH ---------
+       //SCIMResponse res= um.updateWithPATCH(null,null,new SCIMUserManager(),attributes,null);
 
 
        System.out.println(res.getResponseStatus());
