@@ -90,6 +90,9 @@ public class SCIMResourceSchemaManager {
 
 	public String getExtensionName(){
 		SCIMAttributeSchema schemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
+		if(schemaExtension == null){
+			return null;
+		}
 		return schemaExtension.getName();
 	}
 

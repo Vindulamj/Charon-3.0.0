@@ -14,6 +14,7 @@ import org.wso2.charon.core.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.protocol.SCIMResponse;
 import org.wso2.charon.core.schema.*;
 import org.wso2.charon.core.utils.AttributeUtil;
+import org.wso2.charon.core.utils.codeutils.PatchOperation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -446,6 +447,37 @@ public class JSONDecoder {
         return (ComplexAttribute) DefaultAttributeFactory.createAttribute(attributeSchema,
                 complexAttribute);
 
+    }
+
+    /**
+     * This method is to extract operations from the PATCH request body and create separate PatchOperation objects
+     * for each operation
+     * @param scimResourceString
+     * @return
+     */
+    public ArrayList<PatchOperation> decodeRequest(String scimResourceString) throws BadRequestException {
+
+        ArrayList<PatchOperation> operationList = new ArrayList<PatchOperation>();
+        try {
+            //decode the string into json representation
+            JSONObject decodedJsonObj = new JSONObject(new JSONTokener(scimResourceString));
+            //obtain the Operations values
+            JSONArray operationJsonList = (JSONArray) decodedJsonObj.opt(SCIMConstants.OperationalConstants.OPERATIONS);
+            //for each operation, create a PatchOperation object and add the relevant values to it
+            for (int count = 0; count < operationJsonList.length(); count++) {
+                JSONObject operation = (JSONObject) operationJsonList.get(count);
+                PatchOperation patchOperation = new PatchOperation();
+                patchOperation.setOperation((String) operation.opt(SCIMConstants.OperationalConstants.OP));
+                patchOperation.setPath((String) operation.opt(SCIMConstants.OperationalConstants.PATH));
+                patchOperation.setValues(operation.opt(SCIMConstants.OperationalConstants.VALUE));
+                operationList.add(patchOperation);
+            }
+        }
+        catch (JSONException e){
+            logger.error("json error in decoding the request");
+            throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+        }
+        return  operationList;
     }
 }
 

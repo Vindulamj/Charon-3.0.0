@@ -20,6 +20,7 @@ import org.wso2.charon.core.utils.AttributeUtil;
 import org.wso2.charon.core.utils.CopyUtil;
 import org.wso2.charon.core.utils.codeutils.FilterTreeManager;
 import org.wso2.charon.core.utils.codeutils.Node;
+import org.wso2.charon.core.utils.codeutils.PatchOperation;
 
 import java.io.IOException;
 import java.util.*;
@@ -560,6 +561,50 @@ public class UserResourceManager extends AbstractResourceManager {
 
     public SCIMResponse updateWithPATCH(String existingId, String scimObjectString, UserManager userManager,
                                         String attributes, String excludeAttributes) {
+        //needs to validate the incoming object. eg: id can not be set by the consumer.
+        JSONEncoder encoder = null;
+        JSONDecoder decoder = null;
+
+        ArrayList<PatchOperation> operationList = new ArrayList<PatchOperation>();
+        try {
+            //obtain the json encoder
+            encoder = getEncoder();
+            //obtain the json decoder.
+            decoder = getDecoder();
+
+            if (existingId != null) {
+                //retrieve the old object
+                User oldUser = userManager.getUser(existingId);
+                if (oldUser == null) {
+                    String error = "No user exists with the given id: " + existingId;
+                    throw new NotFoundException(error);
+                }
+                operationList = decoder.decodeRequest(scimObjectString);
+                for(PatchOperation patchOperation : operationList){
+                    if(patchOperation.getOperation().equals(SCIMConstants.OperationalConstants.ADD)){
+                        patchOperationAdd(oldUser, patchOperation);
+                    }
+                    else if(patchOperation.getOperation().equals(SCIMConstants.OperationalConstants.REMOVE)){
+                        patchOperationRemove(oldUser, patchOperation);
+                    }
+                    else if(patchOperation.getOperation().equals(SCIMConstants.OperationalConstants.REPLACE)){
+                        patchOperationReplace(oldUser, patchOperation);
+                    }
+                }
+            }
+            else{
+                //PATCH is for modifying resources, not endpoints, hence if existing id is not specified,
+                // an error need to be thrown
+                String error = "No user resource is specified in the request";
+                throw new BadRequestException(error, ResponseCodeConstants.NO_TARGET);
+            }
+        } catch (CharonException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (NotFoundException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (BadRequestException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        }
         return null;
     }
 
@@ -601,5 +646,18 @@ public class UserResourceManager extends AbstractResourceManager {
             paginatedListedResource.setResources(userAttributes);
         }
         return paginatedListedResource;
+    }
+
+
+    private void patchOperationAdd(User oldUser, PatchOperation patchOperation){
+
+    }
+
+    private void patchOperationReplace(User oldUser, PatchOperation patchOperation){
+
+    }
+
+    private void patchOperationRemove(User oldUser, PatchOperation patchOperation){
+
     }
 }

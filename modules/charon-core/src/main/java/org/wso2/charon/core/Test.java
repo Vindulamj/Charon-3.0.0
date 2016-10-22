@@ -114,7 +114,7 @@ public class Test {
        //SCIMResponse res= um.listWithPagination(1,7,new SCIMUserManager(),null,null);
 
        //-----UPDATE USER VIA PUT ---------
-       SCIMResponse res= um.updateWithPUT("f38508e0-40f7-4a74-b2a1-1b602939b172",array,new SCIMUserManager(),null,null);
+       //SCIMResponse res= um.updateWithPUT("c6c75a94-d298-4202-b180-e89c973c0ab4",array,new SCIMUserManager(),null,null);
 
        //-----FILTER AT USER ENDPOINT ---------
        String filter ="userName eq johan@wso2.com";
@@ -123,8 +123,27 @@ public class Test {
        //-----LIST USERS WITH SORT ---------
        //SCIMResponse res= um.listBySort(null,"AsCEnding",new SCIMUserManager(),attributes,null);
 
+
+       String patch_Request = "{\n" +
+               "     \"schemas\":\n" +
+               "       [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n" +
+               "     \"Operations\":[{\n" +
+               "       \"op\":\"add\",\n" +
+               "       \"value\":{\n" +
+               "         \"emails\":[\n" +
+               "           {\n" +
+               "             \"value\":\"babs@jensen.org\",\n" +
+               "             \"type\":\"home\"\n" +
+               "           }\n" +
+               "         ],\n" +
+               "         \"nickname\":\"Babs\"\n" +
+               "       }\n"+
+               "     }]\n" +
+               "   }";
+
        //-----UPDATE USERS WITH PATCH ---------
-       //SCIMResponse res= um.updateWithPATCH(null,null,new SCIMUserManager(),attributes,null);
+       SCIMResponse res= um.updateWithPATCH("3f0dda41-ce08-497c-917e-12b803acdfb3", patch_Request, new SCIMUserManager(),
+               null, null);
 
 
        System.out.println(res.getResponseStatus());

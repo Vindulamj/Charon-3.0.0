@@ -373,26 +373,34 @@ public class SCIMConstants {
     public static class OperationalConstants{
 
         /*SCIM filter types*/
-        public static final String EQ=" eq ";
-        public static final String NE=" ne ";
-        public static final String CO=" co ";
-        public static final String SW=" sw ";
-        public static final String EW=" ew ";
-        public static final String PR=" pr";   //this does not need to have a white space at the end
-        public static final String GT=" gt ";
-        public static final String GE=" ge ";
-        public static final String LT=" lt ";
-        public static final String LE=" le ";
+        public static final String EQ = " eq ";
+        public static final String NE = " ne ";
+        public static final String CO = " co ";
+        public static final String SW = " sw ";
+        public static final String EW = " ew ";
+        public static final String PR = " pr";   //this does not need to have a white space at the end
+        public static final String GT = " gt ";
+        public static final String GE = " ge ";
+        public static final String LT = " lt ";
+        public static final String LE = " le ";
 
         /*SCIM logical operators*/
-        public static final String AND="and";
-        public static final String OR="or";
-        public static final String NOT="not";
-        public static final String LEFT="(";
-        public static final String RIGHT=")";
+        public static final String AND = "and";
+        public static final String OR = "or";
+        public static final String NOT = "not";
+        public static final String LEFT = "(";
+        public static final String RIGHT = ")";
 
         public static final String ASCENDING = "ascending";
-        public static final String DESCENDING= "descending";
+        public static final String DESCENDING = "descending";
+
+        public static final String ADD = "add";
+        public static final String REMOVE = "remove";
+        public static final String REPLACE = "replace";
+        public static final String OPERATIONS = "Operations";
+        public static final String OP = "op";
+        public static final String PATH = "path";
+        public static final String VALUE = "value";
     }
 
      /*Constants found in ServiceProviderConfig schema.*/
