@@ -18,6 +18,10 @@ Currently following features are supported.
 - [x] Get
 - [x] Delete
 - [x] List
+- [x] Filtering including complex filters
+- [x] Pagination
+- [x] attributes and exclude attribute support for all operations
+- [x] Sorting
 
 #### /Me Endpoint
 - [x] Create
