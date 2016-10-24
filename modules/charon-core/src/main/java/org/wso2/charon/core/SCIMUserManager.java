@@ -22,25 +22,18 @@ package org.wso2.charon.core;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.w3c.dom.Attr;
 import org.wso2.charon.core.attributes.*;
-import org.wso2.charon.core.exceptions.BadRequestException;
 import org.wso2.charon.core.exceptions.CharonException;
 import org.wso2.charon.core.exceptions.ConflictException;
 import org.wso2.charon.core.exceptions.NotFoundException;
 import org.wso2.charon.core.extensions.UserManager;
 import org.wso2.charon.core.objects.Group;
 import org.wso2.charon.core.objects.User;
-import org.wso2.charon.core.schema.AttributeSchema;
-import org.wso2.charon.core.schema.SCIMConstants;
-import org.wso2.charon.core.schema.SCIMSchemaDefinitions;
 import org.wso2.charon.core.utils.codeutils.ExpressionNode;
 import org.wso2.charon.core.utils.codeutils.Node;
-import org.wso2.charon.core.utils.codeutils.OperationNode;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -352,6 +345,31 @@ public class SCIMUserManager implements UserManager {
         }
         return groupListNew;
 
+    }
+
+    @Override
+    public List<Group> filterGroups(Node rootNode) {
+        ExpressionNode en=(ExpressionNode)rootNode;
+        String attributeValue = en.getAttributeValue();
+        String operation  = en.getOperation();
+        String value= en.getValue();
+        try {
+            List<Group> list= listGroups();
+            List<Group> newList = new ArrayList<Group>();
+            for(Group group:list){
+                Map<String, Attribute> attributeList= group.getAttributeList();
+                Attribute checkAttribute = attributeList.get("displayName");
+                if(checkAttribute != null){
+                    if (((SimpleAttribute)checkAttribute).getValue().equals(value)){
+                        newList.add(group);
+                    }
+                }
+            }
+            return newList;
+        } catch (CharonException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
 

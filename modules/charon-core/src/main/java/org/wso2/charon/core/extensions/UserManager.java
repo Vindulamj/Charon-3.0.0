@@ -65,4 +65,6 @@ public interface UserManager {
     public int getGroupCount();
 
     public List<Group> listGroupsWithPagination(int startIndex, int count);
+
+    public List<Group> filterGroups(Node rootNode);
 }

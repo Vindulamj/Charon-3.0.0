@@ -52,11 +52,15 @@ public class GroupTest {
         //-----DELETE GROUP  ---------
         //SCIMResponse res= um.delete("c2fa9b6d-5865-4378-948a-f349b64d1544",new SCIMUserManager());
 
-        //-----LIST GROUPs ---------
+        //-----LIST GROUPS ---------
         //SCIMResponse res= um.list(new SCIMUserManager(),null,null);
 
         //-----LIST GROUPS WITH PAGINATION  ---------
-        SCIMResponse res= um.listWithPagination(2,1,new SCIMUserManager(),null,null);
+        //SCIMResponse res= um.listWithPagination(2,1,new SCIMUserManager(),null,null);
+
+        //-----FILTER GROUPS at Groups Endpoint  ---------
+        String filter ="displayName eq Doctors";
+        SCIMResponse res= um.listByFilter(filter, new SCIMUserManager(), null, null);
 
         System.out.println(res.getResponseStatus());
         System.out.println("");

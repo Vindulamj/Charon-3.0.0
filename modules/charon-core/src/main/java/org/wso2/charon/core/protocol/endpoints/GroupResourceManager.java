@@ -13,6 +13,8 @@ import org.wso2.charon.core.objects.User;
 import org.wso2.charon.core.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.protocol.SCIMResponse;
 import org.wso2.charon.core.schema.*;
+import org.wso2.charon.core.utils.codeutils.FilterTreeManager;
+import org.wso2.charon.core.utils.codeutils.Node;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -166,8 +168,64 @@ public class GroupResourceManager extends AbstractResourceManager {
     }
 
     @Override
-    public SCIMResponse listByFilter(String filterString, UserManager userManager, String attributes, String excludeAttributes) throws IOException {
-        return null;
+    public SCIMResponse listByFilter(String filterString, UserManager userManager, String attributes, String excludeAttributes)  {
+        JSONEncoder encoder = null;
+
+        FilterTreeManager filterTreeManager = null;
+        try {
+            // unless configured returns core-user schema or else returns extended user schema)
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
+
+            filterTreeManager = new FilterTreeManager(filterString, schema);
+            Node rootNode=filterTreeManager.buildTree();
+
+            //obtain the json encoder
+            encoder = getEncoder();
+
+            List<Group> returnedGroups;
+            int totalResults=0;
+            //API user should pass a UserManager storage to UserResourceEndpoint.
+            if (userManager != null) {
+                returnedGroups = userManager.filterGroups(rootNode);
+
+                //if user not found, return an error in relevant format.
+                if (returnedGroups == null || returnedGroups.isEmpty()) {
+                    String error = "No filter results are found";
+                    //throw resource not found.
+                    throw new NotFoundException(error);
+                }
+
+                for(Group group: returnedGroups){
+                    //perform service provider side validation.
+                    ServerSideValidator.validateRetrievedSCIMObject(group, schema, attributes, excludeAttributes);
+                }
+                //create a listed resource object out of the returned users list.
+                ListedResource listedResource = createListedResource(returnedGroups);
+                //convert the listed resource into specific format.
+                String encodedListedResource = encoder.encodeSCIMObject(listedResource);
+                //if there are any http headers to be added in the response header.
+                Map<String, String> ResponseHeaders = new HashMap<String, String>();
+                ResponseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
+                return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedListedResource, ResponseHeaders);
+
+            } else {
+                String error = "Provided user manager handler is null.";
+                //throw internal server error.
+                throw new InternalErrorException(error);
+            }
+        } catch (BadRequestException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        }catch (IOException e) {
+            String error = "Error in tokenization of the input filter";
+            CharonException charonException =new CharonException(error);
+            return AbstractResourceManager.encodeSCIMException(charonException);
+        } catch (CharonException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (NotFoundException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (InternalErrorException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        }
     }
 
     @Override
