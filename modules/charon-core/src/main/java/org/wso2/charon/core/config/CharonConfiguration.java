@@ -22,6 +22,9 @@ public class CharonConfiguration implements Configuration{
     private int maxResults;
     private ArrayList<Object[]> authenticationSchemes = new ArrayList<Object[]>();
 
+    //default count value for pagination
+    private int count;
+
     public void setDocumentationURL(String documentationURL){
         this.documentationURL = documentationURL;
     }
@@ -55,6 +58,15 @@ public class CharonConfiguration implements Configuration{
 
     public void setAuthenticationSchemes(ArrayList<Object[]> authenticationSchemes){
         this.authenticationSchemes = authenticationSchemes;
+    }
+
+    @Override
+    public void setCountValueForPagination(int count) {
+        this.count = count;
+    }
+
+    public int getCountValueForPagination(){
+        return count;
     }
 
     public HashMap<String,Object> getConfig(){

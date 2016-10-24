@@ -45,22 +45,23 @@ public class Test {
        authList.add(auth1);
        authList.add(auth2);
        CharonConfiguration.getInstance().setAuthenticationSchemes(authList);
+       CharonConfiguration.getInstance().setCountValueForPagination(2);
 
        //------------------------------------------------------------------
 
        ServiceProviderConfigResourceManager sm= new ServiceProviderConfigResourceManager();
        sm.setEncoder(new JSONEncoder());
        sm.setDecoder(new JSONDecoder());
-       HashMap hmp1=new HashMap<String,String>();
-       hmp1.put(SCIMConstants.SERVICE_PROVIDER_CONFIG_ENDPOINT,"http://localhost:8080/scim/v2/ServiceProviderConfig");
-       sm.setEndpointURLMap(hmp1);
+
+       HashMap hmp=new HashMap<String,String>();
+       hmp.put(SCIMConstants.SERVICE_PROVIDER_CONFIG_ENDPOINT,"http://localhost:8080/scim/v2/ServiceProviderConfig");
+       hmp.put(SCIMConstants.USER_ENDPOINT,"http://localhost:8080/scim/v2/Users");
+       sm.setEndpointURLMap(hmp);
 
        UserResourceManager um =new UserResourceManager();
        um.setEncoder(new JSONEncoder());
        um.setDecoder(new JSONDecoder());
-       HashMap hmp=new HashMap<String,String>();
-       hmp.put(SCIMConstants.USER_ENDPOINT,"http://localhost:8080/scim/v2/Users");
-       um.setEndpointURLMap(hmp);
+
        //-----Extension User schema support------
        SCIMUserSchemaExtensionBuilder extensionBuilder= new SCIMUserSchemaExtensionBuilder();
        try {

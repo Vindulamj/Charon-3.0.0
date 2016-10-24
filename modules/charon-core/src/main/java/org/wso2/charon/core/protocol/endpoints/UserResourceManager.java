@@ -6,6 +6,7 @@ import org.wso2.charon.core.attributes.Attribute;
 import org.wso2.charon.core.attributes.ComplexAttribute;
 import org.wso2.charon.core.attributes.MultiValuedAttribute;
 import org.wso2.charon.core.attributes.SimpleAttribute;
+import org.wso2.charon.core.config.CharonConfiguration;
 import org.wso2.charon.core.encoder.JSONDecoder;
 import org.wso2.charon.core.encoder.JSONEncoder;
 import org.wso2.charon.core.exceptions.*;
@@ -369,9 +370,8 @@ public class UserResourceManager extends AbstractResourceManager {
             startIndex=1;
         }
         //If count is not set, server default should be taken
-        //TODO : We should read this from a config file
         if(count == 0){
-            count = 2;
+            CharonConfiguration.getInstance().getCountValueForPagination();
         }
         JSONEncoder encoder = null;
         try {

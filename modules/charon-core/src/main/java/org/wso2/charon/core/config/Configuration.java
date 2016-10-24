@@ -22,4 +22,6 @@ public interface Configuration {
     public void setSortSupport(boolean supported);
 
     public void setAuthenticationSchemes(ArrayList<Object[]> authenticationSchemes);
+
+    public void setCountValueForPagination(int count);
 }
