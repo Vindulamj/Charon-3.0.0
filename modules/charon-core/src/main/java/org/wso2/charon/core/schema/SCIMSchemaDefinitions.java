@@ -30,7 +30,7 @@ public class SCIMSchemaDefinitions {
 
     //The "DateTime" that the resource was added to the service provider.
     public static final SCIMAttributeSchema CREATED =
-            SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.CommonSchemaConstants.CREATED,
+            SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.CommonSchemaConstants.CREATED_URI,
                     SCIMConstants.CommonSchemaConstants.CREATED,
                     SCIMDefinitions.DataType.DATE_TIME, false, SCIMConstants.CommonSchemaConstants.CREATED_DESC, false, false,
                     SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
@@ -55,7 +55,7 @@ public class SCIMSchemaDefinitions {
     //The version of the resource being returned.
     //This value must be the same as the entity-tag (ETag) HTTP response header.
     public static final SCIMAttributeSchema VERSION =
-            SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.CommonSchemaConstants.VERSION,
+            SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.CommonSchemaConstants.VERSION_URI,
                     SCIMConstants.CommonSchemaConstants.VERSION,
                     SCIMDefinitions.DataType.STRING, false, SCIMConstants.CommonSchemaConstants.VERSION_DESC, false, true,
                     SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
@@ -756,6 +756,236 @@ public class SCIMSchemaDefinitions {
                         SCIMDefinitions.Uniqueness.NONE, null, null, new ArrayList<SCIMAttributeSchema>(Arrays.asList(VALUE, $REF, TYPE)));
     }
 
+
+    public static class SCIMServiceProviderConfigSchemaDefinition {
+
+        /*********** SCIM defined ServiceProviderConfig schemas ****************************/
+
+    /* sub-attribute schemas of the attributes defined in SCIM ServiceProviderConfig schema. */
+
+        public static final SCIMAttributeSchema PATCH_SUPPORTED =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.PATCH_SUPPORTED_URI,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.SUPPORTED,
+                        SCIMDefinitions.DataType.BOOLEAN, false,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.SUPPORTED_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        public static final SCIMAttributeSchema BULK_SUPPORTED =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.BULK_SUPPORTED_URI,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.SUPPORTED,
+                        SCIMDefinitions.DataType.BOOLEAN, false,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.SUPPORTED_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        public static final SCIMAttributeSchema FILTER_SUPPORTED =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.FILTER_SUPPORTED_URI,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.SUPPORTED,
+                        SCIMDefinitions.DataType.BOOLEAN, false,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.SUPPORTED_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        public static final SCIMAttributeSchema SORT_SUPPORTED =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.SORT_SUPPORTED_URI,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.SUPPORTED,
+                        SCIMDefinitions.DataType.BOOLEAN, false,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.SUPPORTED_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        public static final SCIMAttributeSchema ETAG_SUPPORTED =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.ETAG_SUPPORTED_URI,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.SUPPORTED,
+                        SCIMDefinitions.DataType.BOOLEAN, false,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.SUPPORTED_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        public static final SCIMAttributeSchema CHANGE_PASSWORD_SUPPORTED =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.CHANGE_PASSWORD_SUPPORTED_URI,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.SUPPORTED,
+                        SCIMDefinitions.DataType.BOOLEAN, false,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.SUPPORTED_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        public static final SCIMAttributeSchema MAX_OPERATIONS =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.MAX_OPERATIONS_URI,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.MAX_OPERATIONS,
+                        SCIMDefinitions.DataType.INTEGER, false,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.MAX_OPERATIONS_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        public static final SCIMAttributeSchema MAX_PAYLOAD_SIZE =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.MAX_PAYLOAD_SIZE_URI,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.MAX_PAYLOAD_SIZE,
+                        SCIMDefinitions.DataType.INTEGER, false,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.MAX_PAYLOAD_SIZE_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        public static final SCIMAttributeSchema MAX_RESULTS =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.MAX_RESULTS_URI,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.MAX_RESULTS,
+                        SCIMDefinitions.DataType.INTEGER, false,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.MAX_RESULTS_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+
+        public static final SCIMAttributeSchema NAME =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.NAME_URI,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.NAME,
+                        SCIMDefinitions.DataType.STRING, false,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.NAME_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        public static final SCIMAttributeSchema DESCRIPTION =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.DESCRIPTION_URI,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.DESCRIPTION,
+                        SCIMDefinitions.DataType.STRING, false,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.DESCRIPTION_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        public static final SCIMAttributeSchema SPEC_URI =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.SPEC_URI_URI,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.SPEC_URI,
+                        SCIMDefinitions.DataType.REFERENCE, false,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.SPEC_URI_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null,
+                        new ArrayList<SCIMDefinitions.ReferenceType>(Arrays.asList(SCIMDefinitions.ReferenceType.EXTERNAL)),
+                        null);
+
+        public static final SCIMAttributeSchema AUTHENTICATION_SCHEMES_DOCUMENTATION_URI =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.DOCUMENTATION_URI,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.AUTHENTICATION_SCHEMAS_DOCUMENTATION_URI_URI,
+                        SCIMDefinitions.DataType.REFERENCE, false,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.DOCUMENTATION_URI_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null,
+                        new ArrayList<SCIMDefinitions.ReferenceType>(Arrays.asList(SCIMDefinitions.ReferenceType.EXTERNAL)),
+                        null);
+
+        public static final SCIMAttributeSchema TYPE =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.ServiceProviderConfigSchemaConstants.TYPE_URL,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.TYPE,
+                        SCIMDefinitions.DataType.STRING, false, SCIMConstants.ServiceProviderConfigSchemaConstants.TYPE_DESC,
+                        true, false, SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        public static final SCIMAttributeSchema PRIMARY =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.ServiceProviderConfigSchemaConstants.PRIMARY_URI,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.PRIMARY,
+                        SCIMDefinitions.DataType.BOOLEAN, false, SCIMConstants.ServiceProviderConfigSchemaConstants.PRIMARY_DESC,
+                        true, false, SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+    /*------------------------------------------------------------------------------------------------------*/
+
+        /* attribute schemas of the attributes defined in ServiceProviderConfig schema. */
+
+        public static final SCIMAttributeSchema DOCUMENTATION_URI =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.DOCUMENTATION_URI_URI,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.DOCUMENTATION_URI,
+                        SCIMDefinitions.DataType.REFERENCE, false,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.DOCUMENTATION_URI_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        public static final SCIMAttributeSchema PATCH =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.PATCH_URI,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.PATCH,
+                        SCIMDefinitions.DataType.COMPLEX, false,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.PATCH_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null,
+                        new ArrayList<SCIMAttributeSchema>(Arrays.asList(PATCH_SUPPORTED)));
+
+        public static final SCIMAttributeSchema BULK =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.BULK_URI,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.BULK,
+                        SCIMDefinitions.DataType.COMPLEX, false,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.BULK_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null,
+                        new ArrayList<SCIMAttributeSchema>(Arrays.asList(BULK_SUPPORTED, MAX_OPERATIONS, MAX_PAYLOAD_SIZE)));
+
+        public static final SCIMAttributeSchema FILTER =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.FILTER_URI,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.FILTER,
+                        SCIMDefinitions.DataType.COMPLEX, false,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.FILTERS_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null,
+                        new ArrayList<SCIMAttributeSchema>(Arrays.asList(FILTER_SUPPORTED, MAX_RESULTS)));
+
+        public static final SCIMAttributeSchema CHANGE_PASSWORD =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.CHANGE_PASSWORD_URI,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.CHANGE_PASSWORD,
+                        SCIMDefinitions.DataType.COMPLEX, false,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.CHANGE_PASSWORD_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null,
+                        new ArrayList<SCIMAttributeSchema>(Arrays.asList(CHANGE_PASSWORD_SUPPORTED)));
+
+        public static final SCIMAttributeSchema SORT =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.SORT_URI,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.SORT,
+                        SCIMDefinitions.DataType.COMPLEX, false,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.SORT_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null,
+                        new ArrayList<SCIMAttributeSchema>(Arrays.asList(SORT_SUPPORTED)));
+
+        public static final SCIMAttributeSchema ETAG =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.ETAG_URI,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.ETAG,
+                        SCIMDefinitions.DataType.COMPLEX, false,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.ETAG_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null,
+                        new ArrayList<SCIMAttributeSchema>(Arrays.asList(ETAG_SUPPORTED)));
+
+        public static final SCIMAttributeSchema AUTHENTICATION_SCHEMES =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.AUTHENTICATION_SCHEMAS_URI,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.AUTHENTICATION_SCHEMAS,
+                        SCIMDefinitions.DataType.COMPLEX, true,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.AUTHENTICATION_SCHEMAS_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null,
+                        new ArrayList<SCIMAttributeSchema>(Arrays.asList(NAME, DESCRIPTION,
+                                SPEC_URI, AUTHENTICATION_SCHEMES_DOCUMENTATION_URI, TYPE, PRIMARY)));
+
+
+    }
+
         /**
          * **********SCIM defined User Resource Schema****************************
          */
@@ -798,13 +1028,19 @@ public class SCIMSchemaDefinitions {
                         SCIMGroupSchemaDefinition.MEMBERS);
 
         /**
-         * **********SCIM defined EnterpriseUser Resource Schema****************************
+         * **********SCIM defined Service Provider Config Resource Schema****************************
          */
 
-        public static final SCIMResourceTypeSchema SCIM_EnterpriseUser_SCHEMA =
+        public static final SCIMResourceTypeSchema SCIM_SERVICE_PROVIDER_CONFIG_SCHEMA =
                 SCIMResourceTypeSchema.createSCIMResourceSchema(
-                        new ArrayList<String>(Arrays.asList(SCIMConstants.USER_CORE_SCHEMA_URI)),
-                        ID, EXTERNAL_ID, META,
-                        SCIMGroupSchemaDefinition.DISPLAY_NAME,
-                        SCIMGroupSchemaDefinition.MEMBERS);
+                        new ArrayList<String>(Arrays.asList(SCIMConstants.SERVICE_PROVIDER_CONFIG_SCHEMA_URI)),
+                        META,
+                        SCIMServiceProviderConfigSchemaDefinition.DOCUMENTATION_URI,
+                        SCIMServiceProviderConfigSchemaDefinition.PATCH,
+                        SCIMServiceProviderConfigSchemaDefinition.BULK,
+                        SCIMServiceProviderConfigSchemaDefinition.SORT,
+                        SCIMServiceProviderConfigSchemaDefinition.FILTER,
+                        SCIMServiceProviderConfigSchemaDefinition.CHANGE_PASSWORD,
+                        SCIMServiceProviderConfigSchemaDefinition.ETAG,
+                        SCIMServiceProviderConfigSchemaDefinition.AUTHENTICATION_SCHEMES);
 }

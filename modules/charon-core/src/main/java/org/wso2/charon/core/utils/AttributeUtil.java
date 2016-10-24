@@ -37,7 +37,15 @@ public class AttributeUtil {
         }
         String attributeStringValue = null;
         if(!(attributeValue instanceof Boolean)){
-            attributeStringValue= (String) attributeValue;
+            if(attributeValue instanceof  Integer){
+                attributeStringValue = String.valueOf(attributeValue);
+            }
+            else if (attributeValue instanceof Double){
+                attributeStringValue = String.valueOf(attributeValue);
+            }
+            else{
+                attributeStringValue= (String) attributeValue;
+            }
         }
         try {
             switch (dataType) {
@@ -79,17 +87,18 @@ public class AttributeUtil {
         }
     }
 
-    public static URI parseReference(String referenceString) throws CharonException{
+    public static String parseReference(String referenceString) throws CharonException{
         //TODO: Need a better way for doing this. Think of the way to handle reference types
-        try{
+        return referenceString;
+        /*try{
             URI uri =new URI(referenceString);
             uri.normalize();
             return uri;
         } catch (URISyntaxException e) {
             throw new CharonException("Error in normalization of the URI");
-        }
+        }*/
     }
-    //this method is for the consistence purpose only
+    //this method is for the consistency purpose only
     public static String parseComplex(String complexString){
         return complexString;
     }

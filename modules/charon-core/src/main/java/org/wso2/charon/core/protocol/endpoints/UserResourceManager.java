@@ -1,8 +1,10 @@
 package org.wso2.charon.core.protocol.endpoints;
 
 
+import org.w3c.dom.Attr;
 import org.wso2.charon.core.attributes.Attribute;
 import org.wso2.charon.core.attributes.ComplexAttribute;
+import org.wso2.charon.core.attributes.MultiValuedAttribute;
 import org.wso2.charon.core.attributes.SimpleAttribute;
 import org.wso2.charon.core.encoder.JSONDecoder;
 import org.wso2.charon.core.encoder.JSONEncoder;
@@ -368,8 +370,8 @@ public class UserResourceManager extends AbstractResourceManager {
         }
         //If count is not set, server default should be taken
         //TODO : We should read this from a config file
-        if(count==0){
-            count=2;
+        if(count == 0){
+            count = 2;
         }
         JSONEncoder encoder = null;
         try {
@@ -559,9 +561,19 @@ public class UserResourceManager extends AbstractResourceManager {
         }
     }
 
+    /**
+     * Update the user resource by sequence of operations
+     *
+     * @param existingId
+     * @param scimObjectString
+     * @param userManager
+     * @param attributes
+     * @param excludeAttributes
+     * @return
+     */
     public SCIMResponse updateWithPATCH(String existingId, String scimObjectString, UserManager userManager,
                                         String attributes, String excludeAttributes) {
-        //needs to validate the incoming object. eg: id can not be set by the consumer.
+
         JSONEncoder encoder = null;
         JSONDecoder decoder = null;
 
@@ -603,6 +615,8 @@ public class UserResourceManager extends AbstractResourceManager {
         } catch (NotFoundException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         } catch (BadRequestException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (InternalErrorException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         }
         return null;
@@ -649,15 +663,34 @@ public class UserResourceManager extends AbstractResourceManager {
     }
 
 
-    private void patchOperationAdd(User oldUser, PatchOperation patchOperation){
+    private void patchOperationAdd(User oldUser, PatchOperation patchOperation) throws CharonException,
+            BadRequestException, InternalErrorException {
+        //obtain the json decoder.
+        JSONDecoder decoder = getDecoder();
+        SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+        User newUser = (User) decoder.decodeResource((String) patchOperation.getValues().toString(), schema, new User());
+        Map<String,Attribute> attributeMap = newUser.getAttributeList();
+
+        for(Attribute attribute : attributeMap.values()){
+            if(attribute instanceof SimpleAttribute){
+
+            }
+        }
 
     }
 
-    private void patchOperationReplace(User oldUser, PatchOperation patchOperation){
+    private void patchOperationReplace(User oldUser, PatchOperation patchOperation) throws CharonException {
+
+        //obtain the json decoder.
+        JSONDecoder decoder = getDecoder();
 
     }
 
-    private void patchOperationRemove(User oldUser, PatchOperation patchOperation){
+    private void patchOperationRemove(User oldUser, PatchOperation patchOperation) throws CharonException {
+
+        //obtain the json decoder.
+        JSONDecoder decoder = getDecoder();
+
 
     }
 }

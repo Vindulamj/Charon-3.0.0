@@ -10,6 +10,7 @@ public class SCIMConstants {
     public static final String USER_CORE_SCHEMA_URI = "urn:ietf:params:scim:schemas:core:2.0:User";
     public static final String GROUP_CORE_SCHEMA_URI = "urn:ietf:params:scim:schemas:core:2.0:Group";
     public static final String LISTED_RESOURCE_CORE_SCHEMA_URI = "urn:ietf:params:scim:api:messages:2.0:ListResponse";
+    public static final String SERVICE_PROVIDER_CONFIG_SCHEMA_URI = "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig";
 
     /*Data formats*/
     public static final String JSON = "json";
@@ -25,6 +26,7 @@ public class SCIMConstants {
     /*Resource endpoints relative to the base SCIM URL*/
     public static final String USER_ENDPOINT = "/Users";
     public static final String GROUP_ENDPOINT = "/Groups";
+    public static final String SERVICE_PROVIDER_CONFIG_ENDPOINT = "/ServiceProviderConfig";
 
     //HTTP Headers used in SCIM request/response other than auth headers.
     public static final String LOCATION_HEADER = "Location";
@@ -38,7 +40,6 @@ public class SCIMConstants {
     public static class CommonSchemaConstants {
 
         public static final String SCHEMAS = "schemas";
-        public static final String SCHEMAS_URI = "urn:ietf:params:scim:schemas:core:2.0:schemas";
         public static final String ID = "id";
         public static final String ID_URI = "urn:ietf:params:scim:schemas:core:2.0:id";
         public static final String EXTERNAL_ID = "externalId";
@@ -370,6 +371,78 @@ public class SCIMConstants {
         public static final String TYPE_URI = "urn:ietf:params:scim:schemas:core:2.0:Group:members.type";
     }
 
+    /*Constants found in Service Provider Config schema.*/
+
+    public static class ServiceProviderConfigSchemaConstants {
+
+        public static final String DOCUMENTATION_URI = "documentationUri";
+        public static final String DOCUMENTATION_URI_URI = "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig:documentationUri";
+        public static final String PATCH = "patch";
+        public static final String PATCH_URI = "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig:patch";
+        public static final String BULK = "bulk";
+        public static final String BULK_URI = "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig:bulk";
+        public static final String FILTER = "filter";
+        public static final String FILTER_URI = "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig:filter";
+        public static final String CHANGE_PASSWORD = "changePassword";
+        public static final String CHANGE_PASSWORD_URI = "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig:changePassword";
+        public static final String SORT = "sort";
+        public static final String SORT_URI = "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig:sort";
+        public static final String ETAG = "etag";
+        public static final String ETAG_URI = "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig:etag";
+        public static final String AUTHENTICATION_SCHEMAS = "authenticationSchemes";
+        public static final String AUTHENTICATION_SCHEMAS_URI = "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig:authenticationSchemes";
+        public static final String SUPPORTED = "supported";
+        public static final String MAX_OPERATIONS = "maxOperations";
+        public static final String MAX_OPERATIONS_URI = "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig:bulk.maxOperations";
+        public static final String MAX_PAYLOAD_SIZE = "maxPayloadSize";
+        public static final String MAX_PAYLOAD_SIZE_URI = "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig:bulk.maxPayloadSize";
+        public static final String MAX_RESULTS = "maxResults";
+        public static final String MAX_RESULTS_URI = "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig:filter.maxResults";
+        public static final String NAME = "name";
+        public static final String NAME_URI = "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig:authenticationSchemes.name";
+        public static final String DESCRIPTION = "description";
+        public static final String DESCRIPTION_URI = "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig:authenticationSchemes.description";
+        public static final String SPEC_URI = "specURI";
+        public static final String SPEC_URI_URI = "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig:authenticationSchemes.specURI";
+        public static final String TYPE = "type";
+        public static final String TYPE_URL = "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig:authenticationSchemes.type";
+        public static final String PRIMARY = "primary";
+        public static final String PRIMARY_URI = "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig:authenticationSchemes.primary";
+
+        public static final String PATCH_SUPPORTED_URI = "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig:patcg.supported";
+        public static final String BULK_SUPPORTED_URI = "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig:bulk.supported";
+        public static final String FILTER_SUPPORTED_URI = "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig:filter.supported";
+        public static final String CHANGE_PASSWORD_SUPPORTED_URI = "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig:changePassword.supported";
+        public static final String SORT_SUPPORTED_URI = "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig:sort.supported";
+        public static final String ETAG_SUPPORTED_URI = "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig:etag.supported";
+        public static final String AUTHENTICATION_SCHEMAS_DOCUMENTATION_URI_URI = "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig:authenticationSchemes.documentationUri";
+
+
+        /*******Attributes descriptions of the attributes found in Service Provider Config Schema***************/
+
+        public static final String DOCUMENTATION_URI_DESC="An HTTP-addressable URL pointing to the service provider's human-consumable help documentation.";
+        public static final String PATCH_DESC="A complex type that specifies PATCH configuration options.";
+        public static final String BULK_DESC="A complex type that specifies bulk configuration options.";
+        public static final String FILTERS_DESC="A complex type that specifies FILTER options.";
+        public static final String CHANGE_PASSWORD_DESC="A complex type that specifies configuration options related to changing a password.";
+        public static final String SORT_DESC = "A complex type that specifies sort result options.";
+        public static final String ETAG_DESC = "The version of the resources";
+        public static final String AUTHENTICATION_SCHEMAS_DESC = "A complex type that specifies supported authentication scheme properties.";
+        public static final String SUPPORTED_DESC = "A Boolean value specifying whether or not the operation is supported.";
+        public static final String MAX_OPERATIONS_DESC = "An integer value specifying the maximum number of operations.";
+        public static final String MAX_PAYLOAD_SIZE_DESC = "An integer value specifying the maximum payload size in bytes.";
+        public static final String MAX_RESULTS_DESC = "An integer value specifying the maximum number of resources returned in a response.";
+        public static final String NAME_DESC = "The common authentication scheme name,e.g., HTTP Basic.";
+        public static final String DESCRIPTION_DESC = "A description of the authentication scheme.";
+        public static final String SPEC_URI_DESC = "An HTTP-addressable URL pointing to the authentication scheme's specification.";
+        public static final String TYPE_DESC = "A label indicating the attribute's function, e.g., 'work' or 'home'.";
+        public static final String PRIMARY_DESC = "A Boolean value indicating the 'primary' or preferred attribute value for this attribute.  " +
+                "The primary attribute value 'true' MUST appear no more than once.";
+
+
+    }
+
+
     public static class OperationalConstants{
 
         /*SCIM filter types*/
@@ -401,6 +474,7 @@ public class SCIMConstants {
         public static final String OP = "op";
         public static final String PATH = "path";
         public static final String VALUE = "value";
+
     }
 
      /*Constants found in ServiceProviderConfig schema.*/

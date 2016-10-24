@@ -1,7 +1,7 @@
 package org.wso2.charon.core.config;
 
 /**
- * Created by vindula on 10/12/16.
+ * This defines constants for extension schema builder
  */
 public class SCIMConfigConstants {
 
@@ -21,5 +21,15 @@ public class SCIMConfigConstants {
     public static final String CANONICAL_VALUES = "canonicalValues";
     public static final String REFERENCE_TYPES = "referenceTypes";
 
-
+    public static final String PATCH = "patch";
+    public static final String BULK = "bulk";
+    public static final String SORT = "sort";
+    public static final String ETAG = "etag";
+    public static final String FILTER = "filter";
+    public static final String CHNAGE_PASSWORD = "changePassword";
+    public static final String DOCUMENTATION_URL = "documentationURL";
+    public static final String MAX_OPERATIONS = "maxOperations";
+    public static final String MAX_PAYLOAD_SIZE = "maxPayLaodSize";
+    public static final String MAX_RESULTS = "maxResults";
+    public static final String AUTHENTICATION_SCHEMES = "authenticationSchemes";
 }

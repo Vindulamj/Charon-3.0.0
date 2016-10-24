@@ -68,7 +68,7 @@ public class DefaultAttributeFactory {
         }
         catch(BadRequestException e){
             String error = "Violation in attribute schema. DataType doesn't match that of the value.";
-            throw new BadRequestException(error);
+            throw new BadRequestException(error,ResponseCodeConstants.INVALID_VALUE);
         }
     }
 
@@ -121,7 +121,7 @@ public class DefaultAttributeFactory {
             case BINARY:
                 return attributeValue instanceof Byte[];
             case REFERENCE:
-                return attributeValue instanceof URI;
+                return attributeValue instanceof String;
             case COMPLEX:
                 return attributeValue instanceof String;
 

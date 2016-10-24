@@ -29,9 +29,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class SCIMResourceSchemaManager {
-	
+
 	private static SCIMResourceSchemaManager manager = new SCIMResourceSchemaManager();
-	
+
 	public static SCIMResourceSchemaManager getInstance() {
 		return manager;
 	}
@@ -40,15 +40,14 @@ public class SCIMResourceSchemaManager {
 	 * Return the SCIM User Resource Schema
 	 *
 	 * @return SCIMResourceTypeSchema
-	 *
 	 */
 	public SCIMResourceTypeSchema getUserResourceSchema() {
 
 
 		SCIMAttributeSchema schemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
-		if(schemaExtension != null){
-			return   SCIMResourceTypeSchema.createSCIMResourceSchema(
-					new ArrayList<String>(Arrays.asList(SCIMConstants.USER_CORE_SCHEMA_URI,schemaExtension.getURI())),
+		if (schemaExtension != null) {
+			return SCIMResourceTypeSchema.createSCIMResourceSchema(
+					new ArrayList<String>(Arrays.asList(SCIMConstants.USER_CORE_SCHEMA_URI, schemaExtension.getURI())),
 					SCIMSchemaDefinitions.ID, SCIMSchemaDefinitions.EXTERNAL_ID, SCIMSchemaDefinitions.META,
 					SCIMSchemaDefinitions.SCIMUserSchemaDefinition.USERNAME,
 					SCIMSchemaDefinitions.SCIMUserSchemaDefinition.NAME,
@@ -76,24 +75,30 @@ public class SCIMResourceSchemaManager {
 		return SCIMSchemaDefinitions.SCIM_USER_SCHEMA;
 	}
 
-	public Boolean isExtensionSet(){
+	public Boolean isExtensionSet() {
 		int numOfCoreAttributes = SCIMSchemaDefinitions.SCIM_USER_SCHEMA.getAttributesList().size();
 
 		SCIMAttributeSchema schemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
-		if(schemaExtension != null){
+		if (schemaExtension != null) {
 			return true;
-		}
-		else{
-			return  false;
+		} else {
+			return false;
 		}
 	}
 
-	public String getExtensionName(){
+	public String getExtensionName() {
 		SCIMAttributeSchema schemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
-		if(schemaExtension == null){
+		if (schemaExtension == null) {
 			return null;
 		}
 		return schemaExtension.getName();
 	}
 
+	/**
+	 * return service provider config resource schema
+	 * @return
+     */
+	public SCIMResourceTypeSchema getServiceProviderConfig() {
+		return SCIMSchemaDefinitions.SCIM_SERVICE_PROVIDER_CONFIG_SCHEMA;
+	}
 }

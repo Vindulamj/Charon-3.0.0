@@ -9,6 +9,7 @@ import org.wso2.charon.core.attributes.Attribute;
 import org.wso2.charon.core.attributes.ComplexAttribute;
 import org.wso2.charon.core.attributes.MultiValuedAttribute;
 import org.wso2.charon.core.attributes.SimpleAttribute;
+import org.wso2.charon.core.config.SCIMConfigConstants;
 import org.wso2.charon.core.exceptions.AbstractCharonException;
 import org.wso2.charon.core.exceptions.BadRequestException;
 import org.wso2.charon.core.exceptions.CharonException;
@@ -18,9 +19,7 @@ import org.wso2.charon.core.schema.SCIMConstants;
 import org.wso2.charon.core.schema.SCIMDefinitions;
 import org.wso2.charon.core.utils.AttributeUtil;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This encodes the data
@@ -248,6 +247,78 @@ public class JSONEncoder {
             }
         }
         jsonArray.put(subObject);
+    }
+
+
+    public String buildServiceProviderConfigJsonBody(HashMap<String,Object> config){
+        JSONObject rootObject = new JSONObject();
+
+        JSONObject bulkObject = new JSONObject();
+        bulkObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.SUPPORTED,
+                config.get(SCIMConfigConstants.BULK));
+        bulkObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.MAX_OPERATIONS,
+                config.get(SCIMConfigConstants.MAX_OPERATIONS));
+        bulkObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.MAX_PAYLOAD_SIZE,
+                config.get(SCIMConfigConstants.MAX_PAYLOAD_SIZE));
+
+        JSONObject filterObject = new JSONObject();
+        filterObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.SUPPORTED,
+                config.get(SCIMConfigConstants.FILTER));
+        filterObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.MAX_RESULTS,
+                config.get(SCIMConfigConstants.MAX_RESULTS));
+
+        JSONObject patchObject = new JSONObject();
+        patchObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.SUPPORTED,
+                config.get(SCIMConfigConstants.PATCH));
+
+        JSONObject sortObject = new JSONObject();
+        sortObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.SUPPORTED,
+                config.get(SCIMConfigConstants.SORT));
+
+        JSONObject etagObject = new JSONObject();
+        etagObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.SUPPORTED,
+                config.get(SCIMConfigConstants.ETAG));
+
+        JSONObject changePasswordObject = new JSONObject();
+        changePasswordObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.SUPPORTED,
+                config.get(SCIMConfigConstants.CHNAGE_PASSWORD));
+
+        JSONArray authenticationSchemesArray = new JSONArray();
+        ArrayList<Object[]> values = (ArrayList<Object[]>) config.get(SCIMConfigConstants.AUTHENTICATION_SCHEMES);
+
+        for(int i = 0; i< values.size() ; i++){
+            JSONObject authenticationSchemeObject = new JSONObject();
+            Object [] value = values.get(i);
+            authenticationSchemeObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.NAME, value[0] );
+            authenticationSchemeObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.DESCRIPTION, value[1]);
+            authenticationSchemeObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.SPEC_URI, value[2]);
+            authenticationSchemeObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.DOCUMENTATION_URI, value[3]);
+            authenticationSchemeObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.TYPE, value[4]);
+            authenticationSchemeObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.PRIMARY, value[5]);
+            authenticationSchemesArray.put(authenticationSchemeObject);
+        }
+
+        rootObject.put(SCIMConstants.CommonSchemaConstants.SCHEMAS,
+                new JSONArray().put(SCIMConstants.SERVICE_PROVIDER_CONFIG_SCHEMA_URI));
+        rootObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.DOCUMENTATION_URI,
+                config.get(SCIMConfigConstants.DOCUMENTATION_URL));
+        rootObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.BULK,
+                bulkObject);
+        rootObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.FILTER,
+                filterObject);
+        rootObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.PATCH,
+                patchObject);
+        rootObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.CHANGE_PASSWORD,
+                changePasswordObject);
+        rootObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.SORT,
+                sortObject);
+        rootObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.ETAG,
+                etagObject);
+        rootObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.AUTHENTICATION_SCHEMAS,
+                authenticationSchemesArray);
+
+        return rootObject.toString();
+
     }
 
 }
