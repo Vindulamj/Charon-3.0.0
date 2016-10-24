@@ -37,7 +37,7 @@ Currently following features are supported.
 - [x] Sorting
 - [x] Filtering including complex filters
 
-#### ServicePRoviderConfig
+#### /ServiceProviderConfig Endpoint
 - [x] Get
 
 #####Following types of filters are supported.
