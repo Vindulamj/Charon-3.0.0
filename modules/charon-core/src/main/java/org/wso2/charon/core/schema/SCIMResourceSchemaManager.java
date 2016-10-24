@@ -98,7 +98,15 @@ public class SCIMResourceSchemaManager {
 	 * return service provider config resource schema
 	 * @return
      */
-	public SCIMResourceTypeSchema getServiceProviderConfig() {
+	public SCIMResourceTypeSchema getServiceProviderConfigResourceSchema() {
 		return SCIMSchemaDefinitions.SCIM_SERVICE_PROVIDER_CONFIG_SCHEMA;
+	}
+
+	/**
+	 * return group resource schema
+	 * @return
+	 */
+	public SCIMResourceTypeSchema getGroupResourceSchema() {
+		return SCIMSchemaDefinitions.SCIM_GROUP_SCHEMA;
 	}
 }

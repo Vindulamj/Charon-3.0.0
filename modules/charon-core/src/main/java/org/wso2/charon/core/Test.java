@@ -76,7 +76,6 @@ public class Test {
                "  \"schemas\":\n" +
                "    [\"urn:ietf:params:scim:schemas:core:2.0:User\",\n" +
                "      \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\"],\n" +
-               "  \"id\": \"2819c223-7f76-453a-919d-413861904646\",\n" +
                "  \"externalId\": \"701984\",\n" +
                "  \"userName\": \"bjensen@example.com\",\n" +
                "  \"name\": {\n" +

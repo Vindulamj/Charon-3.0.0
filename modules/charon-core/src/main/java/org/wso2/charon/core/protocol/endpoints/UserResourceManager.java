@@ -382,7 +382,7 @@ public class UserResourceManager extends AbstractResourceManager {
             int totalResults=0;
             //API user should pass a UserManager storage to UserResourceEndpoint.
             if (userManager != null) {
-                returnedUsers = userManager.listWithPagination(startIndex,count);
+                returnedUsers = userManager.listUsersWithPagination(startIndex,count);
 
                 //TODO: Are we having this method support from user core
                 totalResults =userManager.getUserCount();

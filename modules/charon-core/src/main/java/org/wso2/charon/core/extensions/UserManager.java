@@ -42,7 +42,7 @@ public interface UserManager {
 
     public List<User> listUsers() throws CharonException;
 
-    public List<User> listWithPagination(int startIndex, int count);
+    public List<User> listUsersWithPagination(int startIndex, int count);
 
     public int getUserCount();
 
@@ -61,4 +61,8 @@ public interface UserManager {
     public void deleteGroup(String id) throws NotFoundException, CharonException;
 
     public List<Group> listGroups() throws CharonException;
+
+    public int getGroupCount();
+
+    public List<Group> listGroupsWithPagination(int startIndex, int count);
 }

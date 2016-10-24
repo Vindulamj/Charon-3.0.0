@@ -11,7 +11,6 @@ import org.wso2.charon.core.exceptions.InternalErrorException;
 import org.wso2.charon.core.exceptions.NotFoundException;
 import org.wso2.charon.core.extensions.UserManager;
 import org.wso2.charon.core.objects.AbstractSCIMObject;
-import org.wso2.charon.core.objects.User;
 import org.wso2.charon.core.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.protocol.SCIMResponse;
 import org.wso2.charon.core.schema.SCIMConstants;
@@ -55,7 +54,7 @@ public class ServiceProviderConfigResourceManager extends AbstractResourceManage
             JSONDecoder decoder = getDecoder();
 
             // get the service provider config schema
-            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getServiceProviderConfig();
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getServiceProviderConfigResourceSchema();
             //create a string in json format with relevant values
             String scimObjectString = encoder.buildServiceProviderConfigJsonBody(CharonConfiguration.getInstance().getConfig());
             //decode the SCIM service provider config object, encoded in the submitted payload.

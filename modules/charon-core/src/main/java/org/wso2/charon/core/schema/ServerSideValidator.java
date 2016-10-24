@@ -26,8 +26,6 @@ public class ServerSideValidator extends AbstractValidator{
 
         //set display names for complex multivalued attributes
         setDisplayNameInComplexMultiValuedAttributes(scimObject,resourceSchema);
-        //check for required attributes
-        validateSCIMObjectForRequiredAttributes(scimObject, resourceSchema);
         //remove any read only attributes
         removeAnyReadOnlyAttributes(scimObject,resourceSchema);
         //add created and last modified dates
@@ -50,6 +48,8 @@ public class ServerSideValidator extends AbstractValidator{
             scimObject.setLocation(location);
             scimObject.setResourceType(SCIMConstants.GROUP);
         }
+        //check for required attributes
+        validateSCIMObjectForRequiredAttributes(scimObject, resourceSchema);
         validateSchemaList(scimObject, resourceSchema);
     }
 
@@ -62,8 +62,8 @@ public class ServerSideValidator extends AbstractValidator{
                                                    SCIMResourceTypeSchema resourceSchema,String reuqestedAttributes,
                                                    String requestedExcludingAttributes)
             throws BadRequestException, CharonException {
-        validateSCIMObjectForRequiredAttributes(scimObject, resourceSchema);
         removeAttributesOnReturn(scimObject,reuqestedAttributes,requestedExcludingAttributes);
+        validateSCIMObjectForRequiredAttributes(scimObject, resourceSchema);
         validateSchemaList(scimObject, resourceSchema);
     }
 

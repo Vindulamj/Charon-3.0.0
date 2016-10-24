@@ -52,8 +52,11 @@ public class GroupTest {
         //-----DELETE GROUP  ---------
         //SCIMResponse res= um.delete("c2fa9b6d-5865-4378-948a-f349b64d1544",new SCIMUserManager());
 
-        //-----LIST USER  ---------
-        SCIMResponse res= um.list(new SCIMUserManager(),null,null);
+        //-----LIST GROUPs ---------
+        //SCIMResponse res= um.list(new SCIMUserManager(),null,null);
+
+        //-----LIST GROUPS WITH PAGINATION  ---------
+        SCIMResponse res= um.listWithPagination(2,1,new SCIMUserManager(),null,null);
 
         System.out.println(res.getResponseStatus());
         System.out.println("");
