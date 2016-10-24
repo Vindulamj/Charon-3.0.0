@@ -13,6 +13,7 @@ import org.wso2.charon.core.objects.User;
 import org.wso2.charon.core.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.protocol.SCIMResponse;
 import org.wso2.charon.core.schema.*;
+import org.wso2.charon.core.utils.AttributeUtil;
 import org.wso2.charon.core.utils.codeutils.FilterTreeManager;
 import org.wso2.charon.core.utils.codeutils.Node;
 
@@ -230,7 +231,72 @@ public class GroupResourceManager extends AbstractResourceManager {
 
     @Override
     public SCIMResponse listBySort(String sortBy, String sortOrder, UserManager usermanager, String attributes, String excludeAttributes) {
-        return null;
+        try {
+            //check whether provided sortOrder is valid or not
+            if(sortOrder != null ){
+                if(!(sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.ASCENDING)
+                        || sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.DESCENDING))){
+                    String error = " Invalid sortOrder value is specified";
+                    throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
+                }
+            }
+            //If a value for "sortBy" is provided and no "sortOrder" is specified, "sortOrder" SHALL default to ascending.
+            if(sortOrder == null && sortBy != null){
+                sortOrder = SCIMConstants.OperationalConstants.ASCENDING;
+            }
+            JSONEncoder encoder = null;
+            //obtain the json encoder
+            encoder = getEncoder();
+
+            List<Group> returnedGroups;
+
+            //API user should pass a UserManager storage to UserResourceEndpoint.
+            if (usermanager != null) {
+                // unless configured returns core-user schema or else returns extended user schema)
+                SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
+
+                String sortByAttributeURI = null;
+
+                if(sortBy != null){
+                    sortByAttributeURI = AttributeUtil.getAttributeURI(sortBy,schema);
+                }
+                returnedGroups = usermanager.sortGroups(sortByAttributeURI, sortOrder.toLowerCase());
+
+                //if user not found, return an error in relevant format.
+                if (returnedGroups == null || returnedGroups.isEmpty()) {
+                    String error = "Users not found in the user store.";
+                    //throw resource not found.
+                    throw new NotFoundException(error);
+                }
+
+                for(Group group: returnedGroups){
+                    //perform service provider side validation.
+                    ServerSideValidator.validateRetrievedSCIMObject(group, schema, attributes, excludeAttributes);
+                }
+                //create a listed resource object out of the returned users list.
+                ListedResource listedResource = createListedResource(returnedGroups);
+                //convert the listed resource into specific format.
+                String encodedListedResource = encoder.encodeSCIMObject(listedResource);
+                //if there are any http headers to be added in the response header.
+                Map<String, String> ResponseHeaders = new HashMap<String, String>();
+                ResponseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
+                return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedListedResource, ResponseHeaders);
+
+            } else {
+                String error = "Provided user manager handler is null.";
+                //log the error as well.
+                //throw internal server error.
+                throw new InternalErrorException(error);
+            }
+        } catch (CharonException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (NotFoundException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (InternalErrorException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (BadRequestException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        }
     }
 
     @Override

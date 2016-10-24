@@ -67,4 +67,6 @@ public interface UserManager {
     public List<Group> listGroupsWithPagination(int startIndex, int count);
 
     public List<Group> filterGroups(Node rootNode);
+
+    public List<Group> sortGroups(String sortByAttributeURI, String sortOrder);
 }

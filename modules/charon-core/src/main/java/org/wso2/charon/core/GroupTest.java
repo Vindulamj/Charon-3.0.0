@@ -40,7 +40,7 @@ public class GroupTest {
                 "     ]\n"+
                 "     }";
 
-        String attributes="id";
+        String attributes="displayName";
         String excludeAttributes="members";
 
         //----CREATE Group--------
@@ -59,8 +59,12 @@ public class GroupTest {
         //SCIMResponse res= um.listWithPagination(2,1,new SCIMUserManager(),null,null);
 
         //-----FILTER GROUPS at Groups Endpoint  ---------
+        //String filter ="members.value eq 2819c223-7f76-453a-919d-413861904646";
         String filter ="displayName eq Doctors";
-        SCIMResponse res= um.listByFilter(filter, new SCIMUserManager(), null, null);
+        //SCIMResponse res= um.listByFilter(filter, new SCIMUserManager(), null, null);
+
+        //-----SORT GROUPS  ---------
+        SCIMResponse res= um.listBySort(null,"AsCEnding",new SCIMUserManager(),attributes,null);
 
         System.out.println(res.getResponseStatus());
         System.out.println("");
