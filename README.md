@@ -22,6 +22,7 @@ Currently following features are supported.
 - [x] Pagination
 - [x] attributes and exclude attribute support for all operations
 - [x] Sorting
+- [x] Update with PUT
 
 #### /Me Endpoint
 - [x] Create
