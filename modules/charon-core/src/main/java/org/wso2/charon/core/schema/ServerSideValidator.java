@@ -84,9 +84,7 @@ public class ServerSideValidator extends AbstractValidator{
             AbstractSCIMObject validatedObject = null;
             //set display names for complex multivalued attributes
             setDisplayNameInComplexMultiValuedAttributes(newObject,resourceSchema);
-            //check for required attributes.
-            validateSCIMObjectForRequiredAttributes(newObject, resourceSchema);
-
+            //check for read only and immutable attributes
             validatedObject = checkIfReadOnlyAndImmutableAttributesModified(oldObject, newObject, resourceSchema);
             //copy meta attribute from old to new
             validatedObject.setAttribute(oldObject.getAttribute(SCIMConstants.CommonSchemaConstants.META));
@@ -95,6 +93,8 @@ public class ServerSideValidator extends AbstractValidator{
             //edit last modified date
             Date date = new Date();
             validatedObject.setLastModified(date);
+            //check for required attributes.
+            validateSCIMObjectForRequiredAttributes(newObject, resourceSchema);
             //check for schema list
             validateSchemaList(validatedObject, resourceSchema);
 

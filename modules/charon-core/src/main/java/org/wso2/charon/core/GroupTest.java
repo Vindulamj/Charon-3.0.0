@@ -64,7 +64,10 @@ public class GroupTest {
         //SCIMResponse res= um.listByFilter(filter, new SCIMUserManager(), null, null);
 
         //-----SORT GROUPS  ---------
-        SCIMResponse res= um.listBySort(null,"AsCEnding",new SCIMUserManager(),attributes,null);
+        //SCIMResponse res= um.listBySort(null,"AsCEnding",new SCIMUserManager(),attributes,null);
+
+        //-----UPDATE GROUP WITH PUT ---------
+        SCIMResponse res= um.updateWithPUT("912742f6-bc64-4ff6-a25d-45325e46b995",array,new SCIMUserManager(),null,null);
 
         System.out.println(res.getResponseStatus());
         System.out.println("");

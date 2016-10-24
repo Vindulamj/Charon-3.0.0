@@ -9,11 +9,11 @@ import org.wso2.charon.core.extensions.UserManager;
 import org.wso2.charon.core.objects.Group;
 import org.wso2.charon.core.objects.ListedResource;
 import org.wso2.charon.core.objects.PaginatedListedResource;
-import org.wso2.charon.core.objects.User;
 import org.wso2.charon.core.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.protocol.SCIMResponse;
 import org.wso2.charon.core.schema.*;
 import org.wso2.charon.core.utils.AttributeUtil;
+import org.wso2.charon.core.utils.CopyUtil;
 import org.wso2.charon.core.utils.codeutils.FilterTreeManager;
 import org.wso2.charon.core.utils.codeutils.Node;
 
@@ -415,7 +415,69 @@ public class GroupResourceManager extends AbstractResourceManager {
 
     @Override
     public SCIMResponse updateWithPUT(String existingId, String scimObjectString, UserManager userManager, String attributes, String excludeAttributes) {
-        return null;
+        //needs to validate the incoming object. eg: id can not be set by the consumer.
+
+        JSONEncoder encoder = null;
+        JSONDecoder decoder = null;
+
+        try {
+            //obtain the json encoder
+            encoder = getEncoder();
+            //obtain the json decoder.
+            decoder = getDecoder();
+
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
+
+            //decode the SCIM User object, encoded in the submitted payload.
+            Group group = (Group) decoder.decodeResource(scimObjectString, schema, new Group());
+            Group updatedGroup = null;
+            if (userManager != null) {
+                //retrieve the old object
+                Group oldGroup = userManager.getGroup(existingId);
+                if (oldGroup != null) {
+                    Group validatedGroup = (Group) ServerSideValidator.validateUpdatedSCIMObject(oldGroup, group, schema);
+                    updatedGroup = userManager.updateGroup(validatedGroup);
+
+                } else {
+                    String error = "No user exists with the given id: " + existingId;
+                    throw new NotFoundException(error);
+                }
+
+            } else {
+                String error = "Provided user manager handler is null.";
+                throw new InternalErrorException(error);
+            }
+            //encode the newly created SCIM user object and add id attribute to Location header.
+            String encodedGroup;
+            Map<String, String> httpHeaders = new HashMap<String, String>();
+            if (updatedGroup != null) {
+                //create a deep copy of the user object since we are going to change it.
+                Group copiedGroup = (Group) CopyUtil.deepCopy(updatedGroup);
+                //need to remove password before returning
+                ServerSideValidator.removeAttributesOnReturn(copiedGroup,attributes,excludeAttributes);
+                encodedGroup = encoder.encodeSCIMObject(copiedGroup);
+                //add location header
+                httpHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(
+                        SCIMConstants.GROUP_ENDPOINT) + "/" + updatedGroup.getId());
+                httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
+
+            } else {
+                String error = "Updated Group resource is null.";
+                throw new InternalErrorException(error);
+            }
+
+            //put the URI of the User object in the response header parameter.
+            return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedGroup, httpHeaders);
+
+        } catch (NotFoundException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (BadRequestException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (CharonException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (InternalErrorException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        }
     }
 
     @Override

@@ -69,4 +69,6 @@ public interface UserManager {
     public List<Group> filterGroups(Node rootNode);
 
     public List<Group> sortGroups(String sortByAttributeURI, String sortOrder);
+
+    public Group updateGroup(Group validatedGroup);
 }

@@ -543,7 +543,7 @@ public class UserResourceManager extends AbstractResourceManager {
                 httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
 
             } else {
-                String error = "Updated User resource is null..";
+                String error = "Updated User resource is null.";
                 throw new InternalErrorException(error);
             }
 
