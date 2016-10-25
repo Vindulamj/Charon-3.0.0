@@ -94,6 +94,22 @@ public class SCIMResourceSchemaManager {
 		return schemaExtension.getName();
 	}
 
+	public String getExtensionURI() {
+		SCIMAttributeSchema schemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
+		if (schemaExtension == null) {
+			return null;
+		}
+		return schemaExtension.getURI();
+	}
+
+	public boolean getExtensionRequired() {
+		SCIMAttributeSchema schemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
+		if (schemaExtension == null) {
+			return false;
+		}
+		return schemaExtension.getRequired();
+	}
+
 	/**
 	 * return service provider config resource schema
 	 * @return
@@ -109,4 +125,13 @@ public class SCIMResourceSchemaManager {
 	public SCIMResourceTypeSchema getGroupResourceSchema() {
 		return SCIMSchemaDefinitions.SCIM_GROUP_SCHEMA;
 	}
+
+	/**
+	 * return resource type resource schema
+	 * @return
+	 */
+	public SCIMResourceTypeSchema getResourceTypeResourceSchema() {
+		return SCIMSchemaDefinitions.SCIM_RESOURCE_TYPE_SCHEMA;
+	}
+
 }

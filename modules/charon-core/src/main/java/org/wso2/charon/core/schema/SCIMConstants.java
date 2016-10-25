@@ -11,6 +11,7 @@ public class SCIMConstants {
     public static final String GROUP_CORE_SCHEMA_URI = "urn:ietf:params:scim:schemas:core:2.0:Group";
     public static final String LISTED_RESOURCE_CORE_SCHEMA_URI = "urn:ietf:params:scim:api:messages:2.0:ListResponse";
     public static final String SERVICE_PROVIDER_CONFIG_SCHEMA_URI = "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig";
+    public static final String RESOURCE_TYPE_SCHEMA_URI = "urn:ietf:params:scim:schemas:core:2.0:ResourceType";
 
     /*Data formats*/
     public static final String JSON = "json";
@@ -27,6 +28,8 @@ public class SCIMConstants {
     public static final String USER_ENDPOINT = "/Users";
     public static final String GROUP_ENDPOINT = "/Groups";
     public static final String SERVICE_PROVIDER_CONFIG_ENDPOINT = "/ServiceProviderConfig";
+    public static final String RESOURCE_TYPE_ENDPOINT = "/ResourceType";
+
 
     //HTTP Headers used in SCIM request/response other than auth headers.
     public static final String LOCATION_HEADER = "Location";
@@ -438,10 +441,39 @@ public class SCIMConstants {
         public static final String TYPE_DESC = "A label indicating the attribute's function, e.g., 'work' or 'home'.";
         public static final String PRIMARY_DESC = "A Boolean value indicating the 'primary' or preferred attribute value for this attribute.  " +
                 "The primary attribute value 'true' MUST appear no more than once.";
-
-
     }
 
+    public static class ResourceTypeSchemaConstants{
+        public static final String ResourceType = "resourceType";
+        public static final String ID = "id";
+        public static final String ID_URI = "urn:ietf:params:scim:schemas:core:2.0:ResourceType:id";
+        public static final String NAME = "name";
+        public static final String NAME_URI = "urn:ietf:params:scim:schemas:core:2.0:ResourceType:name";
+        public static final String DESCRIPTION = "description";
+        public static final String DESCRIPTION_URI = "urn:ietf:params:scim:schemas:core:2.0:ResourceType:description";
+        public static final String ENDPOINT = "endpoint";
+        public static final String ENDPOINT_URI = "urn:ietf:params:scim:schemas:core:2.0:ResourceType:endpoint";
+        public static final String SCHEMA = "schema";
+        public static final String SCHEMA_URI = "urn:ietf:params:scim:schemas:core:2.0:ResourceType:schema";
+        public static final String SCHEMA_EXTENSIONS = "schemaExtensions";
+        public static final String SCHEMA_EXTENSIONS_URI = "urn:ietf:params:scim:schemas:core:2.0:ResourceType:schemaExtensions";
+        public static final String SCHEMA_EXTENSIONS_SCHEMA = "schema";
+        public static final String SCHEMA_EXTENSIONS_SCHEMA_URI = "urn:ietf:params:scim:schemas:core:2.0:ResourceType:schemaExtension.schema";
+        public static final String SCHEMA_EXTENSIONS_REQUIRED = "required";
+        public static final String SCHEMA_EXTENSIONS_REQUIRED_URI = "urn:ietf:params:scim:schemas:core:2.0:ResourceType:schemaExtension.required";
+
+        public static final String NAME_DESC = "The resource type name.  When applicable, service providers MUST specify the name, e.g., 'User'.\"";
+        public static final String DESCRIPTION_DESC = "e resource type's human-readable description. When applicable, service providers MUST specify the description.";
+        public static final String ENDPOINT_DESC = "The resource type's HTTP-addressable endpoint relative to the Base URL, e.g., '/Users'.";
+        public static final String SCHEMA_DESC = "The resource type's primary/base schema URI.";
+        public static final String SCHEMA_EXTENSIONS_DESC = "A list of URIs of the resource type's schema extensions.";
+        public static final String SCHEMA_EXTENSIONS_SCHEMA_DESC = "The URI of a schema extension.";
+        public static final String SCHEMA_EXTENSION_REQUIRED_DESC = "A Boolean value that specifies whether or not the schema extension is required for the resource type.";
+        public static final String ID_DESC = "The resource type's server unique id";
+
+        public static final String USER_ACCOUNT = "User Account";
+        public static final String GROUP = "Group";
+    }
 
     public static class OperationalConstants{
 
@@ -451,7 +483,7 @@ public class SCIMConstants {
         public static final String CO = " co ";
         public static final String SW = " sw ";
         public static final String EW = " ew ";
-        public static final String PR = " pr";   //this does not need to have a white space at the end
+        public static final String PR = " pr";   //this MUST NOT have a white space at the end
         public static final String GT = " gt ";
         public static final String GE = " ge ";
         public static final String LT = " lt ";

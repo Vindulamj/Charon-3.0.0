@@ -39,6 +39,7 @@ public class MultiValuedAttribute extends AbstractAttribute{
         this.name = attributeName;
         this.attributeValues = attributeValues;
     }
+    public  MultiValuedAttribute(){}
 
     public MultiValuedAttribute(String attributeName) {
         this.name=attributeName;

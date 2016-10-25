@@ -986,6 +986,92 @@ public class SCIMSchemaDefinitions {
 
     }
 
+    public static class SCIMResourceTypeSchemaDefinition {
+
+        /*********** SCIM defined resourceType  schemas ****************************/
+
+        public static final SCIMAttributeSchema SCHEMA_EXTENSION_SCHEMA =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_SCHEMA_URI,
+                        SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_SCHEMA,
+                        SCIMDefinitions.DataType.REFERENCE, false,
+                        SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_SCHEMA_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null,
+                        new ArrayList<SCIMDefinitions.ReferenceType>(Arrays.asList(SCIMDefinitions.ReferenceType.URI)),
+                        null);
+
+        public static final SCIMAttributeSchema SCHEMA_EXTENSION_REQUIRED =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_REQUIRED_URI,
+                        SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_REQUIRED,
+                        SCIMDefinitions.DataType.BOOLEAN, false,
+                        SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSION_REQUIRED_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        public static final SCIMAttributeSchema ID =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ResourceTypeSchemaConstants.ID_URI,
+                        SCIMConstants.ResourceTypeSchemaConstants.ID,
+                        SCIMDefinitions.DataType.STRING, false,
+                        SCIMConstants.ResourceTypeSchemaConstants.ID_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        public static final SCIMAttributeSchema DESCRIPTION =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ResourceTypeSchemaConstants.DESCRIPTION_URI,
+                        SCIMConstants.ResourceTypeSchemaConstants.DESCRIPTION,
+                        SCIMDefinitions.DataType.STRING, false,
+                        SCIMConstants.ResourceTypeSchemaConstants.DESCRIPTION_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        public static final SCIMAttributeSchema NAME =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ResourceTypeSchemaConstants.NAME_URI,
+                        SCIMConstants.ResourceTypeSchemaConstants.NAME,
+                        SCIMDefinitions.DataType.STRING, false,
+                        SCIMConstants.ResourceTypeSchemaConstants.NAME_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        public static final SCIMAttributeSchema ENDPOINT =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ResourceTypeSchemaConstants.ENDPOINT_URI,
+                        SCIMConstants.ResourceTypeSchemaConstants.ENDPOINT,
+                        SCIMDefinitions.DataType.REFERENCE, false,
+                        SCIMConstants.ResourceTypeSchemaConstants.ENDPOINT_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null,
+                        new ArrayList<SCIMDefinitions.ReferenceType>(Arrays.asList(SCIMDefinitions.ReferenceType.URI)),
+                        null);
+
+        public static final SCIMAttributeSchema SCHEMA =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_URI,
+                        SCIMConstants.ResourceTypeSchemaConstants.SCHEMA,
+                        SCIMDefinitions.DataType.REFERENCE, false,
+                        SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null,
+                        new ArrayList<SCIMDefinitions.ReferenceType>(Arrays.asList(SCIMDefinitions.ReferenceType.URI)),
+                        null);
+
+        public static final SCIMAttributeSchema SCHEMA_EXTENSIONS =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_URI,
+                        SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS,
+                        SCIMDefinitions.DataType.COMPLEX, false,
+                        SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null,
+                        new ArrayList<SCIMAttributeSchema>(Arrays.asList(SCHEMA_EXTENSION_SCHEMA, SCHEMA_EXTENSION_REQUIRED)));
+
+
+    }
+
         /**
          * **********SCIM defined User Resource Schema****************************
          */
@@ -1043,4 +1129,18 @@ public class SCIMSchemaDefinitions {
                         SCIMServiceProviderConfigSchemaDefinition.CHANGE_PASSWORD,
                         SCIMServiceProviderConfigSchemaDefinition.ETAG,
                         SCIMServiceProviderConfigSchemaDefinition.AUTHENTICATION_SCHEMES);
+
+    /**
+     * **********SCIM defined Resource Type Resource Schema****************************
+     */
+
+    public static final SCIMResourceTypeSchema SCIM_RESOURCE_TYPE_SCHEMA =
+            SCIMResourceTypeSchema.createSCIMResourceSchema(
+                    new ArrayList<String>(Arrays.asList(SCIMConstants.RESOURCE_TYPE_SCHEMA_URI)), META,
+                    SCIMResourceTypeSchemaDefinition.ID,
+                    SCIMResourceTypeSchemaDefinition.NAME,
+                    SCIMResourceTypeSchemaDefinition.ENDPOINT,
+                    SCIMResourceTypeSchemaDefinition.DESCRIPTION,
+                    SCIMResourceTypeSchemaDefinition.SCHEMA,
+                    SCIMResourceTypeSchemaDefinition.SCHEMA_EXTENSIONS);
 }

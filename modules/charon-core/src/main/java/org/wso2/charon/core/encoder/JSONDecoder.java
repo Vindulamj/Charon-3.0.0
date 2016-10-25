@@ -479,5 +479,6 @@ public class JSONDecoder {
         }
         return  operationList;
     }
+
 }
 

@@ -7,6 +7,7 @@ import org.wso2.charon.core.encoder.JSONEncoder;
 import org.wso2.charon.core.exceptions.CharonException;
 import org.wso2.charon.core.exceptions.InternalErrorException;
 import org.wso2.charon.core.protocol.SCIMResponse;
+import org.wso2.charon.core.protocol.endpoints.ResourceTypeResourceManager;
 import org.wso2.charon.core.protocol.endpoints.ServiceProviderConfigResourceManager;
 import org.wso2.charon.core.protocol.endpoints.UserResourceManager;
 import org.wso2.charon.core.schema.SCIMConstants;
@@ -48,13 +49,14 @@ public class Test {
        CharonConfiguration.getInstance().setCountValueForPagination(2);
 
        //------------------------------------------------------------------
-
+       ResourceTypeResourceManager rm = new ResourceTypeResourceManager();
        ServiceProviderConfigResourceManager sm= new ServiceProviderConfigResourceManager();
        sm.setEncoder(new JSONEncoder());
        sm.setDecoder(new JSONDecoder());
 
        HashMap hmp=new HashMap<String,String>();
        hmp.put(SCIMConstants.SERVICE_PROVIDER_CONFIG_ENDPOINT,"http://localhost:8080/scim/v2/ServiceProviderConfig");
+       hmp.put(SCIMConstants.RESOURCE_TYPE_ENDPOINT,"http://localhost:8080/scim/v2/ResourceType");
        hmp.put(SCIMConstants.USER_ENDPOINT,"http://localhost:8080/scim/v2/Users");
        sm.setEndpointURLMap(hmp);
 
@@ -251,7 +253,10 @@ public class Test {
 
 
        //-----SERVICE PROVIDER CONFIG  ---------
-       SCIMResponse res= sm.get(null, null, null, null);
+       //SCIMResponse res= sm.get(null, null, null, null);
+
+       //-----RESOURCE TYPE CONFIG  ---------
+       SCIMResponse res= rm.get(null, null, null, null);
 
 
        System.out.println(res.getResponseStatus());
