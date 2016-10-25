@@ -45,6 +45,9 @@ Currently following features are supported.
 #### /ServiceProviderConfig Endpoint
 - [x] Get
 
+#### /ResourceType Endpoint
+- [x] Get
+
 #####Following types of filters are supported.
 
 filter=userName eq "bjensen"
