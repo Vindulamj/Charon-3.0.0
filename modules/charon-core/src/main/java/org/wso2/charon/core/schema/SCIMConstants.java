@@ -23,6 +23,7 @@ public class SCIMConstants {
     /*Resource names as defined in SCIM Schema spec*/
     public static final String USER = "User";
     public static final String GROUP = "Group";
+    public static final String RESOURCE_TYPE = "ResourceType";
 
     /*Resource endpoints relative to the base SCIM URL*/
     public static final String USER_ENDPOINT = "/Users";

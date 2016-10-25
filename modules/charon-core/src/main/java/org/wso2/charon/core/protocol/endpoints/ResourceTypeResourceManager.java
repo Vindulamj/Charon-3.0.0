@@ -16,6 +16,7 @@ import org.wso2.charon.core.protocol.SCIMResponse;
 import org.wso2.charon.core.schema.SCIMConstants;
 import org.wso2.charon.core.schema.SCIMResourceSchemaManager;
 import org.wso2.charon.core.schema.SCIMResourceTypeSchema;
+import org.wso2.charon.core.schema.ServerSideValidator;
 import org.wso2.charon.core.utils.CopyUtil;
 
 import java.io.IOException;
@@ -54,19 +55,23 @@ public class ResourceTypeResourceManager extends AbstractResourceManager{
             //build the user abstract scim object
             AbstractSCIMObject userResourceTypeObject = (AbstractSCIMObject) decoder.decodeResource(
                     scimUserObjectString, schema, new AbstractSCIMObject());
+            //add meta data
+            userResourceTypeObject = ServerSideValidator.validateResourceTypeSCIMObject(userResourceTypeObject);
             //build the group abstract scim object
             AbstractSCIMObject groupResourceTypeObject = (AbstractSCIMObject) decoder.decodeResource(
                     scimGroupObjectString, schema, new AbstractSCIMObject());
+            //add meta data
+            groupResourceTypeObject = ServerSideValidator.validateResourceTypeSCIMObject(groupResourceTypeObject);
             //build the root abstract scim object
-            AbstractSCIMObject ResourceTypeObject = buildCombinedResourceType(userResourceTypeObject,
+            AbstractSCIMObject resourceTypeObject = buildCombinedResourceType(userResourceTypeObject,
                     groupResourceTypeObject);
             //encode the newly created SCIM Resource Type object.
             String encodedObject;
             Map<String, String> ResponseHeaders = new HashMap<String, String>();
 
-            if (ResourceTypeObject != null) {
+            if (resourceTypeObject != null) {
                 //create a deep copy of the resource type object since we are going to change it.
-                AbstractSCIMObject copiedObject = (AbstractSCIMObject) CopyUtil.deepCopy(ResourceTypeObject);
+                AbstractSCIMObject copiedObject = (AbstractSCIMObject) CopyUtil.deepCopy(resourceTypeObject);
                 encodedObject = encoder.encodeSCIMObject(copiedObject);
                 //add location header
                 ResponseHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(
