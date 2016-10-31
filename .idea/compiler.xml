@@ -27,7 +27,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="charon-parent" target="1.5" />
-      <module name="org.wso2.charon.core" target="1.6" />
+      <module name="org.wso2.charon.core" target="1.7" />
     </bytecodeTargetLevel>
   </component>
 </project>

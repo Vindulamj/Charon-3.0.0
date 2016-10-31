@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>charon-parent</artifactId>
         <groupId>org.wso2.charon</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <artifactId>charon-parent</artifactId>
+        <version>3.0.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>org.wso2.charon.core</artifactId>
+    <artifactId>org.wso2.charon.core.v2</artifactId>
     <packaging>bundle</packaging>
-    <name>WSO2 Charon - Core</name>
-    <description>WSO2 Charon - SCIM 2.0 Implementation</description>
+    <name>WSO2 Charon - Core - V2</name>
+    <description>WSO2 Charon - SCIM Implementation</description>
     <url>http://wso2.com</url>
 
     <dependencies>
@@ -25,42 +23,45 @@
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.ws.commons.axiom</groupId>
+            <artifactId>axiom-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ws.commons.axiom</groupId>
+            <artifactId>axiom-impl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>2.17</version>
-                <executions>
-                    <execution>
-                        <id>validate</id>
-                        <phase>validate</phase>
-                        <configuration>
-                            <configLocation>
-                                https://raw.githubusercontent.com/wso2/code-quality-tools/master/checkstyle/checkstyle.xml
-                            </configLocation>
-                            <suppressionsLocation>
-                                https://raw.githubusercontent.com/wso2/code-quality-tools/master/checkstyle/suppressions.xml
-                            </suppressionsLocation>
-                            <encoding>UTF-8</encoding>
-                            <consoleOutput>true</consoleOutput>
-                            <failsOnError>true</failsOnError>
-                            <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                        </configuration>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Bundle-Name>${project.artifactId}</Bundle-Name>
+                        <Export-Package>
+                            org.wso2.charon.core.*;version=3.0.0
+                        </Export-Package>
+                        <Import-Package>
+                            org.json.*,
+                            org.apache.commons.logging.*; version="${commons-logging.osgi.version.range}",
+                            org.apache.axiom.om.*; version="${axiom.osgi.version.range}",
+                            javax.xml.namespace.*,
+                            javax.xml.stream.*,
+                        </Import-Package>
+                    </instructions>
                 </configuration>
             </plugin>
         </plugins>
