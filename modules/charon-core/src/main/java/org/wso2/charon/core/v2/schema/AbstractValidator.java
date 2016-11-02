@@ -484,7 +484,6 @@ public abstract class AbstractValidator {
                                                          List<String> requestedAttributesList,
                                                          List<String> requestedExcludingAttributesList,
                                                          AbstractSCIMObject scimObject){
-        logger.info(attribute.getName()+"-"+subAttribute.getName()+"-"+subSimpleAttribute.getName());
         if(subSimpleAttribute.getReturned().equals(SCIMDefinitions.Returned.NEVER)){
             scimObject.deleteValuesSubAttribute(attribute.getName(),
                     subAttribute.getName(),subSimpleAttribute.getName());
