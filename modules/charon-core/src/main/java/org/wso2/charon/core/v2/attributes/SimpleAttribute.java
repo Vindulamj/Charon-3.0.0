@@ -20,6 +20,8 @@ package org.wso2.charon.core.v2.attributes;
 import org.wso2.charon.core.v2.schema.SCIMDefinitions;
 import org.wso2.charon.core.v2.exceptions.CharonException;
 
+import java.util.Date;
+
 /*
  * This class is a blueprint of SimpleAttribute defined in SCIM Core Schema Spec.
  */
@@ -55,6 +57,23 @@ public class SimpleAttribute extends AbstractAttribute {
             throw new CharonException("Mismatch in requested data type");
         }
     }
+
+    public Date getDateValue() throws CharonException {
+        if(this.type.equals(SCIMDefinitions.DataType.DATE_TIME)) {
+            return (Date)this.value;
+        } else {
+            throw new CharonException("Datatype doesn\'t match the datatype of the attribute value");
+        }
+    }
+
+    public Boolean getBooleanValue() throws CharonException {
+        if(this.type.equals(SCIMDefinitions.DataType.BOOLEAN)) {
+            return (Boolean)this.value;
+        } else {
+            throw new CharonException("Datatype doesn\'t match the datatype of the attribute value");
+        }
+    }
+
     public void updateValue(Object value) throws CharonException {
             this.value = value;
 

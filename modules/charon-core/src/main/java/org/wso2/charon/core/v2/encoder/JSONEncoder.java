@@ -63,7 +63,7 @@ public class JSONEncoder {
             errorObject.put(ResponseCodeConstants.DETAIL, String.valueOf(exception.getDetail()));
             errorObject.put(ResponseCodeConstants.STATUS, String.valueOf(exception.getStatus()));
             //construct the full json obj.
-            rootErrorObject =errorObject;
+            rootErrorObject = errorObject;
 
         } catch (JSONException e) {
             //usually errors occur rarely when encoding exceptions. and no need to pass them to clients.

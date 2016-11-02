@@ -339,5 +339,31 @@ public class AbstractSCIMObject implements SCIMObject{
         }
     }
 
+    public String getLocation() throws CharonException {
+        if(this.isMetaAttributeExist()) {
+            SimpleAttribute location = (SimpleAttribute)this.getMetaAttribute().getSubAttribute
+                    (SCIMConstants.CommonSchemaConstants.LOCATION);
+            return location != null?location.getStringValue():null;
+        } else {
+            return null;
+        }
+    }
 
+    public Date getCreatedDate() throws CharonException {
+        if(this.isMetaAttributeExist()) {
+            SimpleAttribute createdDate = (SimpleAttribute)this.getMetaAttribute().getSubAttribute("created");
+            return createdDate != null?createdDate.getDateValue():null;
+        } else {
+            return null;
+        }
+    }
+
+    public Date getLastModified() throws CharonException {
+        if (this.isMetaAttributeExist()) {
+            SimpleAttribute createdDate = (SimpleAttribute) this.getMetaAttribute().getSubAttribute("lastModified");
+            return createdDate != null ? createdDate.getDateValue() : null;
+        } else {
+            return null;
+        }
+    }
 }

@@ -16,4 +16,12 @@ import java.util.Date;
  */
 public class Group extends AbstractSCIMObject {
 
+    public String getDisplayName() throws CharonException {
+        if (isAttributeExist(SCIMConstants.GroupSchemaConstants.DISPLAY_NAME)) {
+            return ((SimpleAttribute) attributeList.get(
+                    SCIMConstants.GroupSchemaConstants.DISPLAY_NAME)).getStringValue();
+        } else {
+            return null;
+        }
+    }
 }
