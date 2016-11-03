@@ -2,6 +2,7 @@ package org.wso2.charon.core.v2.objects;
 
 import org.wso2.charon.core.v2.attributes.*;
 import org.wso2.charon.core.v2.schema.ResourceTypeSchema;
+import org.wso2.charon.core.v2.schema.SCIMResourceSchemaManager;
 import org.wso2.charon.core.v2.schema.SCIMSchemaDefinitions;
 import org.wso2.charon.core.v2.exceptions.BadRequestException;
 import org.wso2.charon.core.v2.exceptions.CharonException;

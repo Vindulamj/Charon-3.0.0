@@ -24,4 +24,17 @@ public class Group extends AbstractSCIMObject {
             return null;
         }
     }
+
+    public void setDisplayName(String displayName) throws CharonException, BadRequestException {
+        if(this.isAttributeExist(SCIMConstants.GroupSchemaConstants.DISPLAY_NAME)) {
+            ((SimpleAttribute)this.attributeList.get(SCIMConstants.GroupSchemaConstants.DISPLAY_NAME)).
+                    updateValue(displayName);
+        } else {
+            SimpleAttribute displayAttribute = new SimpleAttribute(SCIMConstants.GroupSchemaConstants.DISPLAY_NAME, displayName);
+            displayAttribute = (SimpleAttribute)DefaultAttributeFactory.createAttribute
+                    (SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.DISPLAY_NAME, displayAttribute);
+            this.attributeList.put(SCIMConstants.GroupSchemaConstants.DISPLAY_NAME, displayAttribute);
+        }
+
+    }
 }

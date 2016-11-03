@@ -46,12 +46,12 @@ public class AbstractCharonException extends Exception {
      */
     public AbstractCharonException(String message, Throwable cause) {
         super(message, cause);
-        this.status = -1;
+        this.status = 600;
         this.detail = message;
     }
 
     public AbstractCharonException(String message) {
-        this.status = -1;
+        this.status = 600;
         this.detail = message;
     }
 

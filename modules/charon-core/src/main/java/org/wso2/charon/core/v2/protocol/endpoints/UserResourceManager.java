@@ -1,6 +1,7 @@
 package org.wso2.charon.core.v2.protocol.endpoints;
 
 
+import org.wso2.charon.core.v2.attributes.ComplexAttribute;
 import org.wso2.charon.core.v2.attributes.SimpleAttribute;
 import org.wso2.charon.core.v2.config.CharonConfiguration;
 import org.wso2.charon.core.v2.encoder.JSONDecoder;
@@ -64,7 +65,6 @@ public class UserResourceManager extends AbstractResourceManager {
                 String error = "User not found in the user store.";
                 throw new NotFoundException(error);
             }
-
             //obtain the schema corresponding to user
             // unless configured returns core-user schema or else returns extended user schema)
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
