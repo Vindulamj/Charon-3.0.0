@@ -1,7 +1,6 @@
 package org.wso2.charon.core.v2.protocol.endpoints;
 
 
-import org.wso2.charon.core.v2.attributes.ComplexAttribute;
 import org.wso2.charon.core.v2.attributes.SimpleAttribute;
 import org.wso2.charon.core.v2.config.CharonConfiguration;
 import org.wso2.charon.core.v2.encoder.JSONDecoder;

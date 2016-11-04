@@ -75,7 +75,7 @@ public class Test {
                "    [\"urn:ietf:params:scim:schemas:core:2.0:User\",\n" +
                "      \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\"],\n" +
                "  \"externalId\": \"701984\",\n" +
-               "  \"userName\": \"bjensen@example.com\",\n" +
+               "  \"userName\": \"Bihan\",\n" +
                "  \"name\": {\n" +
                "    \"formatted\": \"Ms. Barbara J Jensen, III\",\n" +
                "    \"familyName\": \"Jensen\",\n" +
@@ -199,11 +199,11 @@ public class Test {
        //SCIMResponse res= um.listWithPagination(1,7,new SCIMUserManager(),null,null);
 
        //-----UPDATE USER VIA PUT ---------
-       //SCIMResponse res= um.updateWithPUT("0429a28f-2e3c-4bf8-a799-f6052aea00c6",array,new SCIMUserManager(),null,null);
+       SCIMResponse res= um.updateWithPUT("042e8851-718c-469f-9a2b-548bf08830db",array,new SCIMUserManager(),null,null);
 
        //-----FILTER AT USER ENDPOINT ---------
        String filter ="wso2Extension.dogs.value eq johan@wso2.com";
-       SCIMResponse res= um.listByFilter(filter, new SCIMUserManager(), attributes, null);
+       //SCIMResponse res= um.listByFilter(filter, new SCIMUserManager(), attributes, null);
 
        //-----LIST USERS WITH SORT ---------
        //SCIMResponse res= um.listBySort(null,"AsCEnding",new SCIMUserManager(),attributes,null);

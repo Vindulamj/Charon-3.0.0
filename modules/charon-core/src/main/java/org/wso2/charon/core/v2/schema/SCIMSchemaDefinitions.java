@@ -517,7 +517,7 @@ public class SCIMSchemaDefinitions {
                 SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.UserSchemaConstants.USER_NAME_URI,
                         SCIMConstants.UserSchemaConstants.USER_NAME,
                         SCIMDefinitions.DataType.STRING, false, SCIMConstants.UserSchemaConstants.USERNAME_DESC, true, false,
-                        SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Mutability.IMMUTABLE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.SERVER, null, null, null);
 
         //The components of the user's real name.
@@ -725,14 +725,13 @@ public class SCIMSchemaDefinitions {
                         SCIMDefinitions.Uniqueness.NONE, null, new ArrayList<SCIMDefinitions.ReferenceType>
                                 (Arrays.asList(SCIMDefinitions.ReferenceType.USER, SCIMDefinitions.ReferenceType.GROUP)), null);
 
-        //A label indicating the type of resource, e.g., 'User' or 'Group'.
-        public static final SCIMAttributeSchema TYPE =
-                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.GroupSchemaConstants.TYPE_URI,
-                        SCIMConstants.CommonSchemaConstants.TYPE,
-                        SCIMDefinitions.DataType.STRING, false, SCIMConstants.GroupSchemaConstants.TYPE_DESC, false, false,
-                        SCIMDefinitions.Mutability.IMMUTABLE, SCIMDefinitions.Returned.DEFAULT,
-                        SCIMDefinitions.Uniqueness.NONE, new ArrayList<String>(Arrays.asList(SCIMConstants.GroupSchemaConstants.USER,
-                                SCIMConstants.GroupSchemaConstants.GROUP)), null, null);
+        //A human-readable name for the Group. REQUIRED.
+        public static final SCIMAttributeSchema DISPLAY =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.GroupSchemaConstants.DISPLAY_URI,
+                        SCIMConstants.GroupSchemaConstants.DISPLAY,
+                        SCIMDefinitions.DataType.STRING, false, SCIMConstants.GroupSchemaConstants.DISPLAY_DESC, false, false,
+                        SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
 
     /*------------------------------------------------------------------------------------------------------*/
 
@@ -752,7 +751,7 @@ public class SCIMSchemaDefinitions {
                         SCIMConstants.GroupSchemaConstants.MEMBERS,
                         SCIMDefinitions.DataType.COMPLEX, true, SCIMConstants.GroupSchemaConstants.MEMBERS_DESC, false, false,
                         SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
-                        SCIMDefinitions.Uniqueness.NONE, null, null, new ArrayList<SCIMAttributeSchema>(Arrays.asList(VALUE, $REF, TYPE)));
+                        SCIMDefinitions.Uniqueness.NONE, null, null, new ArrayList<SCIMAttributeSchema>(Arrays.asList(VALUE, $REF, DISPLAY)));
     }
 
 

@@ -43,7 +43,7 @@ public class GroupTest {
         String excludeAttributes = "members";
 
         //----CREATE Group--------
-        //SCIMResponse res=um.create(array,new SCIMUserManager(),null,null);
+        SCIMResponse res=um.create(array,new SCIMUserManager(),null,null);
 
         //-----GET GROUP ---------
         //SCIMResponse res= um.get("c2fa9b6d-5865-4378-948a-f349b64d1544",new SCIMUserManager(),null,excludeAttributes);
@@ -66,7 +66,7 @@ public class GroupTest {
         //SCIMResponse res= um.listBySort(null,"AsCEnding",new SCIMUserManager(),attributes,null);
 
         //-----UPDATE GROUP WITH PUT ---------
-        SCIMResponse res = um.updateWithPUT("912742f6-bc64-4ff6-a25d-45325e46b995", array, new SCIMUserManager(), null, null);
+        //SCIMResponse res = um.updateWithPUT("912742f6-bc64-4ff6-a25d-45325e46b995", array, new SCIMUserManager(), null, null);
 
         System.out.println(res.getResponseStatus());
         System.out.println("");

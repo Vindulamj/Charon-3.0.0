@@ -1,15 +1,13 @@
 package org.wso2.charon.core.v2.objects;
 
-import org.wso2.charon.core.v2.attributes.ComplexAttribute;
-import org.wso2.charon.core.v2.attributes.DefaultAttributeFactory;
-import org.wso2.charon.core.v2.attributes.SimpleAttribute;
+import org.wso2.charon.core.v2.attributes.*;
 import org.wso2.charon.core.v2.exceptions.BadRequestException;
 import org.wso2.charon.core.v2.exceptions.CharonException;
 import org.wso2.charon.core.v2.schema.SCIMConstants;
 import org.wso2.charon.core.v2.schema.SCIMDefinitions;
 import org.wso2.charon.core.v2.schema.SCIMSchemaDefinitions;
 
-import java.util.Date;
+import java.util.*;
 
 /**
  * Represents the Group object which is a collection of attributes defined by SCIM Group-schema.
@@ -35,6 +33,43 @@ public class Group extends AbstractSCIMObject {
                     (SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.DISPLAY_NAME, displayAttribute);
             this.attributeList.put(SCIMConstants.GroupSchemaConstants.DISPLAY_NAME, displayAttribute);
         }
+    }
 
+    public List<Object> getMembers(){
+        List<Object> memberList = new ArrayList<>();
+        if(this.isAttributeExist(SCIMConstants.GroupSchemaConstants.MEMBERS)) {
+            MultiValuedAttribute members = (MultiValuedAttribute)this.attributeList.get(
+                    SCIMConstants.GroupSchemaConstants.MEMBERS);
+            List<Attribute> subValuesList = members.getAttributeValues();
+            for(Attribute subValue : subValuesList){
+                ComplexAttribute complexAttribute = (ComplexAttribute)subValue;
+                Map<String,Attribute> subAttributesList = complexAttribute.getSubAttributesList();
+                memberList.add(((SimpleAttribute)(subAttributesList.get(SCIMConstants.CommonSchemaConstants.VALUE))).getValue());
+            }
+            return memberList;
+        } else {
+            return null;
+        }
+    }
+
+    public List<String> getMembersWithDisplayName() {
+        ArrayList displayNames = new ArrayList();
+        if(this.isAttributeExist(SCIMConstants.GroupSchemaConstants.MEMBERS)) {
+            MultiValuedAttribute members = (MultiValuedAttribute)this.attributeList.get(
+                    SCIMConstants.GroupSchemaConstants.MEMBERS);
+            List<Attribute> values = members.getAttributeValues();
+            if(values != null) {
+                List<Attribute> subValuesList = members.getAttributeValues();
+                for(Attribute subValue : subValuesList){
+                    ComplexAttribute complexAttribute = (ComplexAttribute)subValue;
+                    Map<String,Attribute> subAttributesList = complexAttribute.getSubAttributesList();
+                    displayNames.add(((SimpleAttribute)(subAttributesList.get(
+                            SCIMConstants.CommonSchemaConstants.DISPLAY))).getValue());
+                }
+                return displayNames;
+            }
+        }
+
+        return displayNames;
     }
 }

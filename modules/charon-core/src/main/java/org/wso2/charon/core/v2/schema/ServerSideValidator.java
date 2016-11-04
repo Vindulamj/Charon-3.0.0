@@ -5,6 +5,7 @@ import org.wso2.charon.core.v2.exceptions.BadRequestException;
 import org.wso2.charon.core.v2.exceptions.CharonException;
 import org.wso2.charon.core.v2.exceptions.NotFoundException;
 import org.wso2.charon.core.v2.objects.AbstractSCIMObject;
+import org.wso2.charon.core.v2.objects.User;
 import org.wso2.charon.core.v2.protocol.endpoints.AbstractResourceManager;
 import org.wso2.charon.core.v2.utils.AttributeUtil;
 
@@ -24,8 +25,10 @@ public class ServerSideValidator extends AbstractValidator{
     public static void validateCreatedSCIMObject(AbstractSCIMObject scimObject, SCIMResourceTypeSchema resourceSchema)
             throws CharonException, BadRequestException, NotFoundException {
 
-        //set display names for complex multivalued attributes
-        setDisplayNameInComplexMultiValuedAttributes(scimObject,resourceSchema);
+        if(scimObject instanceof User){
+            //set display names for complex multivalued attributes
+            setDisplayNameInComplexMultiValuedAttributes(scimObject,resourceSchema);
+        }
         //remove any read only attributes
         removeAnyReadOnlyAttributes(scimObject,resourceSchema);
         //add created and last modified dates
