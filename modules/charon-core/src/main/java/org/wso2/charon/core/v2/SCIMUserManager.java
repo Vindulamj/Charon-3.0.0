@@ -192,23 +192,9 @@ public class SCIMUserManager implements UserManager {
         ExpressionNode en = (ExpressionNode) rootNode;
         String attributeValue = en.getAttributeValue();
         String operation = en.getOperation();
-        String value = en.getValue();
-        try {
-            List<User> list = listUsers();
-            List<User> newList = new ArrayList<User>();
-            for (User user : list) {
-                Map<String, Attribute> attributeList = user.getAttributeList();
-                Attribute checkAttribute = attributeList.get("userName");
-                if (checkAttribute != null) {
-                    if (((SimpleAttribute) checkAttribute).getValue().equals(value)) {
-                        newList.add(user);
-                    }
-                }
-            }
-            return newList;
-        } catch (CharonException e) {
-            e.printStackTrace();
-        }
+        String attribute = en.getValue();
+
+        System.out.println(attributeValue+"-"+operation+"-"+attribute);
         return null;
     }
 

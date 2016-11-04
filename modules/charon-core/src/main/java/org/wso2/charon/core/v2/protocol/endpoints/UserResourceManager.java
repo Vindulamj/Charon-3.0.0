@@ -221,7 +221,7 @@ public class UserResourceManager extends AbstractResourceManager {
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
 
             filterTreeManager = new FilterTreeManager(filterString, schema);
-            Node rootNode=filterTreeManager.buildTree();
+            Node rootNode = filterTreeManager.buildTree();
 
             //obtain the json encoder
             encoder = getEncoder();

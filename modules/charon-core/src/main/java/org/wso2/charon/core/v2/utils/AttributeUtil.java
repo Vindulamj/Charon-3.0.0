@@ -7,6 +7,7 @@ import org.wso2.charon.core.v2.schema.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -190,6 +191,21 @@ public class AttributeUtil {
                 if((attributeSchema.getName()+"."+subAttributeSchema.getName()).equals(attributeName) ||
                         subAttributeSchema.getURI().equals(attributeName)) {
                     return subAttributeSchema.getURI();
+                }
+                if(subAttributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)){
+                    List<SCIMAttributeSchema> subSubAttributeSchemas = subAttributeSchema.getSubAttributeSchemas();
+                    if (subSubAttributeSchemas != null) {
+                        Iterator<SCIMAttributeSchema> subSubsIterator = subSubAttributeSchemas.iterator();
+
+                        while(subSubsIterator.hasNext()) {
+                            SCIMAttributeSchema subSubAttributeSchema = subSubsIterator.next();
+                            if((attributeSchema.getName()+"."+subAttributeSchema.getName()+"."+
+                                    subSubAttributeSchema.getName()).equals(attributeName) ||
+                                    subAttributeSchema.getURI().equals(attributeName)) {
+                                return subSubAttributeSchema.getURI();
+                            }
+                        }
+                    }
                 }
             }
         }

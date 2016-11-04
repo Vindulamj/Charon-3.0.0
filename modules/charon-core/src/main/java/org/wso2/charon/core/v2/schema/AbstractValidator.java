@@ -891,8 +891,15 @@ public abstract class AbstractValidator {
             List<SCIMAttributeSchema> subAttributeSchemaList, AbstractAttribute newAttribute,
             AbstractAttribute oldAttribute) throws CharonException, BadRequestException {
 
-        Map<String,Attribute> newAttributeList = ((ComplexAttribute)newAttribute).getSubAttributesList();
-        Map<String,Attribute> oldAttributeList = ((ComplexAttribute)oldAttribute).getSubAttributesList();
+        Map<String,Attribute> newAttributeList = new HashMap<String, Attribute>();
+        Map<String,Attribute> oldAttributeList = new HashMap<String, Attribute>();
+
+        if(newAttribute != null){
+            newAttributeList = ((ComplexAttribute)newAttribute).getSubAttributesList();
+        }
+        if(oldAttribute != null){
+            oldAttributeList = ((ComplexAttribute)oldAttribute).getSubAttributesList();
+        }
 
         for (AttributeSchema attributeSchema : subAttributeSchemaList) {
             if (attributeSchema.getMutability().equals(SCIMDefinitions.Mutability.READ_ONLY)) {
@@ -1102,12 +1109,13 @@ public abstract class AbstractValidator {
                             subAttributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)){
                         if(subAttributeSchema.getSubAttributeSchema(SCIMConstants.CommonSchemaConstants.DISPLAY) != null){
                             Attribute extensionAttribute = attributeList.get(attributeSchema.getName());
-
-                            if((((ComplexAttribute)extensionAttribute).
-                                    getSubAttribute(subAttributeSchema.getName()))!=null){
-                                Attribute multiValuedAttribute = (attributeList.get(attributeSchema.getName()))
-                                        .getSubAttribute(subAttributeSchema.getName());
-                                setDisplayNameInComplexMultiValuedSubAttributes(multiValuedAttribute, subAttributeSchema);
+                            if(extensionAttribute != null) {
+                                if ((((ComplexAttribute) extensionAttribute).
+                                        getSubAttribute(subAttributeSchema.getName())) != null) {
+                                    Attribute multiValuedAttribute = (attributeList.get(attributeSchema.getName()))
+                                            .getSubAttribute(subAttributeSchema.getName());
+                                    setDisplayNameInComplexMultiValuedSubAttributes(multiValuedAttribute, subAttributeSchema);
+                                }
                             }
                         }
                     }

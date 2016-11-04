@@ -62,7 +62,7 @@ public class Test {
        //-----Extension User schema support------
        SCIMUserSchemaExtensionBuilder extensionBuilder= new SCIMUserSchemaExtensionBuilder();
        try {
-           extensionBuilder.buildUserSchemaExtension("/home/vindula/Desktop/Charon/Charon-3.0/scim-schema-extension.config");
+           extensionBuilder.buildUserSchemaExtension("/home/vindula/Desktop/Charon-3.0/scim-schema-extension.config");
        } catch (CharonException e) {
            e.printStackTrace();
        } catch (InternalErrorException e) {
@@ -177,31 +177,13 @@ public class Test {
                "       \"MIIDQzCCAqygAwIBAgICEAAwDQYJKoZIhvcNAQEFBQAwTjELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFDASBgNVBAoMC2V4YW1wbGUuY29tMRQwEgYDVQQDDAtleGFtcGxlLmNvbTAeFw0xMTEwMjIwNjI0MzFaFw0xMjEwMDQwNjI0MzFaMH8xCzAJBgNVBAYTAlVTMRMwEQYDVQQIDApDYWxpZm9ybmlhMRQwEgYDVQQKDAtl eGFtcGxlLmNvbTEhMB8GA1UEAwwYTXMuIEJhcmJhcmEgSiBKZW5zZW4gSUlJMSIw IAYJKoZIhvcNAQkBFhNiamVuc2VuQGV4YW1wbGUuY29tMIIBIjANBgkqhkiG9w0B AQEFAAOCAQ8AMIIBCgKCAQEA7Kr+Dcds/JQ5GwejJFcBIP682X3xpjis56AK02bc 1FLgzdLI8auoR+cC9/Vrh5t66HkQIOdA4unHh0AaZ4xL5PhVbXIPMB5vAPKpzz5i PSi8xO8SL7I7SDhcBVJhqVqr3HgllEG6UClDdHO7nkLuwXq8HcISKkbT5WFTVfFZ zidPl8HZ7DhXkZIRtJwBweq4bvm3hM1Os7UQH05ZS6cVDgweKNwdLLrT51ikSQG3 DYrl+ft781UQRIqxgwqCfXEuDiinPh0kkvIi5jivVu1Z9QiwlYEdRbLJ4zJQBmDr SGTMYn4lRc2HgHO4DqB/bnMVorHB0CC6AV1QoFK4GPe1LwIDAQABo3sweTAJBgNV HRMEAjAAMCwGCWCGSAGG+EIBDQQfFh1PcGVuU1NMIEdlbmVyYXRlZCBDZXJ0aWZp Y2F0ZTAdBgNVHQ4EFgQU8pD0U0vsZIsaA16lL8En8bx0F/gwHwYDVR0jBBgwFoAU dGeKitcaF7gnzsNwDx708kqaVt0wDQYJKoZIhvcNAQEFBQADgYEAA81SsFnOdYJt Ng5Tcq+/ByEDrBgnusx0jloUhByPMEVkoMZ3J7j1ZgI8rAbOkNngX8+pKfTiDz1R C4+dx8oU6Za+4NJXUjlL5CvV6BEYb1+QAEJwitTVvxB/A67g42/vzgAtoRUeDov1+GFiBZ+GNF/cAYKcMtGcrs2i97ZkJMo=\"\n" +
                "    }\n" +
                "  ],\n" +
-               "  \"urn:scim:schemas:extension:wso2:1.0:wso2Extension\": {\n" +
-               "    \"employeeNumber\":{\n" +
-               "        \"value\": \"ODEL\", \n" +
-               "        \"display\": \"NoLimit\" \n" +
-               "      },\n" +
-               "    \"sister\": \"Dushanis\",\n" +
-               "    \"owners\": [\"Sakditha\",\"Mildinda\"],\n" +
-               "    \"dogs\": [\n" +
-               "    {\n" +
-               "        \"boss\": \"micky\", \n" +
-               "        \"value\": \"li1sa\" \n" +
-               "    },\n" +
-               "    {\n" +
-               "        \"boss\": \"lisa\", \n" +
-               "        \"value\": \"lisaa\" \n" +
-               "    }\n" +
-               "      ]\n" +
-               "  }\n" +
                "}";
 
        String attributes="wso2Extension.sister,nickName,photos.value,wso2Extension.employeeNumber.value";
        String excludeAttributes="externalId,emails.value,wso2Extension.employeeNumber.display";
 
        //----CREATE USER --------
-       SCIMResponse res=um.create(array,new SCIMUserManager(),null, null);
+       //SCIMResponse res=um.create(array,new SCIMUserManager(),null, null);
 
 
        //-----GET USER  ---------
@@ -217,11 +199,11 @@ public class Test {
        //SCIMResponse res= um.listWithPagination(1,7,new SCIMUserManager(),null,null);
 
        //-----UPDATE USER VIA PUT ---------
-       //SCIMResponse res= um.updateWithPUT("0e0db565-7856-463b-a7bc-96e1cf3400f4",array,new SCIMUserManager(),null,null);
+       //SCIMResponse res= um.updateWithPUT("0429a28f-2e3c-4bf8-a799-f6052aea00c6",array,new SCIMUserManager(),null,null);
 
        //-----FILTER AT USER ENDPOINT ---------
-       String filter ="userName eq johan@wso2.com";
-       //SCIMResponse res= um.listByFilter(filter, new SCIMUserManager(), attributes, null);
+       String filter ="wso2Extension.dogs.value eq johan@wso2.com";
+       SCIMResponse res= um.listByFilter(filter, new SCIMUserManager(), attributes, null);
 
        //-----LIST USERS WITH SORT ---------
        //SCIMResponse res= um.listBySort(null,"AsCEnding",new SCIMUserManager(),attributes,null);

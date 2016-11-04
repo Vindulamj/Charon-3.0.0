@@ -139,7 +139,7 @@ public class FilterTreeManager {
             if(!(symbol.equals(String.valueOf(SCIMConstants.OperationalConstants.RIGHT)))){
                 ExpressionNode expressionNode = new ExpressionNode();
                 validateAndBuildFilterExpression(symbol,expressionNode);
-                root= expressionNode;
+                root = expressionNode;
                 symbol = nextSymbol();
             }
             else{
@@ -249,6 +249,7 @@ public class FilterTreeManager {
      */
     private void setExpressionNodeValues(String attributeValue, String operation,
                                          String value, ExpressionNode expressionNode) throws BadRequestException {
+        System.out.println(attributeValue);
         expressionNode.setAttributeValue(AttributeUtil.getAttributeURI(attributeValue.trim(),schema));
         expressionNode.setOperation(operation.trim());
         if(value !=null){
