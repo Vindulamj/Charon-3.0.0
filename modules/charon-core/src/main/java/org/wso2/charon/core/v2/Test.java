@@ -187,19 +187,19 @@ public class Test {
 
 
        //-----GET USER  ---------
-       //SCIMResponse res= um.get("a713e12b-0364-4d54-b939-6d1230d40251",new SCIMUserManager(),null,null);
+       SCIMResponse res= um.get("b1fac6b4-85ae-4945-bfe1-1360b771b6e4",new SCIMUserManager(),null,null);
 
        //-----DELETE USER  ---------
        //SCIMResponse res= um.delete("cf712155-e974-42ae-9e57-6c42f7bbadad",new SCIMUserManager());
 
        //-----LIST USER  ---------
-       //SCIMResponse res= um.list(new SCIMUserManager(),attributes,null);
+      // SCIMResponse res= um.list(new SCIMUserManager(),attributes,null);
 
        //-----LIST USER WITH PAGINATION ---------
        //SCIMResponse res= um.listWithPagination(1,7,new SCIMUserManager(),null,null);
 
        //-----UPDATE USER VIA PUT ---------
-       SCIMResponse res= um.updateWithPUT("042e8851-718c-469f-9a2b-548bf08830db",array,new SCIMUserManager(),null,null);
+       //SCIMResponse res= um.updateWithPUT("042e8851-718c-469f-9a2b-548bf08830db",array,new SCIMUserManager(),null,null);
 
        //-----FILTER AT USER ENDPOINT ---------
        String filter ="wso2Extension.dogs.value eq johan@wso2.com";

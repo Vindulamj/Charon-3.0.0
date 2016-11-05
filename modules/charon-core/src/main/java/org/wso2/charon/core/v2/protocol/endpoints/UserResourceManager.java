@@ -194,7 +194,9 @@ public class UserResourceManager extends AbstractResourceManager {
             return AbstractResourceManager.encodeSCIMException(e);
         } catch (InternalErrorException e) {
             return AbstractResourceManager.encodeSCIMException(e);
-      }
+      } catch (NotImplementedException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        }
     }
 
 
@@ -267,6 +269,8 @@ public class UserResourceManager extends AbstractResourceManager {
         } catch (NotFoundException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         } catch (InternalErrorException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (NotImplementedException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         }
     }
@@ -349,6 +353,8 @@ public class UserResourceManager extends AbstractResourceManager {
             return AbstractResourceManager.encodeSCIMException(e);
         } catch (BadRequestException e) {
             return AbstractResourceManager.encodeSCIMException(e);
+        } catch (NotImplementedException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
         }
     }
 
@@ -423,6 +429,8 @@ public class UserResourceManager extends AbstractResourceManager {
             return AbstractResourceManager.encodeSCIMException(e);
         } catch (BadRequestException e) {
             return AbstractResourceManager.encodeSCIMException(e);
+        } catch (NotImplementedException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
         }
     }
 
@@ -482,6 +490,8 @@ public class UserResourceManager extends AbstractResourceManager {
         } catch (InternalErrorException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         } catch (BadRequestException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (NotImplementedException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         }
     }
@@ -556,6 +566,8 @@ public class UserResourceManager extends AbstractResourceManager {
         } catch (CharonException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         } catch (InternalErrorException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (NotImplementedException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         }
     }

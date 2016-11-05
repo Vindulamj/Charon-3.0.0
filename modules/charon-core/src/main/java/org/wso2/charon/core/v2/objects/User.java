@@ -83,6 +83,7 @@ public class User extends AbstractSCIMObject {
             }
             String complexAttributeName = SCIMConstants.UserSchemaConstants.GROUPS + "_" + valueVal + "_" + typeVal;
             complexAttribute.setName(complexAttributeName);
+            DefaultAttributeFactory.createAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUPS, complexAttribute);
             setGroup(complexAttribute);
         }
     }

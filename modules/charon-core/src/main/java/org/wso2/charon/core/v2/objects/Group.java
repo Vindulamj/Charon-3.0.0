@@ -3,9 +3,7 @@ package org.wso2.charon.core.v2.objects;
 import org.wso2.charon.core.v2.attributes.*;
 import org.wso2.charon.core.v2.exceptions.BadRequestException;
 import org.wso2.charon.core.v2.exceptions.CharonException;
-import org.wso2.charon.core.v2.schema.SCIMConstants;
-import org.wso2.charon.core.v2.schema.SCIMDefinitions;
-import org.wso2.charon.core.v2.schema.SCIMSchemaDefinitions;
+import org.wso2.charon.core.v2.schema.*;
 
 import java.util.*;
 
@@ -24,27 +22,27 @@ public class Group extends AbstractSCIMObject {
     }
 
     public void setDisplayName(String displayName) throws CharonException, BadRequestException {
-        if(this.isAttributeExist(SCIMConstants.GroupSchemaConstants.DISPLAY_NAME)) {
-            ((SimpleAttribute)this.attributeList.get(SCIMConstants.GroupSchemaConstants.DISPLAY_NAME)).
+        if (this.isAttributeExist(SCIMConstants.GroupSchemaConstants.DISPLAY_NAME)) {
+            ((SimpleAttribute) this.attributeList.get(SCIMConstants.GroupSchemaConstants.DISPLAY_NAME)).
                     updateValue(displayName);
         } else {
             SimpleAttribute displayAttribute = new SimpleAttribute(SCIMConstants.GroupSchemaConstants.DISPLAY_NAME, displayName);
-            displayAttribute = (SimpleAttribute)DefaultAttributeFactory.createAttribute
+            displayAttribute = (SimpleAttribute) DefaultAttributeFactory.createAttribute
                     (SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.DISPLAY_NAME, displayAttribute);
             this.attributeList.put(SCIMConstants.GroupSchemaConstants.DISPLAY_NAME, displayAttribute);
         }
     }
 
-    public List<Object> getMembers(){
+    public List<Object> getMembers() {
         List<Object> memberList = new ArrayList<>();
-        if(this.isAttributeExist(SCIMConstants.GroupSchemaConstants.MEMBERS)) {
-            MultiValuedAttribute members = (MultiValuedAttribute)this.attributeList.get(
+        if (this.isAttributeExist(SCIMConstants.GroupSchemaConstants.MEMBERS)) {
+            MultiValuedAttribute members = (MultiValuedAttribute) this.attributeList.get(
                     SCIMConstants.GroupSchemaConstants.MEMBERS);
             List<Attribute> subValuesList = members.getAttributeValues();
-            for(Attribute subValue : subValuesList){
-                ComplexAttribute complexAttribute = (ComplexAttribute)subValue;
-                Map<String,Attribute> subAttributesList = complexAttribute.getSubAttributesList();
-                memberList.add(((SimpleAttribute)(subAttributesList.get(SCIMConstants.CommonSchemaConstants.VALUE))).getValue());
+            for (Attribute subValue : subValuesList) {
+                ComplexAttribute complexAttribute = (ComplexAttribute) subValue;
+                Map<String, Attribute> subAttributesList = complexAttribute.getSubAttributesList();
+                memberList.add(((SimpleAttribute) (subAttributesList.get(SCIMConstants.CommonSchemaConstants.VALUE))).getValue());
             }
             return memberList;
         } else {
@@ -54,16 +52,16 @@ public class Group extends AbstractSCIMObject {
 
     public List<String> getMembersWithDisplayName() {
         ArrayList displayNames = new ArrayList();
-        if(this.isAttributeExist(SCIMConstants.GroupSchemaConstants.MEMBERS)) {
-            MultiValuedAttribute members = (MultiValuedAttribute)this.attributeList.get(
+        if (this.isAttributeExist(SCIMConstants.GroupSchemaConstants.MEMBERS)) {
+            MultiValuedAttribute members = (MultiValuedAttribute) this.attributeList.get(
                     SCIMConstants.GroupSchemaConstants.MEMBERS);
             List<Attribute> values = members.getAttributeValues();
-            if(values != null) {
+            if (values != null) {
                 List<Attribute> subValuesList = members.getAttributeValues();
-                for(Attribute subValue : subValuesList){
-                    ComplexAttribute complexAttribute = (ComplexAttribute)subValue;
-                    Map<String,Attribute> subAttributesList = complexAttribute.getSubAttributesList();
-                    displayNames.add(((SimpleAttribute)(subAttributesList.get(
+                for (Attribute subValue : subValuesList) {
+                    ComplexAttribute complexAttribute = (ComplexAttribute) subValue;
+                    Map<String, Attribute> subAttributesList = complexAttribute.getSubAttributesList();
+                    displayNames.add(((SimpleAttribute) (subAttributesList.get(
                             SCIMConstants.CommonSchemaConstants.DISPLAY))).getValue());
                 }
                 return displayNames;
@@ -72,4 +70,47 @@ public class Group extends AbstractSCIMObject {
 
         return displayNames;
     }
+
+    public void setMember(String userId, String userName) throws BadRequestException, CharonException {
+        if (this.isAttributeExist(SCIMConstants.GroupSchemaConstants.MEMBERS)) {
+            MultiValuedAttribute members = (MultiValuedAttribute) this.attributeList.get(
+                    SCIMConstants.GroupSchemaConstants.MEMBERS);
+            ComplexAttribute complexAttribute = setMemberCommon(userId,userName);
+            members.setAttributeValue(complexAttribute);
+        } else {
+            MultiValuedAttribute members = new MultiValuedAttribute(SCIMConstants.GroupSchemaConstants.MEMBERS);
+            DefaultAttributeFactory.createAttribute(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.MEMBERS, members);
+            ComplexAttribute complexAttribute = setMemberCommon(userId,userName);
+            members.setAttributeValue(complexAttribute);
+            this.setAttribute(members);
+        }
+    }
+
+
+    private ComplexAttribute setMemberCommon(String userId, String userName) throws BadRequestException, CharonException {
+        ComplexAttribute complexAttribute = new ComplexAttribute();
+        complexAttribute.setName(SCIMConstants.GroupSchemaConstants.MEMBERS+"_"+userId+SCIMConstants.DEFAULT);
+        SimpleAttribute valueSimpleAttribute = new SimpleAttribute(SCIMConstants.CommonSchemaConstants.VALUE,userId);
+        DefaultAttributeFactory.createAttribute(
+                SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.VALUE, valueSimpleAttribute);
+
+        SimpleAttribute displaySimpleAttribute = new SimpleAttribute(SCIMConstants.GroupSchemaConstants.DISPLAY,userName);
+        DefaultAttributeFactory.createAttribute(
+                SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.DISPLAY, displaySimpleAttribute);
+
+        complexAttribute.setSubAttribute(valueSimpleAttribute);
+        complexAttribute.setSubAttribute(displaySimpleAttribute);
+        DefaultAttributeFactory.createAttribute(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.MEMBERS, complexAttribute);
+        return  complexAttribute;
+    }
+
+    public void setSchemas() {
+        SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
+        List<String> schemasList = schema.getSchemasList();
+        for(String scheme : schemasList){
+            setSchema(scheme);
+        }
+
+    }
+
 }
