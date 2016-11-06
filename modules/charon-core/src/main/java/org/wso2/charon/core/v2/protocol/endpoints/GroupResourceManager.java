@@ -449,8 +449,8 @@ public class GroupResourceManager extends AbstractResourceManager {
                 //retrieve the old object
                 Group oldGroup = userManager.getGroup(existingId);
                 if (oldGroup != null) {
-                    Group validatedGroup = (Group) ServerSideValidator.validateUpdatedSCIMObject(oldGroup, group, schema);
-                    updatedGroup = userManager.updateGroup(validatedGroup);
+                    Group newGroup = (Group) ServerSideValidator.validateUpdatedSCIMObject(oldGroup, group, schema);
+                    updatedGroup = userManager.updateGroup(oldGroup, newGroup);
 
                 } else {
                     String error = "No user exists with the given id: " + existingId;

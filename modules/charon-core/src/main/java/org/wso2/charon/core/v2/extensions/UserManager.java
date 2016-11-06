@@ -43,7 +43,7 @@ public interface UserManager {
 
     public int getUserCount() throws NotImplementedException;
 
-    public User updateUser(User validatedUser) throws NotImplementedException;
+    public User updateUser(User updatedUser) throws NotImplementedException;
 
     public List<User> filterUsers(Node rootNode) throws NotImplementedException;
 
@@ -67,5 +67,5 @@ public interface UserManager {
 
     public List<Group> sortGroups(String sortByAttributeURI, String sortOrder) throws NotImplementedException;
 
-    public Group updateGroup(Group validatedGroup) throws NotImplementedException;
+    public Group updateGroup(Group oldGroup, Group newGroup) throws NotImplementedException;
 }

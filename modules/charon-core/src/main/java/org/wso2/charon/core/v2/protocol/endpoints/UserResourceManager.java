@@ -553,7 +553,7 @@ public class UserResourceManager extends AbstractResourceManager {
 
             } else {
                 String error = "Updated User resource is null.";
-                throw new InternalErrorException(error);
+                throw new CharonException(error);
             }
 
             //put the URI of the User object in the response header parameter.

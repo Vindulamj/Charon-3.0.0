@@ -94,8 +94,10 @@ public class ServerSideValidator extends AbstractValidator{
             throws CharonException, BadRequestException {
 
             AbstractSCIMObject validatedObject = null;
-            //set display names for complex multivalued attributes
-            setDisplayNameInComplexMultiValuedAttributes(newObject,resourceSchema);
+            if(newObject instanceof User){
+                //set display names for complex multivalued attributes
+                setDisplayNameInComplexMultiValuedAttributes(newObject,resourceSchema);
+            }
             //check for read only and immutable attributes
             validatedObject = checkIfReadOnlyAndImmutableAttributesModified(oldObject, newObject, resourceSchema);
             //copy meta attribute from old to new

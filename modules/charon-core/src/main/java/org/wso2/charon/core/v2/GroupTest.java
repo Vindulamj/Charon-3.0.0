@@ -25,7 +25,7 @@ public class GroupTest {
                 "     \"displayName\": \"Doctors\",\n" +
                 "     \"members\": [\n" +
                 "       {\n" +
-                "         \"value\": \"2819c223-7f76-453a-919d-413861904646\",\n" +
+                "         \"value\": \"e01b5773-c8f3-446d-8958-31c603b65660\",\n" +
                 "         \"$ref\":\n" +
                 "   \"https://example.com/v2/Users/2819c223-7f76-453a-919d-413861904646\",\n" +
                 "         \"display\": \"Babs Jensen\"\n" +
@@ -43,7 +43,7 @@ public class GroupTest {
         String excludeAttributes = "members";
 
         //----CREATE Group--------
-        SCIMResponse res=um.create(array,new SCIMUserManager(),null,null);
+        //SCIMResponse res=um.create(array,new SCIMUserManager(),null,null);
 
         //-----GET GROUP ---------
         //SCIMResponse res= um.get("c2fa9b6d-5865-4378-948a-f349b64d1544",new SCIMUserManager(),null,excludeAttributes);
@@ -66,7 +66,7 @@ public class GroupTest {
         //SCIMResponse res= um.listBySort(null,"AsCEnding",new SCIMUserManager(),attributes,null);
 
         //-----UPDATE GROUP WITH PUT ---------
-        //SCIMResponse res = um.updateWithPUT("912742f6-bc64-4ff6-a25d-45325e46b995", array, new SCIMUserManager(), null, null);
+        SCIMResponse res = um.updateWithPUT("e01b5773-c8f3-446d-8958-31c603b65660", array, new SCIMUserManager(), null, null);
 
         System.out.println(res.getResponseStatus());
         System.out.println("");

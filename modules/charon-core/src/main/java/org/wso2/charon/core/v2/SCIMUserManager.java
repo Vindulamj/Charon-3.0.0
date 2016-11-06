@@ -371,7 +371,7 @@ public class SCIMUserManager implements UserManager {
     }
 
     @Override
-    public Group updateGroup(Group validatedGroup) {
+    public Group updateGroup(Group oldGroup, Group validatedGroup) {
         try {
             Group group = createGroup(validatedGroup);
             return group;
