@@ -75,6 +75,10 @@ public class SCIMResourceSchemaManager {
 		return SCIMSchemaDefinitions.SCIM_USER_SCHEMA;
 	}
 
+	/**
+	 * check whether the extension is enabled
+	 * @return
+     */
 	public Boolean isExtensionSet() {
 		int numOfCoreAttributes = SCIMSchemaDefinitions.SCIM_USER_SCHEMA.getAttributesList().size();
 
@@ -86,6 +90,10 @@ public class SCIMResourceSchemaManager {
 		}
 	}
 
+	/**
+	 * return the extension name
+	 * @return
+     */
 	public String getExtensionName() {
 		SCIMAttributeSchema schemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
 		if (schemaExtension == null) {
@@ -94,6 +102,10 @@ public class SCIMResourceSchemaManager {
 		return schemaExtension.getName();
 	}
 
+	/**
+	 * return the extension URI
+	 * @return
+     */
 	public String getExtensionURI() {
 		SCIMAttributeSchema schemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
 		if (schemaExtension == null) {
@@ -102,6 +114,10 @@ public class SCIMResourceSchemaManager {
 		return schemaExtension.getURI();
 	}
 
+	/**
+	 * return the extension's required property
+	 * @return
+     */
 	public boolean getExtensionRequired() {
 		SCIMAttributeSchema schemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
 		if (schemaExtension == null) {

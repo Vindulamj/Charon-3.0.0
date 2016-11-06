@@ -20,7 +20,11 @@ package org.wso2.charon.core.v2.exceptions;
 
 import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
 
+/**
+ * Failed to update. Resource has changed on the server.
+ */
 public class PreConditionFailedException extends AbstractCharonException  {
+
     public PreConditionFailedException() {
         status = ResponseCodeConstants.CODE_PRECONDITION_FAILED;
         detail = ResponseCodeConstants.DESC_PRECONDITION_FAILED;

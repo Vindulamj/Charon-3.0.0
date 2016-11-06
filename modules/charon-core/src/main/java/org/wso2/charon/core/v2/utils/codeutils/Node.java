@@ -18,7 +18,7 @@
 package org.wso2.charon.core.v2.utils.codeutils;
 
 /**
- * Created by vindula on 10/10/16.
+ * Tree node representation
  */
 public abstract class Node {
 

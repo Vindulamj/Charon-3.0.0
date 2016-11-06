@@ -524,7 +524,6 @@ public class SCIMConstants {
 
     }
 
-     /*Constants found in ServiceProviderConfig schema.*/
 
 
 }

@@ -40,7 +40,7 @@ import org.wso2.charon.core.v2.schema.SCIMConstants;
 import java.util.*;
 
 /**
- * This encodes the data
+ * This encodes the in the json format
  */
 
 public class JSONEncoder {
@@ -56,7 +56,12 @@ public class JSONEncoder {
         return format;
     }
 
-
+    /**
+     * return encoded string from scim object
+     * @param scimObject
+     * @return
+     * @throws CharonException
+     */
     public String encodeSCIMObject(SCIMObject scimObject) throws CharonException {
         //root json object containing the encoded SCIM Object.
         JSONObject rootObject = new JSONObject();
@@ -64,7 +69,11 @@ public class JSONEncoder {
         return rootObject.toString();
     }
 
-
+    /**
+     * encode scim exceptions
+     * @param exception
+     * @return
+     */
     public String encodeSCIMException(AbstractCharonException exception) {
         //outer most json object
         JSONObject rootErrorObject = new JSONObject();
@@ -127,7 +136,13 @@ public class JSONEncoder {
         return rootObject;
     }
 
-
+    /**
+     * encode array of values
+     * @param arrayName
+     * @param arrayValues
+     * @param rootObject
+     * @throws JSONException
+     */
     public void encodeArrayOfValues(String arrayName, Object[] arrayValues,
                                     JSONObject rootObject) throws JSONException {
         JSONArray jsonArray = new JSONArray();

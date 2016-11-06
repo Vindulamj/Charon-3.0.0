@@ -45,7 +45,7 @@ public class AbstractCharonException extends Exception {
     }
     public AbstractCharonException() {
         this.schemas= ResponseCodeConstants.ERROR_RESPONSE_SCHEMA_URI;
-        this.status = 500;
+        this.status = ResponseCodeConstants.CODE_INTERNAL_ERROR;
         this.detail = null;
     }
 
@@ -63,12 +63,12 @@ public class AbstractCharonException extends Exception {
      */
     public AbstractCharonException(String message, Throwable cause) {
         super(message, cause);
-        this.status = 500;
+        this.status = ResponseCodeConstants.CODE_INTERNAL_ERROR;
         this.detail = message;
     }
 
     public AbstractCharonException(String message) {
-        this.status = 500;
+        this.status = ResponseCodeConstants.CODE_INTERNAL_ERROR;
         this.detail = message;
     }
 

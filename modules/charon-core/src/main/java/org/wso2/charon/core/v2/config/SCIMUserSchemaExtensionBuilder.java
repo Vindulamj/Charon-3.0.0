@@ -184,6 +184,12 @@ public class SCIMUserSchemaExtensionBuilder {
 
     }
 
+    /**
+     * create SCIM Attribute Schema
+     * @param attribute
+     * @param subAttributeList
+     * @return
+     */
     public SCIMAttributeSchema createSCIMAttributeSchema(ExtensionAttributeSchemaConfig attribute,
                                                          ArrayList<SCIMAttributeSchema> subAttributeList){
 

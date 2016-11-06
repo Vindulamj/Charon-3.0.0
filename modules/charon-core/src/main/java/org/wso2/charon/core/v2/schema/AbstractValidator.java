@@ -29,6 +29,10 @@ import org.wso2.charon.core.v2.attributes.*;
 
 import java.util.*;
 
+/**
+ * This defined the validation algorithms accroding to SCIM spec 2.0
+ */
+
 public abstract class AbstractValidator {
 
     private static Log logger= LogFactory.getLog(AbstractValidator.class);

@@ -29,6 +29,11 @@ import java.util.*;
  */
 public class Group extends AbstractSCIMObject {
 
+    /**
+     * get the display name of the group
+     * @return
+     * @throws CharonException
+     */
     public String getDisplayName() throws CharonException {
         if (isAttributeExist(SCIMConstants.GroupSchemaConstants.DISPLAY_NAME)) {
             return ((SimpleAttribute) attributeList.get(
@@ -38,6 +43,12 @@ public class Group extends AbstractSCIMObject {
         }
     }
 
+    /**
+     * set the display name of the group
+     * @param displayName
+     * @throws CharonException
+     * @throws BadRequestException
+     */
     public void setDisplayName(String displayName) throws CharonException, BadRequestException {
         if (this.isAttributeExist(SCIMConstants.GroupSchemaConstants.DISPLAY_NAME)) {
             ((SimpleAttribute) this.attributeList.get(SCIMConstants.GroupSchemaConstants.DISPLAY_NAME)).
@@ -50,6 +61,10 @@ public class Group extends AbstractSCIMObject {
         }
     }
 
+    /**
+     * get the members of the group
+     * @return
+     */
     public List<Object> getMembers() {
         List<Object> memberList = new ArrayList<>();
         if (this.isAttributeExist(SCIMConstants.GroupSchemaConstants.MEMBERS)) {
@@ -67,6 +82,10 @@ public class Group extends AbstractSCIMObject {
         }
     }
 
+    /**
+     * get the members of the group with their display names
+     * @return
+     */
     public List<String> getMembersWithDisplayName() {
         ArrayList displayNames = new ArrayList();
         if (this.isAttributeExist(SCIMConstants.GroupSchemaConstants.MEMBERS)) {
@@ -88,6 +107,13 @@ public class Group extends AbstractSCIMObject {
         return displayNames;
     }
 
+    /**
+     * set a member to the group
+     * @param userId
+     * @param userName
+     * @throws BadRequestException
+     * @throws CharonException
+     */
     public void setMember(String userId, String userName) throws BadRequestException, CharonException {
         if (this.isAttributeExist(SCIMConstants.GroupSchemaConstants.MEMBERS)) {
             MultiValuedAttribute members = (MultiValuedAttribute) this.attributeList.get(
@@ -103,7 +129,14 @@ public class Group extends AbstractSCIMObject {
         }
     }
 
-
+    /**
+     * set member to the group
+     * @param userId
+     * @param userName
+     * @return
+     * @throws BadRequestException
+     * @throws CharonException
+     */
     private ComplexAttribute setMemberCommon(String userId, String userName) throws BadRequestException, CharonException {
         ComplexAttribute complexAttribute = new ComplexAttribute();
         complexAttribute.setName(SCIMConstants.GroupSchemaConstants.MEMBERS+"_"+userId+SCIMConstants.DEFAULT);
@@ -121,6 +154,9 @@ public class Group extends AbstractSCIMObject {
         return  complexAttribute;
     }
 
+    /**
+     * set the schemas for scim object -group
+     */
     public void setSchemas() {
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
         List<String> schemasList = schema.getSchemasList();

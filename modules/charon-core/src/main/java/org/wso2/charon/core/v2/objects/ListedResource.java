@@ -45,6 +45,10 @@ public class ListedResource implements SCIMObject {
         return totalResults;
     }
 
+    /**
+     * set the total results of the listed resource
+     * @param totalResults
+     */
     public void setTotalResults(int totalResults) {
         if (!isAttributeExist(SCIMConstants.ListedResourceSchemaConstants.TOTAL_RESULTS)) {
             SimpleAttribute totalResultsAttribute =
@@ -87,6 +91,10 @@ public class ListedResource implements SCIMObject {
         schemaList.add(schema);
     }
 
+    /**
+     * set the listed resources
+     * @param valueWithAttributes
+     */
     public void setResources(Map<String, Attribute> valueWithAttributes) {
         if (!isAttributeExist(SCIMConstants.ListedResourceSchemaConstants.RESOURCES)) {
             MultiValuedAttribute resourcesAttribute =

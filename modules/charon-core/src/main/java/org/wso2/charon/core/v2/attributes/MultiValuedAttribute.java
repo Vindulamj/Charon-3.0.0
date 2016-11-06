@@ -52,12 +52,21 @@ public class MultiValuedAttribute extends AbstractAttribute{
         this.attributeValues = attributeValues;
     }
 
-
+    /**
+     * not supported for multivalued attribute
+     * @param attributeName
+     * @return
+     * @throws CharonException
+     */
     @Override
     public Attribute getSubAttribute(String attributeName) throws CharonException {
         throw new CharonException("getSubAttribute method not supported by MultiValuedAttribute.");
     }
 
+    /**
+     * clear all sub attribute values
+     * @throws CharonException
+     */
     @Override
     public void deleteSubAttributes() throws CharonException {
         //here we delete the complex type sub attributes which act as sub values
@@ -74,14 +83,26 @@ public class MultiValuedAttribute extends AbstractAttribute{
         this.attributeValues.add(complexValue);
     }
 
+    /**
+     * get the attribute primitive values
+     * @return
+     */
     public List<Object> getAttributePrimitiveValues() {
         return attributePrimitiveValues;
     }
 
+    /**
+     * set attribute primitive values
+     * @param attributePrimitiveValues
+     */
     public void setAttributePrimitiveValues(List<Object> attributePrimitiveValues) {
         this.attributePrimitiveValues = attributePrimitiveValues;
     }
 
+    /**
+     * set sub attribute value
+     * @param attributeValue
+     */
     public void setAttributeValue(Attribute attributeValue){
         attributeValues.add(attributeValue);
     }

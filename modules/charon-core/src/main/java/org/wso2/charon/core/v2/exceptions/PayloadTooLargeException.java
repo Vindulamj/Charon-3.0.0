@@ -17,8 +17,15 @@
  */
 package org.wso2.charon.core.v2.exceptions;
 
+import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
+
 /**
- * Created by vindula on 9/19/16.
+ * payload size exceed the max payload size
  */
 public class PayloadTooLargeException extends AbstractCharonException  {
+
+    public PayloadTooLargeException(String msg) {
+        status = ResponseCodeConstants.CODE_PAYLOAD_TOO_LARGE;
+        detail = msg;
+    }
 }

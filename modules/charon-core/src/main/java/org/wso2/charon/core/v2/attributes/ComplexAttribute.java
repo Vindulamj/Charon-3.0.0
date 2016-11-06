@@ -66,6 +66,10 @@ public class ComplexAttribute extends AbstractAttribute{
         }
     }
 
+    /**
+     * delete all sub attributes
+     * @throws CharonException
+     */
     @Override
     public void deleteSubAttributes() throws CharonException {
         subAttributesList.clear();

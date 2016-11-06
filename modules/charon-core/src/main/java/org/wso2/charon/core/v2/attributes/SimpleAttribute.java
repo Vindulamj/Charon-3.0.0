@@ -35,21 +35,44 @@ public class SimpleAttribute extends AbstractAttribute {
         this.value = value;
     }
 
+    /**
+     * return the value of the simple attribute
+     * @return
+     */
     public Object getValue() { return value; }
 
+    /**
+     * set the value of the simple attribute
+     * @param value
+     */
     public void setValue(Object value) {
         this.value = value;
     }
 
+    /**
+     * not supported by simple attributes
+     * @param attributeName
+     * @return
+     * @throws CharonException
+     */
     public Attribute getSubAttribute(String attributeName) throws CharonException {
         throw new CharonException("getSubAttribute method not supported by SimpleAttribute.");
     }
 
+    /**
+     * not supported by simple attributes
+     * @throws CharonException
+     */
     @Override
     public void deleteSubAttributes() throws CharonException {
         throw new CharonException("deleteSubAttributes method not supported by SimpleAttribute.");
     }
 
+    /**
+     * return the string type of the attribute value
+     * @return
+     * @throws CharonException
+     */
     public String getStringValue() throws CharonException {
         if (this.type.equals(SCIMDefinitions.DataType.STRING)) {
             return (String) value;
@@ -58,6 +81,11 @@ public class SimpleAttribute extends AbstractAttribute {
         }
     }
 
+    /**
+     * return the date type of the attribute value
+     * @return
+     * @throws CharonException
+     */
     public Date getDateValue() throws CharonException {
         if(this.type.equals(SCIMDefinitions.DataType.DATE_TIME)) {
             return (Date)this.value;
@@ -66,6 +94,11 @@ public class SimpleAttribute extends AbstractAttribute {
         }
     }
 
+    /**
+     * return boolean type of the attribute value
+     * @return
+     * @throws CharonException
+     */
     public Boolean getBooleanValue() throws CharonException {
         if(this.type.equals(SCIMDefinitions.DataType.BOOLEAN)) {
             return (Boolean)this.value;
@@ -74,6 +107,11 @@ public class SimpleAttribute extends AbstractAttribute {
         }
     }
 
+    /**
+     * uodate the attribute value
+     * @param value
+     * @throws CharonException
+     */
     public void updateValue(Object value) throws CharonException {
             this.value = value;
 

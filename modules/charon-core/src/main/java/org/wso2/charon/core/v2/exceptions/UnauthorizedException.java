@@ -17,8 +17,15 @@
  */
 package org.wso2.charon.core.v2.exceptions;
 
+import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
+
 /**
- * Created by vindula on 9/19/16.
+ * Authorization failure.
  */
 public class UnauthorizedException extends AbstractCharonException  {
+
+    public UnauthorizedException(String msg) {
+        status = ResponseCodeConstants.CODE_UNAUTHORIZED;
+        detail = msg;
+    }
 }

@@ -33,19 +33,43 @@ import java.util.*;
  */
 public class User extends AbstractSCIMObject {
 
+    /**
+     * return userName of the user
+     * @return
+     * @throws CharonException
+     */
     public String getUserName() throws CharonException {
         return this.getSimpleAttributeStringVal(SCIMConstants.UserSchemaConstants.USER_NAME);
     }
 
+    /**
+     * set the userName of the user
+     * @param userName
+     * @throws CharonException
+     * @throws BadRequestException
+     */
     public void setUserName(String userName) throws CharonException, BadRequestException {
         this.setSimpleAttribute(SCIMConstants.UserSchemaConstants.USER_NAME,
                 SCIMSchemaDefinitions.SCIMUserSchemaDefinition.USERNAME, userName);
     }
 
+    /**
+     * return the password of the user
+     * @return
+     * @throws CharonException
+     */
     public String getPassword() throws CharonException {
         return this.getSimpleAttributeStringVal(SCIMConstants.UserSchemaConstants.PASSWORD);
     }
 
+    /**
+     * set simple attribute in the scim object
+     * @param attributeName
+     * @param attributeSchema
+     * @param value
+     * @throws CharonException
+     * @throws BadRequestException
+     */
     private void setSimpleAttribute(String attributeName, AttributeSchema attributeSchema, Object value)
             throws CharonException, BadRequestException {
         if (this.isAttributeExist(attributeName)) {
@@ -58,12 +82,25 @@ public class User extends AbstractSCIMObject {
 
     }
 
+    /**
+     * return simple attribute's string value
+     * @param attributeName
+     * @return
+     * @throws CharonException
+     */
     private String getSimpleAttributeStringVal(String attributeName) throws CharonException {
         return this.isAttributeExist(attributeName) ?
                 ((SimpleAttribute) this.attributeList.get(attributeName)).getStringValue() : null;
     }
 
-
+    /**
+     * set the associated groups of the user
+     * @param type
+     * @param value
+     * @param display
+     * @throws CharonException
+     * @throws BadRequestException
+     */
     public void setGroup(String type, String value, String display) throws CharonException, BadRequestException {
         SimpleAttribute typeSimpleAttribute = null;
         SimpleAttribute valueSimpleAttribute = null;
@@ -122,6 +159,9 @@ public class User extends AbstractSCIMObject {
 
     }
 
+    /**
+     * set the schemas of the user
+     */
     public void setSchemas(){
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         java.util.List<String> schemasList = schema.getSchemasList();

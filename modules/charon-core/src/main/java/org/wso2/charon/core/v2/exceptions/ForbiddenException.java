@@ -20,7 +20,7 @@ package org.wso2.charon.core.v2.exceptions;
 import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
 
 /**
- * Created by vindula on 9/19/16.
+ * Operation is not permitted based on the supplied authorization.
  */
 public class ForbiddenException extends AbstractCharonException  {
 

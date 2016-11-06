@@ -56,6 +56,10 @@ public class ResourceTypeResourceManager extends AbstractResourceManager{
         return getResourceType();
     }
 
+    /**
+     * return ResourceType schema
+     * @return
+     */
     private SCIMResponse getResourceType(){
         JSONEncoder encoder = null;
         try {

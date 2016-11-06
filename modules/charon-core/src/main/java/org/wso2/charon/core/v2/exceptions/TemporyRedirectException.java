@@ -17,8 +17,15 @@
  */
 package org.wso2.charon.core.v2.exceptions;
 
+import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
+
 /**
- * Created by vindula on 9/19/16.
+ * The client is directed to repeat the same HTTP request at the location identified.
  */
 public class TemporyRedirectException extends AbstractCharonException  {
+
+    public TemporyRedirectException(String msg) {
+        status = ResponseCodeConstants.CODE_TEMPORARY_REDIRECT;
+        detail = msg;
+    }
 }

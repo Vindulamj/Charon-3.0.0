@@ -34,12 +34,16 @@ public class PaginatedListedResource extends ListedResource {
 
     public int getItemsPerPage() { return itemsPerPage; }
 
+    /**
+     * paginated listed resource items per page settings
+     * @param itemsPerPage
+     */
     public void setItemsPerPage(int itemsPerPage) {
         if (!isAttributeExist(SCIMConstants.ListedResourceSchemaConstants.ITEMS_PER_PAGE)) {
             SimpleAttribute totalResultsAttribute =
                     new SimpleAttribute(SCIMConstants.ListedResourceSchemaConstants.ITEMS_PER_PAGE, itemsPerPage);
             //No need to let the Default attribute factory to handle the attribute, as this is
-            //not officially defined as SCIM attribute, hence have no charactersitics defined
+            //not officially defined as SCIM attribute, hence have no characteristics defined
             //TODO: may be we can let the default attribute factory to handle it?
             attributeList.put(SCIMConstants.ListedResourceSchemaConstants.ITEMS_PER_PAGE, totalResultsAttribute);
         } else {
@@ -50,6 +54,10 @@ public class PaginatedListedResource extends ListedResource {
 
     public int getStartIndex() { return startIndex; }
 
+    /**
+     *  paginated listed resource start index settings
+     * @param startIndex
+     */
     public void setStartIndex(int startIndex) {
         if (!isAttributeExist(SCIMConstants.ListedResourceSchemaConstants.START_INDEX)) {
             SimpleAttribute totalResultsAttribute =

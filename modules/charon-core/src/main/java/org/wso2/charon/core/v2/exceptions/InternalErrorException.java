@@ -20,7 +20,7 @@ package org.wso2.charon.core.v2.exceptions;
 import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
 
 /**
- * Created by vindula on 9/19/16.
+ * An internal error.
  */
 public class InternalErrorException extends AbstractCharonException  {
     public InternalErrorException(String error) {

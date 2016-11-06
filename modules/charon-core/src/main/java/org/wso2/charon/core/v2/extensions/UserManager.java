@@ -30,6 +30,7 @@ import java.util.List;
  * by implementing this interface and mentioning it in configuration.
  */
 public interface UserManager {
+
         /***************User Manipulation operations*******************/
     /**
      * Create user with the given user object.

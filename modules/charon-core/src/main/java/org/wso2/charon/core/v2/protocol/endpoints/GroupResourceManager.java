@@ -191,6 +191,14 @@ public class GroupResourceManager extends AbstractResourceManager {
         }
     }
 
+    /**
+     * Method to filter the groups based on parameters
+     * @param filterString
+     * @param userManager
+     * @param attributes
+     * @param  excludeAttributes
+     * @return
+     */
     @Override
     public SCIMResponse listByFilter(String filterString, UserManager userManager, String attributes, String excludeAttributes)  {
         JSONEncoder encoder = null;
@@ -254,6 +262,15 @@ public class GroupResourceManager extends AbstractResourceManager {
         }
     }
 
+    /**
+     * Method to sort the groups
+     * @param sortBy
+     * @param sortOrder
+     * @param usermanager
+     * @param attributes
+     * @param excludeAttributes
+     * @return
+     */
     @Override
     public SCIMResponse listBySort(String sortBy, String sortOrder, UserManager usermanager, String attributes, String excludeAttributes) {
         try {
@@ -326,6 +343,15 @@ public class GroupResourceManager extends AbstractResourceManager {
         }
     }
 
+    /**
+     * method to list the groups with pagination enable
+     * @param startIndex
+     * @param count
+     * @param userManager
+     * @param attributes
+     * @param excludeAttributes
+     * @return
+     */
     @Override
     public SCIMResponse listWithPagination(int startIndex, int count, UserManager userManager, String attributes, String excludeAttributes) {
         //A value less than one shall be interpreted as 1
@@ -392,6 +418,13 @@ public class GroupResourceManager extends AbstractResourceManager {
         }
     }
 
+    /**
+     * Method to list the groups at the /Groups endpoint
+     * @param userManager
+     * @param attributes
+     * @param excludeAttributes
+     * @return
+     */
     @Override
     public SCIMResponse list(UserManager userManager, String attributes, String excludeAttributes) {
         JSONEncoder encoder = null;
@@ -444,6 +477,15 @@ public class GroupResourceManager extends AbstractResourceManager {
         }
     }
 
+    /**
+     * method which corresponds to HTTP PUT - delete the group
+     * @param existingId
+     * @param scimObjectString
+     * @param userManager
+     * @param attributes
+     * @param excludeAttributes
+     * @return
+     */
     @Override
     public SCIMResponse updateWithPUT(String existingId, String scimObjectString, UserManager userManager, String attributes, String excludeAttributes) {
         //needs to validate the incoming object. eg: id can not be set by the consumer.

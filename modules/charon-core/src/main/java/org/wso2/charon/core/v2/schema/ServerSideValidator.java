@@ -73,11 +73,26 @@ public class ServerSideValidator extends AbstractValidator{
         validateSchemaList(scimObject, resourceSchema);
     }
 
+    /**
+     * create location header from location and resourceID
+     * @param location
+     * @param resourceID
+     * @return
+     */
     private static String createLocationHeader(String location, String resourceID) {
         String locationString = location + "/" + resourceID;
         return locationString;
     }
 
+    /**
+     * validate Retrieved SCIM Object in List
+     * @param scimObject
+     * @param resourceSchema
+     * @param reuqestedAttributes
+     * @param requestedExcludingAttributes
+     * @throws BadRequestException
+     * @throws CharonException
+     */
     public static void validateRetrievedSCIMObjectInList(AbstractSCIMObject scimObject,
                                                          SCIMResourceTypeSchema resourceSchema, String reuqestedAttributes,
                                                          String requestedExcludingAttributes)
@@ -86,6 +101,15 @@ public class ServerSideValidator extends AbstractValidator{
         removeAttributesOnReturn(scimObject,reuqestedAttributes,requestedExcludingAttributes);
     }
 
+    /**
+     * validate Retrieved SCIM Object
+     * @param scimObject
+     * @param resourceSchema
+     * @param reuqestedAttributes
+     * @param requestedExcludingAttributes
+     * @throws BadRequestException
+     * @throws CharonException
+     */
     public static void validateRetrievedSCIMObject(AbstractSCIMObject scimObject,
                                                    SCIMResourceTypeSchema resourceSchema,String reuqestedAttributes,
                                                    String requestedExcludingAttributes)
