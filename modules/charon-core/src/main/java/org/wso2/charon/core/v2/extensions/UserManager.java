@@ -32,27 +32,11 @@ import java.util.List;
 public interface UserManager {
 
         /***************User Manipulation operations*******************/
-    /**
-     * Create user with the given user object.
-     *
-     * @param user User resource to be created in the user store of service provider.
-     * @return newly created SCIM User resource sent back to the client in the response.
-     */
+
     public User createUser(User user) throws CharonException, ConflictException, BadRequestException;
 
-    /**
-     * Obtains the user given the id.
-     *
-     * @param id
-     * @return
-     */
     public User getUser(String id) throws CharonException;
 
-    /**
-     * Delete the user given the user id.
-     *
-     * @param userId
-     */
     public void deleteUser(String userId) throws NotFoundException, CharonException, NotImplementedException;
 
     public List<User> listUsers() throws CharonException, NotImplementedException;
@@ -66,6 +50,15 @@ public interface UserManager {
     public List<User> filterUsers(Node rootNode) throws NotImplementedException;
 
     public List<User> sortUsers(String sortBy, String sortOrder) throws NotImplementedException;
+
+    public User getMe(String userName) throws CharonException;
+
+    public User createMe(User user) throws CharonException, ConflictException, BadRequestException;
+
+    public void deleteMe(String userName) throws NotFoundException, CharonException, NotImplementedException;
+
+    public User updateMe(User updatedUser) throws NotImplementedException;
+
 
    /* ****************Group manipulation operations********************/
 
