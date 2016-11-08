@@ -188,6 +188,8 @@ public class GroupResourceManager extends AbstractResourceManager {
             return encodeSCIMException(e);
         } catch (NotImplementedException e) {
             return encodeSCIMException(e);
+        } catch (BadRequestException e) {
+            return encodeSCIMException(e);
         }
     }
 
