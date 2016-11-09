@@ -253,4 +253,22 @@ public class MeResourceManager extends AbstractResourceManager{
     public SCIMResponse updateWithPATCH(String existingId, String scimObjectString, UserManager userManager, String attributes, String excludeAttributes) {
         return null;
     }
+
+
+    public String getUserName(String scimObjectString) throws CharonException {
+        try {
+            //obtain the json encoder
+            JSONDecoder decoder = getDecoder();
+            //obtain the schema corresponding to user
+            // unless configured returns core-user schema or else returns extended user schema)
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+            //decode the SCIM User object, encoded in the submitted payload.
+            User user = (User) decoder.decodeResource(scimObjectString, schema, new User());
+
+            return user.getUserName();
+
+        } catch (BadRequestException | InternalErrorException | CharonException e) {
+            throw new CharonException("Error in getting the username from the anonymous request");
+        }
+    }
 }
