@@ -156,11 +156,11 @@ public class AttributeUtil {
      * @param booleanValue
      */
     public static Boolean parseBoolean(Object booleanValue) throws BadRequestException {
-        if(booleanValue instanceof Boolean){
+        try{
             return ((Boolean) booleanValue).booleanValue();
         }
-        else{
-            throw new BadRequestException(ResponseCodeConstants.INVALID_VALUE);
+        catch (Exception e){
+            return Boolean.parseBoolean((String) booleanValue);
         }
     }
 

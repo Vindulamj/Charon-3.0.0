@@ -366,7 +366,7 @@ public class SCIMUserSchemaExtensionBuilder {
                 type = SCIMDefinitions.DataType.DECIMAL;
             } else if ("BOOLEAN".equalsIgnoreCase(input)) {
                 type = SCIMDefinitions.DataType.BOOLEAN;
-            } else if ("DATE_TIME".equalsIgnoreCase(input)) {
+            } else if ("DATETIME".equalsIgnoreCase(input)) {
                 type = SCIMDefinitions.DataType.DATE_TIME;
             } else if ("BINARY".equalsIgnoreCase(input)) {
                 type = SCIMDefinitions.DataType.BINARY;
