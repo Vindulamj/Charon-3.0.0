@@ -17,12 +17,11 @@
  */
 package org.wso2.charon.core.v2.attributes;
 
+import org.wso2.charon.core.v2.exceptions.BadRequestException;
+import org.wso2.charon.core.v2.exceptions.CharonException;
 import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.v2.schema.AttributeSchema;
 import org.wso2.charon.core.v2.schema.SCIMDefinitions;
-import org.wso2.charon.core.v2.exceptions.BadRequestException;
-import org.wso2.charon.core.v2.exceptions.CharonException;
-
 
 import java.util.Date;
 /**
@@ -30,9 +29,9 @@ import java.util.Date;
  */
 public class DefaultAttributeFactory {
 
-    /**
-     * Returns the defined type of attribute with the user defined value included and necessary attribute characteristics set
-     *
+    /*
+     * Returns the defined type of attribute with the user defined value
+     * included and necessary attribute characteristics set
      * @param attributeSchema - Attribute schema
      * @param attribute - attribute
      * @return Attribute
@@ -50,21 +49,18 @@ public class DefaultAttributeFactory {
         attribute.setURI(attributeSchema.getURI());
 
         //Default attribute factory knows about SCIMAttribute schema
-        try{
+        try {
             //set data type of the attribute value, if simple attribute
             if (attribute instanceof SimpleAttribute) {
                 return createSimpleAttribute(attributeSchema, (SimpleAttribute) attribute);
-            }
-            else{
+            } else {
                 attribute.setType(attributeSchema.getType());
             }
             return attribute;
-        }
-        catch(CharonException e){
+        } catch (CharonException e) {
             String error = "Unknown attribute schema.";
             throw new CharonException(error);
-        }
-        catch(BadRequestException e){
+        } catch (BadRequestException e) {
             String error = "Violation in attribute schema. DataType doesn't match that of the value.";
             throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
         }
@@ -80,14 +76,14 @@ public class DefaultAttributeFactory {
      * @throws CharonException
      * @throws BadRequestException
      */
-    protected static SimpleAttribute createSimpleAttribute(AttributeSchema attributeSchema,
-                                                           SimpleAttribute simpleAttribute) throws CharonException, BadRequestException {
+    protected static SimpleAttribute createSimpleAttribute
+                    (AttributeSchema attributeSchema, SimpleAttribute simpleAttribute)
+            throws CharonException, BadRequestException {
         if (simpleAttribute.getValue() != null) {
             if (isAttributeDataTypeValid(simpleAttribute.getValue(), attributeSchema.getType())) {
                 simpleAttribute.setType(attributeSchema.getType());
                 return simpleAttribute;
-            }
-            else{
+            } else {
                 throw new BadRequestException(ResponseCodeConstants.INVALID_VALUE);
             }
         }
@@ -95,8 +91,8 @@ public class DefaultAttributeFactory {
     }
 
     /**
-     * When an attribute is created with value and data type provided, we need to validate whether
-     * they are matching.
+     * When an attribute is created with value and data type provided,
+     * we need to validate whether they are matching.
      *
      * @param attributeValue
      * @param attributeDataType
@@ -104,7 +100,8 @@ public class DefaultAttributeFactory {
      * @throws BadRequestException
      */
     protected static boolean isAttributeDataTypeValid(Object attributeValue,
-                                                      SCIMDefinitions.DataType attributeDataType) throws BadRequestException {
+                                                      SCIMDefinitions.DataType attributeDataType)
+                                                throws BadRequestException {
         switch (attributeDataType) {
             case STRING:
                 return attributeValue instanceof String;

@@ -26,6 +26,7 @@ import org.wso2.charon.core.v2.protocol.endpoints.ServiceProviderConfigResourceM
 import org.wso2.charon.core.v2.protocol.endpoints.UserResourceManager;
 import org.wso2.charon.core.v2.schema.SCIMConstants;
 import org.wso2.charon.core.v2.exceptions.InternalErrorException;
+import org.wso2.charon.core.v2.utils.codeutils.SearchRequest;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -204,7 +205,7 @@ public class Test {
 
 
        //-----GET USER  ---------
-       SCIMResponse res= um.get("b1fac6b4-85ae-4945-bfe1-1360b771b6e4",new SCIMUserManager(),null,null);
+       //SCIMResponse res= um.get("b1fac6b4-85ae-4945-bfe1-1360b771b6e4",new SCIMUserManager(),null,null);
 
        //-----DELETE USER  ---------
        //SCIMResponse res= um.delete("cf712155-e974-42ae-9e57-6c42f7bbadad",new SCIMUserManager());
@@ -253,6 +254,15 @@ public class Test {
        //-----RESOURCE TYPE CONFIG  ---------
        //SCIMResponse res= rm.get(null, null, null, null);
 
+
+       String x = "{\"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:SearchRequest\"],\n" +
+               "     \"attributes\": [\"displayName\", \"userName\"],\n" +
+               "     \"filter\":\n" +
+               "       \"displayName sw \\\"smith\\\"\",\n" +
+               "     \"startIndex\": 1,\n" +
+               "     \"count\": 10}";
+       //-----LIST USER  ---------
+       SCIMResponse res= um.listUsersWithPOST(x ,new SCIMUserManager());
 
        System.out.println(res.getResponseStatus());
        System.out.println("");

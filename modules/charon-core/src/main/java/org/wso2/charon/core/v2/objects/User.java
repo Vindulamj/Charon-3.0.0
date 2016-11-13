@@ -23,17 +23,21 @@ import org.wso2.charon.core.v2.attributes.MultiValuedAttribute;
 import org.wso2.charon.core.v2.attributes.SimpleAttribute;
 import org.wso2.charon.core.v2.exceptions.BadRequestException;
 import org.wso2.charon.core.v2.exceptions.CharonException;
-import org.wso2.charon.core.v2.schema.*;
+import org.wso2.charon.core.v2.schema.AttributeSchema;
+import org.wso2.charon.core.v2.schema.SCIMConstants;
+import org.wso2.charon.core.v2.schema.SCIMResourceSchemaManager;
+import org.wso2.charon.core.v2.schema.SCIMResourceTypeSchema;
+import org.wso2.charon.core.v2.schema.SCIMSchemaDefinitions;
 
-import java.awt.*;
-import java.util.*;
+
+
 
 /**
  * Represents the User object which is a collection of attributes defined by SCIM User-schema.
  */
 public class User extends AbstractSCIMObject {
 
-    /**
+    /*
      * return userName of the user
      * @return
      * @throws CharonException
@@ -42,7 +46,7 @@ public class User extends AbstractSCIMObject {
         return this.getSimpleAttributeStringVal(SCIMConstants.UserSchemaConstants.USER_NAME);
     }
 
-    /**
+    /*
      * set the userName of the user
      * @param userName
      * @throws CharonException
@@ -53,7 +57,7 @@ public class User extends AbstractSCIMObject {
                 SCIMSchemaDefinitions.SCIMUserSchemaDefinition.USERNAME, userName);
     }
 
-    /**
+    /*
      * return the password of the user
      * @return
      * @throws CharonException
@@ -62,7 +66,7 @@ public class User extends AbstractSCIMObject {
         return this.getSimpleAttributeStringVal(SCIMConstants.UserSchemaConstants.PASSWORD);
     }
 
-    /**
+    /*
      * set simple attribute in the scim object
      * @param attributeName
      * @param attributeSchema
@@ -70,19 +74,21 @@ public class User extends AbstractSCIMObject {
      * @throws CharonException
      * @throws BadRequestException
      */
-    private void setSimpleAttribute(String attributeName, AttributeSchema attributeSchema, Object value)
+    private void setSimpleAttribute(String attributeName,
+                                    AttributeSchema attributeSchema, Object value)
             throws CharonException, BadRequestException {
         if (this.isAttributeExist(attributeName)) {
             ((SimpleAttribute) this.attributeList.get(attributeName)).updateValue(value);
         } else {
             SimpleAttribute simpleAttribute = new SimpleAttribute(attributeName, value);
-            simpleAttribute = (SimpleAttribute) DefaultAttributeFactory.createAttribute(attributeSchema, simpleAttribute);
+            simpleAttribute = (SimpleAttribute) DefaultAttributeFactory.
+                            createAttribute(attributeSchema, simpleAttribute);
             this.attributeList.put(attributeName, simpleAttribute);
         }
 
     }
 
-    /**
+    /*
      * return simple attribute's string value
      * @param attributeName
      * @return
@@ -93,7 +99,7 @@ public class User extends AbstractSCIMObject {
                 ((SimpleAttribute) this.attributeList.get(attributeName)).getStringValue() : null;
     }
 
-    /**
+    /*
      * set the associated groups of the user
      * @param type
      * @param value
@@ -137,7 +143,8 @@ public class User extends AbstractSCIMObject {
             }
             String complexAttributeName = SCIMConstants.UserSchemaConstants.GROUPS + "_" + valueVal + "_" + typeVal;
             complexAttribute.setName(complexAttributeName);
-            DefaultAttributeFactory.createAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUPS, complexAttribute);
+            DefaultAttributeFactory.createAttribute(
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUPS, complexAttribute);
             setGroup(complexAttribute);
         }
     }
@@ -145,8 +152,8 @@ public class User extends AbstractSCIMObject {
     private void setGroup(ComplexAttribute groupPropertiesAttribute) throws CharonException, BadRequestException {
         MultiValuedAttribute groupsAttribute;
 
-        if(this.attributeList.containsKey(SCIMConstants.UserSchemaConstants.GROUPS)) {
-            groupsAttribute = (MultiValuedAttribute)this.attributeList.get(SCIMConstants.UserSchemaConstants.GROUPS);
+        if (this.attributeList.containsKey(SCIMConstants.UserSchemaConstants.GROUPS)) {
+            groupsAttribute = (MultiValuedAttribute) this.attributeList.get(SCIMConstants.UserSchemaConstants.GROUPS);
             groupsAttribute.setAttributeValue(groupPropertiesAttribute);
         } else {
             groupsAttribute = new MultiValuedAttribute(SCIMConstants.UserSchemaConstants.GROUPS);
@@ -159,13 +166,13 @@ public class User extends AbstractSCIMObject {
 
     }
 
-    /**
+    /*
      * set the schemas of the user
      */
-    public void setSchemas(){
+    public void setSchemas() {
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         java.util.List<String> schemasList = schema.getSchemasList();
-        for(String scheme : schemasList){
+        for (String scheme : schemasList) {
             setSchema(scheme);
         }
     }

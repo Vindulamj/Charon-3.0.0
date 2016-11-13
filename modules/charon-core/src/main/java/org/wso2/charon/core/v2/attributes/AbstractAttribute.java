@@ -18,12 +18,11 @@
 package org.wso2.charon.core.v2.attributes;
 
 import org.wso2.charon.core.v2.schema.SCIMDefinitions;
-/*
+/**
  * This class abstracts out the common characteristics of different types of attributes defined in
  * SCIM Core Schema Spec.
 */
-
-public abstract class AbstractAttribute implements Attribute{
+public abstract class AbstractAttribute implements Attribute {
 
     //unique identifier for the attribute
     protected String URI;
@@ -46,9 +45,11 @@ public abstract class AbstractAttribute implements Attribute{
     //A SCIM defined value that specifies the uniqueness level of an attribute.
     protected SCIMDefinitions.Uniqueness uniqueness;
 
-    public String getURI() { return URI; }
+    public String getURI() {
+        return URI; }
 
-    public void setURI(String URI) { this.URI = URI; }
+    public void setURI(String URI) {
+        this.URI = URI; }
 
     public String getName() {
         return name;
@@ -106,7 +107,8 @@ public abstract class AbstractAttribute implements Attribute{
         this.mutability = mutability;
     }
 
-    public SCIMDefinitions.Returned getReturned() { return returned; }
+    public SCIMDefinitions.Returned getReturned() {
+        return returned; }
 
     public void setReturned(SCIMDefinitions.Returned returned) {
         this.returned = returned;

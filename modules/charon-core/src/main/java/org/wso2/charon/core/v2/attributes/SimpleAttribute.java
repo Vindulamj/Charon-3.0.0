@@ -17,12 +17,12 @@
  */
 package org.wso2.charon.core.v2.attributes;
 
-import org.wso2.charon.core.v2.schema.SCIMDefinitions;
 import org.wso2.charon.core.v2.exceptions.CharonException;
+import org.wso2.charon.core.v2.schema.SCIMDefinitions;
 
 import java.util.Date;
 
-/*
+/**
  * This class is a blueprint of SimpleAttribute defined in SCIM Core Schema Spec.
  */
 public class SimpleAttribute extends AbstractAttribute {
@@ -35,13 +35,14 @@ public class SimpleAttribute extends AbstractAttribute {
         this.value = value;
     }
 
-    /**
+    /*
      * return the value of the simple attribute
      * @return
      */
-    public Object getValue() { return value; }
+    public Object getValue() {
+        return value; }
 
-    /**
+    /*
      * set the value of the simple attribute
      * @param value
      */
@@ -49,7 +50,7 @@ public class SimpleAttribute extends AbstractAttribute {
         this.value = value;
     }
 
-    /**
+    /*
      * not supported by simple attributes
      * @param attributeName
      * @return
@@ -59,7 +60,7 @@ public class SimpleAttribute extends AbstractAttribute {
         throw new CharonException("getSubAttribute method not supported by SimpleAttribute.");
     }
 
-    /**
+    /*
      * not supported by simple attributes
      * @throws CharonException
      */
@@ -68,7 +69,7 @@ public class SimpleAttribute extends AbstractAttribute {
         throw new CharonException("deleteSubAttributes method not supported by SimpleAttribute.");
     }
 
-    /**
+    /*
      * return the string type of the attribute value
      * @return
      * @throws CharonException
@@ -81,33 +82,33 @@ public class SimpleAttribute extends AbstractAttribute {
         }
     }
 
-    /**
+    /*
      * return the date type of the attribute value
      * @return
      * @throws CharonException
      */
     public Date getDateValue() throws CharonException {
-        if(this.type.equals(SCIMDefinitions.DataType.DATE_TIME)) {
-            return (Date)this.value;
+        if (this.type.equals(SCIMDefinitions.DataType.DATE_TIME)) {
+            return (Date) this.value;
         } else {
             throw new CharonException("Datatype doesn\'t match the datatype of the attribute value");
         }
     }
 
-    /**
+    /*
      * return boolean type of the attribute value
      * @return
      * @throws CharonException
      */
     public Boolean getBooleanValue() throws CharonException {
-        if(this.type.equals(SCIMDefinitions.DataType.BOOLEAN)) {
-            return (Boolean)this.value;
+        if (this.type.equals(SCIMDefinitions.DataType.BOOLEAN)) {
+            return (Boolean) this.value;
         } else {
             throw new CharonException("Datatype doesn\'t match the datatype of the attribute value");
         }
     }
 
-    /**
+    /*
      * uodate the attribute value
      * @param value
      * @throws CharonException

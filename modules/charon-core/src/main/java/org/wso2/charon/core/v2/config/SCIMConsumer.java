@@ -20,6 +20,9 @@ package org.wso2.charon.core.v2.config;
 import java.util.List;
 import java.util.Map;
 
+/**
+ *
+ */
 public class SCIMConsumer {
     private String id;
     private Map<String, SCIMProvider> scimProviders;

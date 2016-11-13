@@ -22,25 +22,28 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.wso2.charon.core.v2.attributes.Attribute;
+import org.wso2.charon.core.v2.attributes.ComplexAttribute;
 import org.wso2.charon.core.v2.attributes.MultiValuedAttribute;
 import org.wso2.charon.core.v2.attributes.SimpleAttribute;
 import org.wso2.charon.core.v2.config.SCIMConfigConstants;
 import org.wso2.charon.core.v2.exceptions.AbstractCharonException;
+import org.wso2.charon.core.v2.exceptions.BadRequestException;
+import org.wso2.charon.core.v2.exceptions.CharonException;
 import org.wso2.charon.core.v2.objects.SCIMObject;
 import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
+import org.wso2.charon.core.v2.schema.SCIMConstants;
 import org.wso2.charon.core.v2.schema.SCIMDefinitions;
 import org.wso2.charon.core.v2.schema.SCIMResourceSchemaManager;
 import org.wso2.charon.core.v2.utils.AttributeUtil;
-import org.wso2.charon.core.v2.attributes.Attribute;
-import org.wso2.charon.core.v2.attributes.ComplexAttribute;
-import org.wso2.charon.core.v2.exceptions.BadRequestException;
-import org.wso2.charon.core.v2.exceptions.CharonException;
-import org.wso2.charon.core.v2.schema.SCIMConstants;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
- * This encodes the in the json format
+ * This encodes the in the json format.
  */
 
 public class JSONEncoder {
@@ -56,7 +59,7 @@ public class JSONEncoder {
         return format;
     }
 
-    /**
+    /*
      * return encoded string from scim object
      * @param scimObject
      * @return
@@ -69,7 +72,7 @@ public class JSONEncoder {
         return rootObject.toString();
     }
 
-    /**
+    /*
      * encode scim exceptions
      * @param exception
      * @return
@@ -83,8 +86,8 @@ public class JSONEncoder {
         try {
             //construct error object with details in the exception
             errorObject.put(ResponseCodeConstants.SCHEMAS, exception.getSchemas());
-            if(exception instanceof BadRequestException){
-                errorObject.put(ResponseCodeConstants.SCIM_TYPE, ((BadRequestException)(exception)).getScimType());
+            if (exception instanceof BadRequestException) {
+                errorObject.put(ResponseCodeConstants.SCIM_TYPE, ((BadRequestException) (exception)).getScimType());
             }
             errorObject.put(ResponseCodeConstants.DETAIL, String.valueOf(exception.getDetail()));
             errorObject.put(ResponseCodeConstants.STATUS, String.valueOf(exception.getStatus()));
@@ -98,7 +101,7 @@ public class JSONEncoder {
         }
         return rootErrorObject.toString();
     }
-    /**
+    /*
      * Make JSON object from given SCIM object.
      *
      * @param scimObject
@@ -136,7 +139,7 @@ public class JSONEncoder {
         return rootObject;
     }
 
-    /**
+    /*
      * encode array of values
      * @param arrayName
      * @param arrayValues
@@ -152,7 +155,7 @@ public class JSONEncoder {
         rootObject.put(arrayName, jsonArray);
     }
 
-    /**
+    /*
      * Encode the simple attribute and include it in root json object to be returned.
      *
      * @param attribute
@@ -171,7 +174,7 @@ public class JSONEncoder {
         }
     }
 
-    /**
+    /*
      * Encode the complex attribute and include it in root json object to be returned.
      *
      * @param complexAttribute
@@ -189,8 +192,7 @@ public class JSONEncoder {
 
             } else if (attributeValue instanceof MultiValuedAttribute) {
                 encodeMultiValuedAttribute((MultiValuedAttribute) attributeValue, subObject);
-            }
-            else if (attributeValue instanceof ComplexAttribute) {
+            } else if (attributeValue instanceof ComplexAttribute) {
                 encodeComplexAttribute((ComplexAttribute) attributeValue, subObject);
             }
             rootObject.put(complexAttribute.getName(), subObject);
@@ -199,7 +201,7 @@ public class JSONEncoder {
     }
 
 
-    /**
+    /*
      * When an attribute value (of a complex or multivalued attribute) becomes a simple attribute itself,
      * encode it and put it in json array.
      *
@@ -223,7 +225,7 @@ public class JSONEncoder {
         }
     }
 
-    /**
+    /*
      * Encode the simple attribute and include it in root json object to be returned.
      *
      * @param multiValuedAttribute
@@ -248,7 +250,7 @@ public class JSONEncoder {
                 }
             }
         }
-        if(stringAttributeValues !=null && !stringAttributeValues.isEmpty()){
+        if (stringAttributeValues != null && !stringAttributeValues.isEmpty()) {
             for (Object arrayValue : stringAttributeValues) {
                 jsonArray.put(arrayValue);
             }
@@ -256,7 +258,7 @@ public class JSONEncoder {
         jsonObject.put(multiValuedAttribute.getName(), jsonArray);
     }
 
-    /**
+    /*
      * When an attribute value (of a multivalued attribute) becomes a complex attribute,
      * use this method to encode it.
      *
@@ -282,12 +284,12 @@ public class JSONEncoder {
         jsonArray.put(subObject);
     }
 
-    /**
+    /*
      * Build the service provider config json representation
      * @param config
      * @return
      */
-    public String buildServiceProviderConfigJsonBody(HashMap<String,Object> config) throws JSONException {
+    public String buildServiceProviderConfigJsonBody(HashMap<String, Object> config) throws JSONException {
         JSONObject rootObject = new JSONObject();
 
         JSONObject bulkObject = new JSONObject();
@@ -323,16 +325,22 @@ public class JSONEncoder {
         JSONArray authenticationSchemesArray = new JSONArray();
         ArrayList<Object[]> values = (ArrayList<Object[]>) config.get(SCIMConfigConstants.AUTHENTICATION_SCHEMES);
 
-        for(int i = 0; i< values.size() ; i++){
+        for (int i = 0; i < values.size(); i++) {
             JSONObject authenticationSchemeObject = new JSONObject();
             Object [] value = values.get(i);
-            authenticationSchemeObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.NAME, value[0] );
-            authenticationSchemeObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.DESCRIPTION, value[1]);
+            authenticationSchemeObject.put(
+                    SCIMConstants.ServiceProviderConfigSchemaConstants.NAME, value[0]);
+            authenticationSchemeObject.put(
+                    SCIMConstants.ServiceProviderConfigSchemaConstants.DESCRIPTION, value[1]);
             authenticationSchemeObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.SPEC_URI, value[2]);
-            authenticationSchemeObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.DOCUMENTATION_URI, value[3]);
-            authenticationSchemeObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.TYPE, value[4]);
-            authenticationSchemeObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.PRIMARY, value[5]);
-            authenticationSchemesArray.put(authenticationSchemeObject);
+            authenticationSchemeObject.put(
+                    SCIMConstants.ServiceProviderConfigSchemaConstants.DOCUMENTATION_URI, value[3]);
+            authenticationSchemeObject.put(
+                    SCIMConstants.ServiceProviderConfigSchemaConstants.TYPE, value[4]);
+            authenticationSchemeObject.put(
+                    SCIMConstants.ServiceProviderConfigSchemaConstants.PRIMARY, value[5]);
+            authenticationSchemesArray.put(
+                    authenticationSchemeObject);
         }
 
         rootObject.put(SCIMConstants.CommonSchemaConstants.SCHEMAS,
@@ -358,50 +366,63 @@ public class JSONEncoder {
 
     }
 
-    /**
-     *
-     *  Build the user resource type json representation
-     *
+    /*
+     *  Build the user resource type json representation.
      * @return
      */
     public String buildUserResourceTypeJsonBody() throws JSONException {
         JSONObject UserResourceTypeObject = new JSONObject();
 
-        UserResourceTypeObject.put(SCIMConstants.CommonSchemaConstants.SCHEMAS, SCIMConstants.RESOURCE_TYPE_SCHEMA_URI);
-        UserResourceTypeObject.put(SCIMConstants.ResourceTypeSchemaConstants.ID, SCIMConstants.USER);
-        UserResourceTypeObject.put(SCIMConstants.ResourceTypeSchemaConstants.NAME, SCIMConstants.USER);
-        UserResourceTypeObject.put(SCIMConstants.ResourceTypeSchemaConstants.ENDPOINT, SCIMConstants.USER_ENDPOINT);
-        UserResourceTypeObject.put(SCIMConstants.ResourceTypeSchemaConstants.DESCRIPTION,
+        UserResourceTypeObject.put(
+                SCIMConstants.CommonSchemaConstants.SCHEMAS, SCIMConstants.RESOURCE_TYPE_SCHEMA_URI);
+        UserResourceTypeObject.put(
+                SCIMConstants.ResourceTypeSchemaConstants.ID, SCIMConstants.USER);
+        UserResourceTypeObject.put(
+                SCIMConstants.ResourceTypeSchemaConstants.NAME, SCIMConstants.USER);
+        UserResourceTypeObject.put(
+                SCIMConstants.ResourceTypeSchemaConstants.ENDPOINT, SCIMConstants.USER_ENDPOINT);
+        UserResourceTypeObject.put(
+                SCIMConstants.ResourceTypeSchemaConstants.DESCRIPTION,
                 SCIMConstants.ResourceTypeSchemaConstants.USER_ACCOUNT);
-        UserResourceTypeObject.put(SCIMConstants.ResourceTypeSchemaConstants.SCHEMA, SCIMConstants.USER_CORE_SCHEMA_URI);
+        UserResourceTypeObject.put(
+                SCIMConstants.ResourceTypeSchemaConstants.SCHEMA, SCIMConstants.USER_CORE_SCHEMA_URI);
 
-        if(SCIMResourceSchemaManager.getInstance().isExtensionSet()){
+        if (SCIMResourceSchemaManager.getInstance().isExtensionSet()) {
             JSONObject extensionSchemaObject = new JSONObject();
 
-            extensionSchemaObject.put(SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_SCHEMA,
+            extensionSchemaObject.put(
+                    SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_SCHEMA,
                     SCIMResourceSchemaManager.getInstance().getExtensionURI());
-            extensionSchemaObject.put(SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_REQUIRED,
+            extensionSchemaObject.put(
+                    SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_REQUIRED,
                     SCIMResourceSchemaManager.getInstance().getExtensionRequired());
-            UserResourceTypeObject.put(SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS, extensionSchemaObject);
+            UserResourceTypeObject.put(
+                    SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS, extensionSchemaObject);
         }
 
         return UserResourceTypeObject.toString();
     }
 
     /**
-     *  Build the group resource type json representation
+     *  Build the group resource type json representation.
      * @return
      */
     public String buildGroupResourceTypeJsonBody() throws JSONException {
         JSONObject GroupResourceTypeObject = new JSONObject();
 
-        GroupResourceTypeObject.put(SCIMConstants.CommonSchemaConstants.SCHEMAS, SCIMConstants.RESOURCE_TYPE_SCHEMA_URI);
-        GroupResourceTypeObject.put(SCIMConstants.ResourceTypeSchemaConstants.ID, SCIMConstants.GROUP);
-        GroupResourceTypeObject.put(SCIMConstants.ResourceTypeSchemaConstants.NAME, SCIMConstants.GROUP);
-        GroupResourceTypeObject.put(SCIMConstants.ResourceTypeSchemaConstants.ENDPOINT, SCIMConstants.GROUP_ENDPOINT);
-        GroupResourceTypeObject.put(SCIMConstants.ResourceTypeSchemaConstants.DESCRIPTION,
+        GroupResourceTypeObject.put(
+                SCIMConstants.CommonSchemaConstants.SCHEMAS, SCIMConstants.RESOURCE_TYPE_SCHEMA_URI);
+        GroupResourceTypeObject.put(
+                SCIMConstants.ResourceTypeSchemaConstants.ID, SCIMConstants.GROUP);
+        GroupResourceTypeObject.put(
+                SCIMConstants.ResourceTypeSchemaConstants.NAME, SCIMConstants.GROUP);
+        GroupResourceTypeObject.put(
+                SCIMConstants.ResourceTypeSchemaConstants.ENDPOINT, SCIMConstants.GROUP_ENDPOINT);
+        GroupResourceTypeObject.put(
+                SCIMConstants.ResourceTypeSchemaConstants.DESCRIPTION,
                 SCIMConstants.ResourceTypeSchemaConstants.GROUP);
-        GroupResourceTypeObject.put(SCIMConstants.ResourceTypeSchemaConstants.SCHEMA, SCIMConstants.GROUP_CORE_SCHEMA_URI);
+        GroupResourceTypeObject.put(
+                SCIMConstants.ResourceTypeSchemaConstants.SCHEMA, SCIMConstants.GROUP_CORE_SCHEMA_URI);
         return GroupResourceTypeObject.toString();
     }
 

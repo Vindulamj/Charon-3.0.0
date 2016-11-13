@@ -20,9 +20,9 @@ package org.wso2.charon.core.v2.protocol.endpoints;
 import org.wso2.charon.core.v2.encoder.JSONDecoder;
 import org.wso2.charon.core.v2.encoder.JSONEncoder;
 import org.wso2.charon.core.v2.exceptions.AbstractCharonException;
+import org.wso2.charon.core.v2.exceptions.CharonException;
 import org.wso2.charon.core.v2.exceptions.NotFoundException;
 import org.wso2.charon.core.v2.protocol.SCIMResponse;
-import org.wso2.charon.core.v2.exceptions.CharonException;
 import org.wso2.charon.core.v2.schema.SCIMConstants;
 
 import java.util.HashMap;
@@ -41,22 +41,22 @@ public abstract class AbstractResourceManager implements ResourceManager {
     //Keeps  a map of endpoint urls of the exposed resources.
     private static Map<String, String> endpointURLMap;
 
-    /**
+    /*
      * Returns the encoder for json.
      *
      * @return JSONEncoder - An json encoder for encoding data
      * @throws CharonException
      */
     public static JSONEncoder getEncoder() throws CharonException {
-        if(encoder == null) {
+        if (encoder == null) {
             //if the encoder is not set, throw a charon exception
-            String error="Encoder is not set";
+            String error = "Encoder is not set";
             throw new CharonException(error);
         }
         return encoder;
     }
 
-    /**
+    /*
      * Returns the decoder for json.
      *
      *
@@ -65,23 +65,23 @@ public abstract class AbstractResourceManager implements ResourceManager {
      */
     public static JSONDecoder getDecoder() throws CharonException {
 
-        if(decoder == null) {
+        if (decoder == null) {
             //if the decoder is not set, throw a charon exception
-            String error="Decoder is not set";
+            String error = "Decoder is not set";
             throw new CharonException(error);
         }
         return decoder;
 
     }
 
-    /**
+    /*
      * Returns the endpoint according to the resource.
      *
      * @param resource -Resource type
      * @return endpoint URL
      * @throws NotFoundException
      */
-    public static String getResourceEndpointURL(String resource) throws NotFoundException{
+    public static String getResourceEndpointURL(String resource) throws NotFoundException {
         if (endpointURLMap != null && endpointURLMap.size() != 0) {
             return endpointURLMap.get(resource);
         } else {
@@ -89,15 +89,18 @@ public abstract class AbstractResourceManager implements ResourceManager {
         }
     }
 
-    public static void setEncoder() { encoder = new JSONEncoder(); }
+    public static void setEncoder() {
+        encoder = new JSONEncoder(); }
 
-    public static void setDecoder() { decoder = new JSONDecoder();}
+    public static void setDecoder() {
+        decoder = new JSONDecoder();
+    }
 
     public static void setEndpointURLMap(Map<String, String> endpointURLMap) {
         AbstractResourceManager.endpointURLMap = endpointURLMap;
     }
 
-    /**
+    /*
      * Returns SCIM Response object after json encoding the exception
      *
      * @param exception - exception message
@@ -105,7 +108,7 @@ public abstract class AbstractResourceManager implements ResourceManager {
      */
     public static SCIMResponse encodeSCIMException(AbstractCharonException exception) {
         Map<String, String> ResponseHeaders = new HashMap<String, String>();
-        ResponseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER,SCIMConstants.APPLICATION_JSON);
+        ResponseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
         return new SCIMResponse(exception.getStatus(), encoder.encodeSCIMException(exception), ResponseHeaders);
     }
 

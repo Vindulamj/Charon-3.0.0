@@ -22,15 +22,16 @@ import org.wso2.charon.core.v2.exceptions.CharonException;
 import java.util.HashMap;
 import java.util.Map;
 
-/*
+/**
  * This class is a blueprint of ComplexAttribute defined in SCIM Core Schema Spec.
  */
-public class ComplexAttribute extends AbstractAttribute{
+public class ComplexAttribute extends AbstractAttribute {
 
     //If it is a complex attribute, it has a list of sub attributes.
     protected Map<String, Attribute> subAttributesList = new HashMap<String, Attribute>();
 
-    public ComplexAttribute(String name) { this.name=name; }
+    public ComplexAttribute(String name) {
+        this.name = name; }
 
     public ComplexAttribute() {}
 
@@ -66,7 +67,7 @@ public class ComplexAttribute extends AbstractAttribute{
         }
     }
 
-    /**
+    /*
      * delete all sub attributes
      * @throws CharonException
      */
@@ -86,7 +87,7 @@ public class ComplexAttribute extends AbstractAttribute{
         }
     }
 
-    /**
+    /*
      * look for the existence of a sub attribute
      *
      * @param attributeName

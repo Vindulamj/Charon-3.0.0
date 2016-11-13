@@ -38,13 +38,13 @@ public class AbstractCharonException extends Exception {
     //The HTTP status code
     protected int status;
 
-    public AbstractCharonException(int status,String detail, String scimType) {
-        this.schemas= ResponseCodeConstants.ERROR_RESPONSE_SCHEMA_URI;
-        this.status=status;
-        this.detail=detail;
+    public AbstractCharonException(int status, String detail, String scimType) {
+        this.schemas = ResponseCodeConstants.ERROR_RESPONSE_SCHEMA_URI;
+        this.status = status;
+        this.detail = detail;
     }
     public AbstractCharonException() {
-        this.schemas= ResponseCodeConstants.ERROR_RESPONSE_SCHEMA_URI;
+        this.schemas = ResponseCodeConstants.ERROR_RESPONSE_SCHEMA_URI;
         this.status = ResponseCodeConstants.CODE_INTERNAL_ERROR;
         this.detail = null;
     }
@@ -72,17 +72,23 @@ public class AbstractCharonException extends Exception {
         this.detail = message;
     }
 
-    public String getSchemas() { return schemas; }
+    public String getSchemas() {
+        return schemas; }
 
-    public void setSchemas(String schemas) { this.schemas = schemas; }
+    public void setSchemas(String schemas) {
+        this.schemas = schemas; }
 
-    public String getDetail() { return detail; }
+    public String getDetail() {
+        return detail; }
 
-    public void setDetail(String detail) { this.detail = detail; }
+    public void setDetail(String detail) {
+        this.detail = detail; }
 
-    public int getStatus() { return status; }
+    public int getStatus() {
+        return status; }
 
-    public void setStatus(int status) { this.status = status; }
+    public void setStatus(int status) {
+        this.status = status; }
 }
 
 

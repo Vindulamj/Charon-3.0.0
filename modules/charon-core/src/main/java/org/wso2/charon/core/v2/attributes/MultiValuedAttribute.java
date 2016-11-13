@@ -23,10 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/*
+/**
  * This class is a blueprint of MultiValuedAttribute defined in SCIM Core Schema Spec.
  */
-public class MultiValuedAttribute extends AbstractAttribute{
+public class MultiValuedAttribute extends AbstractAttribute {
 
     //Multi valued attributes can have VALUES as an array of complex or simple attributes.
     protected List<Attribute> attributeValues = new ArrayList<Attribute>();
@@ -41,7 +41,7 @@ public class MultiValuedAttribute extends AbstractAttribute{
     public  MultiValuedAttribute(){}
 
     public MultiValuedAttribute(String attributeName) {
-        this.name=attributeName;
+        this.name = attributeName;
     }
 
     public List<Attribute> getAttributeValues() {
@@ -52,7 +52,7 @@ public class MultiValuedAttribute extends AbstractAttribute{
         this.attributeValues = attributeValues;
     }
 
-    /**
+    /*
      * not supported for multivalued attribute
      * @param attributeName
      * @return
@@ -63,7 +63,7 @@ public class MultiValuedAttribute extends AbstractAttribute{
         throw new CharonException("getSubAttribute method not supported by MultiValuedAttribute.");
     }
 
-    /**
+    /*
      * clear all sub attribute values
      * @throws CharonException
      */
@@ -83,7 +83,7 @@ public class MultiValuedAttribute extends AbstractAttribute{
         this.attributeValues.add(complexValue);
     }
 
-    /**
+    /*
      * get the attribute primitive values
      * @return
      */
@@ -91,7 +91,7 @@ public class MultiValuedAttribute extends AbstractAttribute{
         return attributePrimitiveValues;
     }
 
-    /**
+    /*
      * set attribute primitive values
      * @param attributePrimitiveValues
      */
@@ -99,11 +99,11 @@ public class MultiValuedAttribute extends AbstractAttribute{
         this.attributePrimitiveValues = attributePrimitiveValues;
     }
 
-    /**
+    /*
      * set sub attribute value
      * @param attributeValue
      */
-    public void setAttributeValue(Attribute attributeValue){
+    public void setAttributeValue(Attribute attributeValue) {
         attributeValues.add(attributeValue);
     }
 

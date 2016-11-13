@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Programmatic representation of the provisioning-config.xml
+ * Programmatic representation of the provisioning-config.xml.
  */
 public class SCIMConfig {
 
@@ -54,7 +54,7 @@ public class SCIMConfig {
 
     /**
      * Obtain the SCIM Consumer with all the provider details processed according to the conventions
-     * of provisioning-config.xml
+     * of provisioning-config.xml.
      *
      * @param consumerId
      * @return

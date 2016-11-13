@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.wso2.charon.core.v2.schema.SCIMConstants;
 import org.wso2.charon.core.v2.schema.ServerSideValidator;
 import org.wso2.charon.core.v2.utils.CopyUtil;
+import org.wso2.charon.core.v2.utils.codeutils.SearchRequest;
 
 import java.io.IOException;
 import java.util.*;
@@ -378,7 +379,7 @@ public class UserResourceManager extends AbstractResourceManager {
         }
         //If count is not set, server default should be taken
         if(count == 0){
-            CharonConfiguration.getInstance().getCountValueForPagination();
+            count = CharonConfiguration.getInstance().getCountValueForPagination();
         }
         JSONEncoder encoder = null;
         try {
@@ -496,6 +497,88 @@ public class UserResourceManager extends AbstractResourceManager {
         } catch (NotImplementedException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         }
+    }
+
+    /*
+     * this facilitates the querying using HTTP POST
+     * @param resourceString
+     * @param userManager
+     * @return
+     */
+
+    public SCIMResponse listUsersWithPOST(String resourceString, UserManager userManager)
+    {
+        JSONEncoder encoder = null;
+        JSONDecoder decoder = null;
+        try {
+            //obtain the json encoder
+            encoder = getEncoder();
+
+            //obtain the json decoder
+            decoder = getDecoder();
+
+            //create the search request object
+            SearchRequest searchRequest = decoder.decodeSearchRequestBody(resourceString);
+
+            //A value less than one shall be interpreted as 1
+            if(searchRequest.getStartIndex() < 1){
+                searchRequest.setStartIndex(1);
+            }
+            //If count is not set, server default should be taken
+            if(searchRequest.getCount() == 0){
+                searchRequest.setCount(CharonConfiguration.getInstance().getCountValueForPagination());
+            }
+
+                List<User> returnedUsers;
+                int totalResults=0;
+                //API user should pass a UserManager storage to UserResourceEndpoint.
+                if (userManager != null) {
+                    returnedUsers = userManager.listUsersWithPost(searchRequest);
+
+                    //TODO: Are we having this method support from user core
+                    totalResults = userManager.getUserCount();
+
+                    //if user not found, return an error in relevant format.
+                    if (returnedUsers == null || returnedUsers.isEmpty()) {
+                        String error = "Users not found in the user store.";
+                        //throw resource not found.
+                        throw new NotFoundException(error);
+                    }
+
+                    // unless configured returns core-user schema or else returns extended user schema)
+                    SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+
+                    for(User user:returnedUsers){
+                        //perform service provider side validation.
+                        ServerSideValidator.validateRetrievedSCIMObjectInList(user, schema,
+                                searchRequest.getAttributesAsString(), searchRequest.getExcludedAttributesAsString());
+                    }
+                    //create a listed resource object out of the returned users list.
+                    PaginatedListedResource listedResource = createPaginatedListedResource(
+                            returnedUsers, searchRequest.getStartIndex(), totalResults);
+                    //convert the listed resource into specific format.
+                    String encodedListedResource = encoder.encodeSCIMObject(listedResource);
+                    //if there are any http headers to be added in the response header.
+                    Map<String, String> ResponseHeaders = new HashMap<String, String>();
+                    ResponseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
+                    return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedListedResource, ResponseHeaders);
+
+                } else {
+                    String error = "Provided user manager handler is null.";
+                    //throw internal server error.
+                    throw new InternalErrorException(error);
+                }
+            } catch (CharonException e) {
+                return AbstractResourceManager.encodeSCIMException(e);
+            } catch (NotFoundException e) {
+                return AbstractResourceManager.encodeSCIMException(e);
+            } catch (InternalErrorException e) {
+                return AbstractResourceManager.encodeSCIMException(e);
+            } catch (BadRequestException e) {
+                return AbstractResourceManager.encodeSCIMException(e);
+            } catch (NotImplementedException e) {
+                return AbstractResourceManager.encodeSCIMException(e);
+            }
     }
 
     /**
@@ -660,7 +743,7 @@ public class UserResourceManager extends AbstractResourceManager {
      * @param users
      * @return
      */
-    public PaginatedListedResource createPaginatedListedResource(List<User> users,int startIndex, int totalResults)
+    private PaginatedListedResource createPaginatedListedResource(List<User> users,int startIndex, int totalResults)
             throws CharonException, NotFoundException {
         PaginatedListedResource paginatedListedResource = new PaginatedListedResource();
         paginatedListedResource.setSchema(SCIMConstants.LISTED_RESOURCE_CORE_SCHEMA_URI);

@@ -20,18 +20,23 @@ package org.wso2.charon.core.v2.config;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.wso2.charon.core.v2.schema.SCIMDefinitions;
 import org.wso2.charon.core.v2.exceptions.CharonException;
 import org.wso2.charon.core.v2.exceptions.InternalErrorException;
 import org.wso2.charon.core.v2.schema.SCIMAttributeSchema;
+import org.wso2.charon.core.v2.schema.SCIMDefinitions;
 
-import java.io.*;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class is to build the extension user schema though the config file
+ * This class is to build the extension user schema though the config file.
  */
 public class SCIMUserSchemaExtensionBuilder {
 
@@ -53,7 +58,7 @@ public class SCIMUserSchemaExtensionBuilder {
     public SCIMAttributeSchema getExtensionSchema() {
         return extensionSchema;
     }
-    /**
+    /*
      * Logic goes here
      * @throws CharonException
      */
@@ -70,14 +75,14 @@ public class SCIMUserSchemaExtensionBuilder {
             }
         }
         // now get the extension schema
-        /**
+        /*
          * Assumption : Final config in the configuration file is the extension
          * root attribute
          */
         extensionSchema = attributeSchemas.get(extensionRootAttributeName);
     }
 
-    /**
+    /*
      * This method reads configuration file and stores in the memory as an
      * configuration map
      *
@@ -120,7 +125,7 @@ public class SCIMUserSchemaExtensionBuilder {
     }
 
 
-    /**
+    /*
      * Knows how to build a complex attribute
      *
      * @param config
@@ -131,18 +136,17 @@ public class SCIMUserSchemaExtensionBuilder {
             for (String subAttribute : subAttributes) {
                 ExtensionAttributeSchemaConfig subAttribConfig = extensionConfig.get(subAttribute);
                 if (!subAttribConfig.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
-                    if(subAttribConfig.hasChildren()){
+                    if (subAttribConfig.hasChildren()) {
                         String error = "A attribute of primitive type can not have sub attributes";
                         throw new InternalErrorException(error);
-                    }else{
+                    } else {
                         buildSimpleAttributeSchema(subAttribConfig);
                     }
                 } else {
-                    if(!(subAttribConfig.hasChildren())){
+                    if (!(subAttribConfig.hasChildren())) {
                         String error = "A attribute of complex type should have sub attributes";
                         throw new InternalErrorException(error);
-                    }
-                    else{
+                    } else {
                         // need to build child schemas first
                         buildComplexAttributeSchema(subAttribConfig);
                     }
@@ -153,7 +157,7 @@ public class SCIMUserSchemaExtensionBuilder {
         }
     }
 
-    /**
+    /*
      * Has the logic to iterate through child attributes
      *
      * @param config
@@ -169,7 +173,7 @@ public class SCIMUserSchemaExtensionBuilder {
         attributeSchemas.put(config.getName(), complexAttribute);
     }
 
-    /**
+    /*
      * Builds simple attribute schema
      *
      * @param config
@@ -184,16 +188,17 @@ public class SCIMUserSchemaExtensionBuilder {
 
     }
 
-    /**
+    /*
      * create SCIM Attribute Schema
      * @param attribute
      * @param subAttributeList
      * @return
      */
     public SCIMAttributeSchema createSCIMAttributeSchema(ExtensionAttributeSchemaConfig attribute,
-                                                         ArrayList<SCIMAttributeSchema> subAttributeList){
+                                                         ArrayList<SCIMAttributeSchema> subAttributeList) {
 
-        return SCIMAttributeSchema.createSCIMAttributeSchema(attribute.getURI(), attribute.getName(), attribute.getType(),
+        return SCIMAttributeSchema.createSCIMAttributeSchema
+                (attribute.getURI(), attribute.getName(), attribute.getType(),
                 attribute.getMultiValued(), attribute.description, attribute.required, attribute.caseExact,
                 attribute.mutability, attribute.returned, attribute.uniqueness,
                 attribute.canonicalValues, attribute.referenceTypes, subAttributeList);
@@ -342,8 +347,10 @@ public class SCIMUserSchemaExtensionBuilder {
                 if (!"null".equalsIgnoreCase(subAttributesString)) {
                     subAttributes = subAttributesString.split(" ");
                 }
-                canonicalValues = setCanonicalValues(attributeConfigJSON.getJSONArray(SCIMConfigConstants.CANONICAL_VALUES));
-                referenceTypes = setReferenceTypes(attributeConfigJSON.getJSONArray(SCIMConfigConstants.REFERENCE_TYPES));
+                canonicalValues = setCanonicalValues(
+                        attributeConfigJSON.getJSONArray(SCIMConfigConstants.CANONICAL_VALUES));
+                referenceTypes = setReferenceTypes(
+                        attributeConfigJSON.getJSONArray(SCIMConfigConstants.REFERENCE_TYPES));
 
             } catch (JSONException e) {
                 throw new CharonException("Error while parsing extension configuration", e);
@@ -351,7 +358,7 @@ public class SCIMUserSchemaExtensionBuilder {
 
         }
 
-        /**
+        /*
          * this builds the relevant data types according to what has configured in config file
          * @param input
          * @return
@@ -378,13 +385,13 @@ public class SCIMUserSchemaExtensionBuilder {
             return type;
         }
 
-        /**
+        /*
          * this builds the relevant mutability according to what has configured in config file
          * @param input
          * @return
          */
-        private SCIMDefinitions.Mutability getDefinedMutability(String input){
-            SCIMDefinitions.Mutability type =null;
+        private SCIMDefinitions.Mutability getDefinedMutability(String input) {
+            SCIMDefinitions.Mutability type = null;
             if ("readWrite".equalsIgnoreCase(input)) {
                 type = SCIMDefinitions.Mutability.READ_WRITE;
             } else if ("readOnly".equalsIgnoreCase(input)) {
@@ -397,13 +404,13 @@ public class SCIMUserSchemaExtensionBuilder {
             return type;
         }
 
-        /**
+        /*
          * this builds the relevant returned type according to what has configured in config file
          * @param input
          * @return
          */
-        private SCIMDefinitions.Returned getDefinedReturned(String input){
-            SCIMDefinitions.Returned type =null;
+        private SCIMDefinitions.Returned getDefinedReturned(String input) {
+            SCIMDefinitions.Returned type = null;
             if ("always".equalsIgnoreCase(input)) {
                 type = SCIMDefinitions.Returned.ALWAYS;
             } else if ("never".equalsIgnoreCase(input)) {
@@ -416,13 +423,13 @@ public class SCIMUserSchemaExtensionBuilder {
             return type;
         }
 
-        /**
+        /*
          * this builds the relevant uniqueness according to what has configured in config file
          * @param input
          * @return
          */
-        private SCIMDefinitions.Uniqueness getDefinedUniqueness(String input){
-            SCIMDefinitions.Uniqueness type =null;
+        private SCIMDefinitions.Uniqueness getDefinedUniqueness(String input) {
+            SCIMDefinitions.Uniqueness type = null;
             if ("none".equalsIgnoreCase(input)) {
                 type = SCIMDefinitions.Uniqueness.NONE;
             } else if ("server".equalsIgnoreCase(input)) {
@@ -433,13 +440,14 @@ public class SCIMUserSchemaExtensionBuilder {
             return type;
         }
 
-        /**
+        /*
          * this builds the relevant sub attributes according to what has configured in config file
          * @param input
          * @return
          * @throws CharonException
          */
-        private ArrayList<ExtensionAttributeSchemaConfig> setSubAttributes(JSONArray input) throws CharonException, JSONException {
+        private ArrayList<ExtensionAttributeSchemaConfig> setSubAttributes(JSONArray input)
+                throws CharonException, JSONException {
             ArrayList<ExtensionAttributeSchemaConfig> subAttributes = new ArrayList<ExtensionAttributeSchemaConfig>();
             JSONArray subAttributeList = input;
             for (int index = 0; index < subAttributeList.length(); ++index) {
@@ -450,7 +458,7 @@ public class SCIMUserSchemaExtensionBuilder {
             return subAttributes;
         }
 
-        /**
+        /*
          * this builds the relevant canonical values according to what has configured in config file
          * @param input
          * @return
@@ -459,12 +467,12 @@ public class SCIMUserSchemaExtensionBuilder {
             ArrayList<String> canonicalValues = new ArrayList<String>();
             JSONArray canonicalValuesList = input;
             for (int index = 0; index < canonicalValuesList.length(); ++index) {
-                canonicalValues.add((String)canonicalValuesList.get(index));
+                canonicalValues.add((String) canonicalValuesList.get(index));
             }
             return canonicalValues;
         }
 
-        /**
+        /*
          * this builds the relevant reference types according to what has configured in config file
          * @param input
          * @return
@@ -474,15 +482,15 @@ public class SCIMUserSchemaExtensionBuilder {
             JSONArray referenceTypesList = input;
 
             for (int index = 0; index < referenceTypesList.length(); ++index) {
-                String referenceValue = (String)referenceTypesList.get(index);
+                String referenceValue = (String) referenceTypesList.get(index);
 
-                if(referenceValue.equalsIgnoreCase("external")) {
+                if (referenceValue.equalsIgnoreCase("external")) {
                     referenceTypes.add(SCIMDefinitions.ReferenceType.EXTERNAL);
-                }else if(referenceValue.equalsIgnoreCase("user")) {
+                } else if (referenceValue.equalsIgnoreCase("user")) {
                     referenceTypes.add(SCIMDefinitions.ReferenceType.USER);
-                }else if(referenceValue.equalsIgnoreCase("group")) {
+                } else if (referenceValue.equalsIgnoreCase("group")) {
                     referenceTypes.add(SCIMDefinitions.ReferenceType.GROUP);
-                }else if(referenceValue.equalsIgnoreCase("uri")) {
+                } else if (referenceValue.equalsIgnoreCase("uri")) {
                     referenceTypes.add(SCIMDefinitions.ReferenceType.URI);
                 }
             }

@@ -522,6 +522,16 @@ public class SCIMConstants {
         public static final String PATH = "path";
         public static final String VALUE = "value";
 
+
+        public static final String ATTRIBUTES = "attributes";
+        public static final String EXCLUDED_ATTRIBUTES = "excludedAttributes";
+        public static final String COUNT = "count";
+        public static final String START_INDEX = "startIndex";
+        public static final String SORT_BY = "sortBy";
+        public static final String SORT_ORDER = "sortOrder";
+        public static final String FILTER = "filter";
+
+
     }
 
 

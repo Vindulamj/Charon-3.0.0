@@ -38,6 +38,7 @@ public class CharonException extends AbstractCharonException {
         super(message, cause);
     }
 
-    public CharonException(String message) { super(message); }
+    public CharonException(String message) {
+        super(message); }
 
 }

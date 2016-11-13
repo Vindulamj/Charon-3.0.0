@@ -18,7 +18,7 @@
 package org.wso2.charon.core.v2.config;
 
 /**
- * This defines constants for extension schema builder
+ * This defines constants for extension schema builder.
  */
 public class SCIMConfigConstants {
 

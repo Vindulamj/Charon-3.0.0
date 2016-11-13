@@ -21,9 +21,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * This class contains the charon related configurations
+ * This class contains the charon related configurations.
  */
-public class CharonConfiguration implements Configuration{
+public class CharonConfiguration implements Configuration {
 
     private static CharonConfiguration charonConfiguration = new CharonConfiguration();
 
@@ -42,77 +42,77 @@ public class CharonConfiguration implements Configuration{
     //default count value for pagination
     private int count;
 
-    /**
+    /*
      * set documentationURL
      * @param documentationURL
      */
-    public void setDocumentationURL(String documentationURL){
+    public void setDocumentationURL(String documentationURL) {
         this.documentationURL = documentationURL;
     }
 
-    /**
+    /*
      * set Patch Support
      * @param supported
      */
-    public void setPatchSupport(boolean supported){
+    public void setPatchSupport(boolean supported) {
         this.patchSupport = supported;
     }
 
-    /**
+    /*
      * set Bulk Support
      * @param supported
      * @param maxOperations
      * @param maxPayLoadSize
      */
-    public void setBulkSupport(boolean supported, int maxOperations, int maxPayLoadSize){
-        this.bulkSupport= supported;
+    public void setBulkSupport(boolean supported, int maxOperations, int maxPayLoadSize) {
+        this.bulkSupport = supported;
         this.maxOperations = maxOperations;
         this.maxPayLoadSize = maxPayLoadSize;
     }
 
-    /**
+    /*
      * Set filter support
      * @param supported
      * @param maxResults
      */
-    public void setFilterSupport(boolean supported, int maxResults){
+    public void setFilterSupport(boolean supported, int maxResults) {
         this.filterSupport = supported;
         this.maxResults = maxResults;
     }
 
-    /**
+    /*
      * set Change Password Support
      * @param supported
      */
-    public void setChangePasswordSupport(boolean supported){
+    public void setChangePasswordSupport(boolean supported) {
         this.changePasswordSupport = supported;
     }
 
-    /**
+    /*
      * set ETag Support
      * @param supported
      */
-    public void setETagSupport(boolean supported){
+    public void setETagSupport(boolean supported) {
         this.eTagSupport = supported;
     }
 
-    /**
+    /*
      * set Sort Support
      * @param supported
      */
-    public void setSortSupport(boolean supported){
+    public void setSortSupport(boolean supported) {
         this.sortSupport = supported;
     }
 
-    /**
+    /*
      * set Authentication Schemes
      * @param authenticationSchemes
      */
-    public void setAuthenticationSchemes(ArrayList<Object[]> authenticationSchemes){
+    public void setAuthenticationSchemes(ArrayList<Object[]> authenticationSchemes) {
         this.authenticationSchemes = authenticationSchemes;
     }
 
-    /**
+    /*
      * set Count Value For Pagination
      * @param count
      */
@@ -121,19 +121,19 @@ public class CharonConfiguration implements Configuration{
         this.count = count;
     }
 
-    /**
+    /*
      * get Count Value For Pagination
      * @return
      */
-    public int getCountValueForPagination(){
+    public int getCountValueForPagination() {
         return count;
     }
 
-    /**
+    /*
      * return the charon configuration map
      * @return
      */
-    public HashMap<String,Object> getConfig(){
+    public HashMap<String, Object> getConfig() {
         HashMap<String, Object> configMap = new HashMap<String, Object>();
         configMap.put(SCIMConfigConstants.DOCUMENTATION_URL, documentationURL);
         configMap.put(SCIMConfigConstants.BULK, bulkSupport);
@@ -149,7 +149,7 @@ public class CharonConfiguration implements Configuration{
         return  configMap;
     }
 
-    /**
+    /*
      * return the instance of CharonConfiguration
      * @return
      */

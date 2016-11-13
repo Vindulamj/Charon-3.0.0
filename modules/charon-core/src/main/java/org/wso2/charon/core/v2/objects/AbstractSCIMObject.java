@@ -17,22 +17,30 @@
  */
 package org.wso2.charon.core.v2.objects;
 
-import org.wso2.charon.core.v2.attributes.*;
-import org.wso2.charon.core.v2.schema.ResourceTypeSchema;
-import org.wso2.charon.core.v2.schema.SCIMResourceSchemaManager;
-import org.wso2.charon.core.v2.schema.SCIMSchemaDefinitions;
+import org.wso2.charon.core.v2.attributes.Attribute;
+import org.wso2.charon.core.v2.attributes.ComplexAttribute;
+import org.wso2.charon.core.v2.attributes.DefaultAttributeFactory;
+import org.wso2.charon.core.v2.attributes.MultiValuedAttribute;
+import org.wso2.charon.core.v2.attributes.SimpleAttribute;
 import org.wso2.charon.core.v2.exceptions.BadRequestException;
 import org.wso2.charon.core.v2.exceptions.CharonException;
+import org.wso2.charon.core.v2.schema.ResourceTypeSchema;
 import org.wso2.charon.core.v2.schema.SCIMConstants;
+import org.wso2.charon.core.v2.schema.SCIMSchemaDefinitions;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 /**
  * This represents the object which is a collection of attributes defined by common-schema.
  * These attributes MUST be included in all other objects which become SCIM resources.
  */
 
-public class AbstractSCIMObject implements SCIMObject{
+public class AbstractSCIMObject implements SCIMObject {
 
     /*Collection of attributes which constitute this resource.*/
     protected Map<String, Attribute> attributeList = new HashMap<String, Attribute>();
@@ -40,7 +48,7 @@ public class AbstractSCIMObject implements SCIMObject{
     /*List of schemas where the attributes of this resource, are defined.*/
     protected List<String> schemaList = new ArrayList<String>();
 
-    /**
+    /*
      * Set the attributes and corresponding schema in the SCIM Object.
      *
      * @param newAttribute
@@ -52,7 +60,7 @@ public class AbstractSCIMObject implements SCIMObject{
         }
     }
 
-    /**
+    /*
      * Set the attributes in the SCIM Object.
      *
      * @param newAttribute
@@ -72,7 +80,8 @@ public class AbstractSCIMObject implements SCIMObject{
         return attributeList.containsKey(attributeName);
     }
 
-    public Map<String, Attribute> getAttributeList() { return attributeList; }
+    public Map<String, Attribute> getAttributeList() {
+        return attributeList; }
 
     public void setSchema(String schema) {
         schemaList.add(schema);
@@ -82,14 +91,14 @@ public class AbstractSCIMObject implements SCIMObject{
         return schemaList;
     }
 
-    public Attribute getAttribute(String attributeName){
-        if(attributeList.containsKey(attributeName)){
+    public Attribute getAttribute(String attributeName) {
+        if (attributeList.containsKey(attributeName)) {
             return attributeList.get(attributeName);
         }
         return null;
     }
 
-    /**
+    /*
      * Deleting an attribute is the responsibility of an attribute holder.
      *
      * @param id - name of the attribute
@@ -100,19 +109,19 @@ public class AbstractSCIMObject implements SCIMObject{
         }
     }
 
-    /**
+    /*
      * Deleting a sub attribute of complex attribute is the responsibility of an attribute holder.
      *
      * @param parentAttribute - name of the parent attribute
      * @param childAttribute - name of the sub attribute
      */
-    public void deleteSubAttribute(String parentAttribute,String childAttribute) {
+    public void deleteSubAttribute(String parentAttribute, String childAttribute) {
         if (attributeList.containsKey(parentAttribute)) {
-            ((ComplexAttribute)(attributeList.get(parentAttribute))).removeSubAttribute(childAttribute);
+            ((ComplexAttribute) (attributeList.get(parentAttribute))).removeSubAttribute(childAttribute);
         }
     }
 
-    /**
+    /*
      * This deletion method is only applicable for extension schema
      * Deleting a sub attribute of complex attribute is the responsibility of an attribute holder.
      *
@@ -125,22 +134,22 @@ public class AbstractSCIMObject implements SCIMObject{
         if (attributeList.containsKey(grandParentAttribute)) {
             ComplexAttribute grandParent = (ComplexAttribute) attributeList.get(grandParentAttribute);
             Attribute parent = ((ComplexAttribute) grandParent).getSubAttribute(parentAttribute);
-            ((ComplexAttribute)(parent)).removeSubAttribute(childAttribute);
+            ((ComplexAttribute) (parent)).removeSubAttribute(childAttribute);
 
         }
     }
 
-    /**
+    /*
      * Deleting a sub value's sub attribute of multivalued attribute is the responsibility of an attribute holder.
      *
      */
     public void deleteValuesSubAttribute(String attribute, String subAttribute, String subSimpleAttribute) {
         if (attributeList.containsKey(attribute)) {
-            MultiValuedAttribute parentAttribute=((MultiValuedAttribute)attributeList.get(attribute));
-            List<Attribute> attributeValues =parentAttribute.getAttributeValues();
-            for(Attribute subValue : attributeValues){
-                if(subAttribute.equals(subValue.getName())){
-                    ((ComplexAttribute)subValue).removeSubAttribute(subSimpleAttribute);
+            MultiValuedAttribute parentAttribute = ((MultiValuedAttribute) attributeList.get(attribute));
+            List<Attribute> attributeValues = parentAttribute.getAttributeValues();
+            for (Attribute subValue : attributeValues) {
+                if (subAttribute.equals(subValue.getName())) {
+                    ((ComplexAttribute) subValue).removeSubAttribute(subSimpleAttribute);
                     break;
                 }
             }
@@ -150,14 +159,14 @@ public class AbstractSCIMObject implements SCIMObject{
 
     public void deleteSubValuesSubAttribute(String grandParentAttribute, String parentAttribute,
                                             String subValue, String childAttribute) {
-        if(attributeList.containsKey(grandParentAttribute)){
+        if (attributeList.containsKey(grandParentAttribute)) {
             ComplexAttribute grandParent = (ComplexAttribute) attributeList.get(grandParentAttribute);
             Map<String, Attribute> subAttributeList = grandParent.getSubAttributesList();
             MultiValuedAttribute parent = (MultiValuedAttribute) subAttributeList.get(parentAttribute);
             List<Attribute> parentAttributeList = parent.getAttributeValues();
-            for(Attribute parentsSubValue : parentAttributeList){
-                if(subValue.equals(parentsSubValue.getName())){
-                    ((ComplexAttribute)parentsSubValue).removeSubAttribute(childAttribute);
+            for (Attribute parentsSubValue : parentAttributeList) {
+                if (subValue.equals(parentsSubValue.getName())) {
+                    ((ComplexAttribute) parentsSubValue).removeSubAttribute(childAttribute);
                 }
             }
 
@@ -169,7 +178,7 @@ public class AbstractSCIMObject implements SCIMObject{
         return attributeList.containsKey(SCIMConstants.CommonSchemaConstants.META);
     }
 
-    /**
+    /*
      * Set a value for the id attribute. If attribute not already created in the resource,
      * create attribute and set the value.
      * Unique identifier for the SCIM Resource as defined by the Service Provider
@@ -181,7 +190,7 @@ public class AbstractSCIMObject implements SCIMObject{
      */
     public void setId(String id) throws CharonException, BadRequestException {
         if (isAttributeExist(SCIMConstants.CommonSchemaConstants.ID)) {
-            String error ="Read only attribute is trying to be modified";
+            String error = "Read only attribute is trying to be modified";
             throw new CharonException(error);
         } else {
             SimpleAttribute idAttribute = new SimpleAttribute(SCIMConstants.CommonSchemaConstants.ID, id);
@@ -192,7 +201,7 @@ public class AbstractSCIMObject implements SCIMObject{
 
     }
 
-    /**
+    /*
      * set the created date and time of the resource
      *
      * @param createdDate
@@ -200,7 +209,7 @@ public class AbstractSCIMObject implements SCIMObject{
     public void setCreatedDate(Date createdDate) throws CharonException, BadRequestException {
         //create the created date attribute as defined in schema.
         SimpleAttribute createdDateAttribute = new SimpleAttribute(
-                SCIMConstants.CommonSchemaConstants.CREATED,createdDate);
+                SCIMConstants.CommonSchemaConstants.CREATED, createdDate);
         createdDateAttribute = (SimpleAttribute) DefaultAttributeFactory.createAttribute(
                 SCIMSchemaDefinitions.CREATED, createdDateAttribute);
         //check meta complex attribute already exist.
@@ -209,7 +218,7 @@ public class AbstractSCIMObject implements SCIMObject{
             //check created date attribute already exist
             if (metaAttribute.isSubAttributeExist(createdDateAttribute.getName())) {
                 //TODO:log info level log that created date already set and can't set again.
-                String error ="Read only meta attribute is tried to modify";
+                String error = "Read only meta attribute is tried to modify";
                 throw new CharonException(error);
             } else {
                 metaAttribute.setSubAttribute(createdDateAttribute);
@@ -223,7 +232,7 @@ public class AbstractSCIMObject implements SCIMObject{
         }
     }
 
-    /**
+    /*
      * set the last modified date and time of the resource
      *
      * @param lastModifiedDate
@@ -253,7 +262,7 @@ public class AbstractSCIMObject implements SCIMObject{
         }
     }
 
-    /**
+    /*
      * crete the meta attribute of the scim object
      *
      */
@@ -263,13 +272,13 @@ public class AbstractSCIMObject implements SCIMObject{
                         SCIMSchemaDefinitions.META,
                         new ComplexAttribute(SCIMConstants.CommonSchemaConstants.META));
         if (isMetaAttributeExist()) {
-            String error ="Read only meta attribute is tried to modify";
+            String error = "Read only meta attribute is tried to modify";
             throw new CharonException(error);
         } else {
             attributeList.put(SCIMConstants.CommonSchemaConstants.META, metaAttribute);
         }
     }
-    /**
+    /*
      * Return the meta attribute
      *
      * @return ComplexAttribute
@@ -283,7 +292,7 @@ public class AbstractSCIMObject implements SCIMObject{
         }
     }
 
-    /**
+    /*
      * Get the value of id attribute.
      * Unique identifier for the SCIM Resource as defined by the Service Provider.
      *
@@ -298,7 +307,7 @@ public class AbstractSCIMObject implements SCIMObject{
         }
     }
 
-    /**
+    /*
      * set the location of the meta attribute
      *
      * @param location
@@ -314,7 +323,7 @@ public class AbstractSCIMObject implements SCIMObject{
             ComplexAttribute metaAttribute = getMetaAttribute();
             //check version attribute already exist
             if (metaAttribute.isSubAttributeExist(locationAttribute.getName())) {
-                String error ="Read only attribute is tried to modify";
+                String error = "Read only attribute is tried to modify";
                 throw new CharonException(error);
             } else {
                 metaAttribute.setSubAttribute(locationAttribute);
@@ -328,7 +337,7 @@ public class AbstractSCIMObject implements SCIMObject{
         }
     }
 
-    /**
+    /*
      * set the resourceType of the meta attribute
      *
      * @param resourceType
@@ -343,7 +352,7 @@ public class AbstractSCIMObject implements SCIMObject{
             ComplexAttribute metaAttribute = getMetaAttribute();
             //check version attribute already exist
             if (metaAttribute.isSubAttributeExist(resourceTypeAttribute.getName())) {
-                String error ="Read only attribute is tried to modify";
+                String error = "Read only attribute is tried to modify";
                 throw new CharonException(error);
             } else {
                 metaAttribute.setSubAttribute(resourceTypeAttribute);
@@ -358,19 +367,19 @@ public class AbstractSCIMObject implements SCIMObject{
     }
 
     public String getLocation() throws CharonException {
-        if(this.isMetaAttributeExist()) {
-            SimpleAttribute location = (SimpleAttribute)this.getMetaAttribute().getSubAttribute
+        if (this.isMetaAttributeExist()) {
+            SimpleAttribute location = (SimpleAttribute) this.getMetaAttribute().getSubAttribute
                     (SCIMConstants.CommonSchemaConstants.LOCATION);
-            return location != null?location.getStringValue():null;
+            return location != null ? location.getStringValue() : null;
         } else {
             return null;
         }
     }
 
     public Date getCreatedDate() throws CharonException {
-        if(this.isMetaAttributeExist()) {
-            SimpleAttribute createdDate = (SimpleAttribute)this.getMetaAttribute().getSubAttribute("created");
-            return createdDate != null?createdDate.getDateValue():null;
+        if (this.isMetaAttributeExist()) {
+            SimpleAttribute createdDate = (SimpleAttribute) this.getMetaAttribute().getSubAttribute("created");
+            return createdDate != null ? createdDate.getDateValue() : null;
         } else {
             return null;
         }

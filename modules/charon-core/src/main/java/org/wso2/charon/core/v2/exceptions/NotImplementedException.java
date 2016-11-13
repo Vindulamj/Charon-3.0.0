@@ -20,7 +20,7 @@ package org.wso2.charon.core.v2.exceptions;
 import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
 
 /**
- * Service provider does not support the request operation
+ * Service provider does not support the request operation.
  */
 public class NotImplementedException extends AbstractCharonException  {
     public NotImplementedException(String msg) {

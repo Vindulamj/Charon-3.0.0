@@ -22,12 +22,19 @@ import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.charon.core.v2.exceptions.CharonException;
-
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import java.io.*;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Class responsible for building a programmatic representation of provisioning-config.xml.

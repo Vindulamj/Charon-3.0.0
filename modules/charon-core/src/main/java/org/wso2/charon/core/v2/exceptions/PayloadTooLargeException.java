@@ -20,7 +20,7 @@ package org.wso2.charon.core.v2.exceptions;
 import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
 
 /**
- * payload size exceed the max payload size
+ * payload size exceed the max payload size.
  */
 public class PayloadTooLargeException extends AbstractCharonException  {
 

@@ -67,7 +67,7 @@ public class MeResourceManager extends AbstractResourceManager{
 
     @Override
     public SCIMResponse create(String scimObjectString, UserManager userManager, String attributes, String excludeAttributes) {
-        JSONEncoder encoder =null;
+        JSONEncoder encoder = null;
         try {
             //obtain the json encoder
             encoder = getEncoder();

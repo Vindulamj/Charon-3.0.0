@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Represents the listed resource object which is a collection of resources
+ * Represents the listed resource object which is a collection of resources.
  **/
 
 public class ListedResource implements SCIMObject {
@@ -37,7 +37,7 @@ public class ListedResource implements SCIMObject {
     /*List of schemas which the resource is associated with*/
     protected List<String> schemaList = new ArrayList<String>();
     //number of items in the scim object List  //default is 0
-    protected int totalResults =0;
+    protected int totalResults = 0;
     /*Collection of attributes which constitute this resource.*/
     protected Map<String, Attribute> attributeList = new HashMap<String, Attribute>();
 
@@ -45,7 +45,7 @@ public class ListedResource implements SCIMObject {
         return totalResults;
     }
 
-    /**
+    /*
      * set the total results of the listed resource
      * @param totalResults
      */
@@ -91,7 +91,7 @@ public class ListedResource implements SCIMObject {
         schemaList.add(schema);
     }
 
-    /**
+    /*
      * set the listed resources
      * @param valueWithAttributes
      */

@@ -30,6 +30,7 @@ import org.wso2.charon.core.v2.objects.User;
 import org.wso2.charon.core.v2.utils.codeutils.Node;
 import org.wso2.charon.core.v2.attributes.Attribute;
 import org.wso2.charon.core.v2.utils.codeutils.ExpressionNode;
+import org.wso2.charon.core.v2.utils.codeutils.SearchRequest;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -129,6 +130,12 @@ public class SCIMUserManager implements UserManager {
 
         }
         return userList;
+    }
+
+    @Override
+    public List<User> listUsersWithPost(SearchRequest searchRequest) throws CharonException, NotImplementedException, BadRequestException {
+        return listUsers();
+
     }
 
     @Override
@@ -400,6 +407,11 @@ public class SCIMUserManager implements UserManager {
             e.printStackTrace();
             return null;
         }
+    }
+
+    @Override
+    public List<Group> listGroupsWithPost(SearchRequest searchRequest) throws NotImplementedException, BadRequestException, CharonException {
+        return listGroups();
     }
 }
 

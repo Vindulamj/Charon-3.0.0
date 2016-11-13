@@ -15,12 +15,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.wso2.charon.core.v2.config;
 
 import java.util.ArrayList;
 
 /**
- * This extension interface defines the defines the methods for configuring the charon
+ * This extension interface defines the defines the methods for configuring the charon.
  */
 public interface Configuration {
 

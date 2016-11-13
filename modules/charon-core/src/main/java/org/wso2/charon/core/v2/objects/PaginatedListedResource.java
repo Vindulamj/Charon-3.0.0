@@ -21,7 +21,7 @@ import org.wso2.charon.core.v2.attributes.SimpleAttribute;
 import org.wso2.charon.core.v2.schema.SCIMConstants;
 
 /**
- * Represents the listed resource object subjected to pagination
+ * Represents the listed resource object subjected to pagination.
  *
  **/
 
@@ -32,9 +32,10 @@ public class PaginatedListedResource extends ListedResource {
     //current set of query results
     protected int startIndex;
 
-    public int getItemsPerPage() { return itemsPerPage; }
+    public int getItemsPerPage() {
+        return itemsPerPage; }
 
-    /**
+    /*
      * paginated listed resource items per page settings
      * @param itemsPerPage
      */
@@ -52,9 +53,10 @@ public class PaginatedListedResource extends ListedResource {
         }
     }
 
-    public int getStartIndex() { return startIndex; }
+    public int getStartIndex() {
+        return startIndex; }
 
-    /**
+    /*
      *  paginated listed resource start index settings
      * @param startIndex
      */

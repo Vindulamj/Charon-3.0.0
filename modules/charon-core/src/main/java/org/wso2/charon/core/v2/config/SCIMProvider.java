@@ -20,6 +20,9 @@ package org.wso2.charon.core.v2.config;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ *
+ */
 public class SCIMProvider {
 
     private String id;
