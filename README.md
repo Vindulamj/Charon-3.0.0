@@ -12,6 +12,7 @@ Currently following features are supported.
 - [x] Update with PUT
 - [x] Sorting
 - [x] Filtering including complex filters
+- [x] Querying with POST 
 
 #### /Groups Endpoint
 - [x] Create
@@ -23,6 +24,7 @@ Currently following features are supported.
 - [x] attributes and exclude attribute support for all operations
 - [x] Sorting
 - [x] Update with PUT
+- [x] Querying with POST 
 
 #### /Me Endpoint
 - [x] Create
@@ -41,6 +43,7 @@ Currently following features are supported.
 - [x] Update with PUT
 - [x] Sorting
 - [x] Filtering including complex filters
+- [x] Querying with POST 
 
 #### /ServiceProviderConfig Endpoint
 - [x] Get
