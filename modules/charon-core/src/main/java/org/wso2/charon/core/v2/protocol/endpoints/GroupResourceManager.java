@@ -75,10 +75,14 @@ public class GroupResourceManager extends AbstractResourceManager {
         try {
             //obtain the correct encoder according to the format requested.
             encoder = getEncoder();
+            //obtain the  URIs for attributes
+            ArrayList<String> attributesURIList = getAttributeURIs(attributes);
+            //obtain the  URIs for excludedAttributes
+            ArrayList<String> excludedAttributesURIList = getAttributeURIs(excludeAttributes);
 
             //API user should pass a UserManager storage to GroupResourceEndpoint.
             //retrieve the group from the provided storage.
-            Group group = ((UserManager) userManager).getGroup(id);
+            Group group = ((UserManager) userManager).getGroup(id, attributesURIList, excludedAttributesURIList);
 
             //if group not found, return an error in relevant format.
             if (group == null) {
@@ -127,6 +131,10 @@ public class GroupResourceManager extends AbstractResourceManager {
             encoder = getEncoder();
             //obtain the json decoder
             decoder = getDecoder();
+            //obtain the  URIs for attributes
+            ArrayList<String> attributesURIList = getAttributeURIs(attributes);
+            //obtain the  URIs for excludedAttributes
+            ArrayList<String> excludedAttributesURIList = getAttributeURIs(excludeAttributes);
             // returns core-group schema
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
             //decode the SCIM group object, encoded in the submitted payload.
@@ -136,7 +144,7 @@ public class GroupResourceManager extends AbstractResourceManager {
             //handover the SCIM User object to the group storage provided by the SP.
             Group createdGroup;
             //need to send back the newly created group in the response payload
-            createdGroup = ((UserManager) userManager).createGroup(group);
+            createdGroup = ((UserManager) userManager).createGroup(group, attributesURIList, excludedAttributesURIList);
 
             //encode the newly created SCIM group object and add id attribute to Location header.
             String encodedGroup;
@@ -618,6 +626,10 @@ public class GroupResourceManager extends AbstractResourceManager {
             encoder = getEncoder();
             //obtain the json decoder.
             decoder = getDecoder();
+            //obtain the  URIs for attributes
+            ArrayList<String> attributesURIList = getAttributeURIs(attributes);
+            //obtain the  URIs for excludedAttributes
+            ArrayList<String> excludedAttributesURIList = getAttributeURIs(excludeAttributes);
 
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
 
@@ -626,10 +638,10 @@ public class GroupResourceManager extends AbstractResourceManager {
             Group updatedGroup = null;
             if (userManager != null) {
                 //retrieve the old object
-                Group oldGroup = userManager.getGroup(existingId);
+                Group oldGroup = userManager.getGroup(existingId, null, null);
                 if (oldGroup != null) {
                     Group newGroup = (Group) ServerSideValidator.validateUpdatedSCIMObject(oldGroup, group, schema);
-                    updatedGroup = userManager.updateGroup(oldGroup, newGroup);
+                    updatedGroup = userManager.updateGroup(oldGroup, newGroup, attributesURIList, excludedAttributesURIList);
 
                 } else {
                     String error = "No user exists with the given id: " + existingId;

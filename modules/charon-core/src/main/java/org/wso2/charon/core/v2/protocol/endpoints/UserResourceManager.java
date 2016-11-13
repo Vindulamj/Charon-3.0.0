@@ -55,10 +55,14 @@ public class UserResourceManager extends AbstractResourceManager {
         try {
             //obtain the json encoder
             encoder = getEncoder();
+            //obtain the  URIs for attributes
+            ArrayList<String> attributesURIList = getAttributeURIs(attributes);
+            //obtain the  URIs for excludedAttributes
+            ArrayList<String> excludedAttributesURIList = getAttributeURIs(excludeAttributes);
 
             /*API user should pass a UserManager impl to UserResourceEndpoint.
             retrieve the user from the provided UM handler.*/
-            User user = ((UserManager) userManager).getUser(id);
+            User user = ((UserManager) userManager).getUser(id, attributesURIList, excludedAttributesURIList);
 
             //if user not found, return an error in relevant format.
             if (user == null) {
@@ -104,6 +108,10 @@ public class UserResourceManager extends AbstractResourceManager {
 
             //obtain the json decoder
             JSONDecoder decoder = getDecoder();
+            //obtain the  URIs for attributes
+            ArrayList<String> attributesURIList = getAttributeURIs(attributes);
+            //obtain the  URIs for excludedAttributes
+            ArrayList<String> excludedAttributesURIList = getAttributeURIs(excludeAttributes);
 
             //obtain the schema corresponding to user
             // unless configured returns core-user schema or else returns extended user schema)
@@ -118,7 +126,7 @@ public class UserResourceManager extends AbstractResourceManager {
             if (userManager != null) {
             /*handover the SCIM User object to the user storage provided by the SP.
             need to send back the newly created user in the response payload*/
-                createdUser = userManager.createUser(user);
+                createdUser = userManager.createUser(user, attributesURIList, excludedAttributesURIList);
             }
             else{
                 String error = "Provided user manager handler is null.";
@@ -620,6 +628,10 @@ public class UserResourceManager extends AbstractResourceManager {
             encoder = getEncoder();
             //obtain the json decoder.
             decoder = getDecoder();
+            //obtain the  URIs for attributes
+            ArrayList<String> attributesURIList = getAttributeURIs(attributes);
+            //obtain the  URIs for excludedAttributes
+            ArrayList<String> excludedAttributesURIList = getAttributeURIs(excludeAttributes);
 
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
 
@@ -628,10 +640,10 @@ public class UserResourceManager extends AbstractResourceManager {
             User updatedUser = null;
             if (userManager != null) {
                 //retrieve the old object
-                User oldUser = userManager.getUser(existingId);
+                User oldUser = userManager.getUser(existingId, null, null);
                 if (oldUser != null) {
                     User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(oldUser, user, schema);
-                    updatedUser = userManager.updateUser(validatedUser);
+                    updatedUser = userManager.updateUser(validatedUser, attributesURIList, excludedAttributesURIList);
 
                 } else {
                     String error = "No user exists with the given id: " + existingId;
@@ -699,10 +711,14 @@ public class UserResourceManager extends AbstractResourceManager {
             encoder = getEncoder();
             //obtain the json decoder.
             decoder = getDecoder();
+            //obtain the  URIs for attributes
+            ArrayList<String> attributesURIList = getAttributeURIs(attributes);
+            //obtain the  URIs for excludedAttributes
+            ArrayList<String> excludedAttributesURIList = getAttributeURIs(excludeAttributes);
 
             if (existingId != null) {
                 //retrieve the old object
-                User oldUser = userManager.getUser(existingId);
+                User oldUser = userManager.getUser(existingId, attributesURIList, excludedAttributesURIList);
                 if (oldUser == null) {
                     String error = "No user exists with the given id: " + existingId;
                     throw new NotFoundException(error);

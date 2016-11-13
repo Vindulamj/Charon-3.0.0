@@ -14,6 +14,7 @@ import org.wso2.charon.core.v2.schema.ServerSideValidator;
 import org.wso2.charon.core.v2.utils.CopyUtil;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,10 +33,14 @@ public class MeResourceManager extends AbstractResourceManager{
         try {
             //obtain the json encoder
             encoder = getEncoder();
+            //obtain the  URIs for attributes
+            ArrayList<String> attributesURIList = getAttributeURIs(attributes);
+            //obtain the  URIs for excludedAttributes
+            ArrayList<String> excludedAttributesURIList = getAttributeURIs(excludeAttributes);
 
             /*API user should pass a UserManager impl to UserResourceEndpoint.
             retrieve the user from the provided UM handler.*/
-            User user = ((UserManager) userManager).getMe(userName);
+            User user = ((UserManager) userManager).getMe(userName, attributesURIList, excludedAttributesURIList);
 
             //if user not found, return an error in relevant format.
             if (user == null) {
@@ -74,6 +79,10 @@ public class MeResourceManager extends AbstractResourceManager{
 
             //obtain the json decoder
             JSONDecoder decoder = getDecoder();
+            //obtain the  URIs for attributes
+            ArrayList<String> attributesURIList = getAttributeURIs(attributes);
+            //obtain the  URIs for excludedAttributes
+            ArrayList<String> excludedAttributesURIList = getAttributeURIs(excludeAttributes);
 
             //obtain the schema corresponding to user
             // unless configured returns core-user schema or else returns extended user schema)
@@ -88,7 +97,7 @@ public class MeResourceManager extends AbstractResourceManager{
             if (userManager != null) {
             /*handover the SCIM User object to the user storage provided by the SP.
             need to send back the newly created user in the response payload*/
-                createdUser = userManager.createMe(user);
+                createdUser = userManager.createMe(user, attributesURIList, excludedAttributesURIList);
             }
             else{
                 String error = "Provided user manager handler is null.";
@@ -192,6 +201,10 @@ public class MeResourceManager extends AbstractResourceManager{
             encoder = getEncoder();
             //obtain the json decoder.
             decoder = getDecoder();
+            //obtain the  URIs for attributes
+            ArrayList<String> attributesURIList = getAttributeURIs(attributes);
+            //obtain the  URIs for excludedAttributes
+            ArrayList<String> excludedAttributesURIList = getAttributeURIs(excludeAttributes);
 
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
 
@@ -200,10 +213,10 @@ public class MeResourceManager extends AbstractResourceManager{
             User updatedUser = null;
             if (userManager != null) {
                 //retrieve the old object
-                User oldUser = userManager.getMe(userName);
+                User oldUser = userManager.getMe(userName, null ,null);
                 if (oldUser != null) {
                     User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(oldUser, user, schema);
-                    updatedUser = userManager.updateMe(validatedUser);
+                    updatedUser = userManager.updateMe(validatedUser, attributesURIList, excludedAttributesURIList);
 
                 } else {
                     String error = "No user exists with the given userName: " + userName;
