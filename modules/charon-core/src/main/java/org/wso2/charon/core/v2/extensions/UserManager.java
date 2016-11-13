@@ -27,6 +27,7 @@ import org.wso2.charon.core.v2.objects.User;
 import org.wso2.charon.core.v2.utils.codeutils.Node;
 import org.wso2.charon.core.v2.utils.codeutils.SearchRequest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -38,76 +39,81 @@ public interface UserManager {
 
         /***************User Manipulation operations.*******************/
 
-    public User createUser (User user)
+    public User createUser (User user, ArrayList<String> attributes, ArrayList<String> excludedAttributes)
             throws CharonException, ConflictException, BadRequestException;
 
-    public User getUser(String id)
+    public User getUser(String id, ArrayList<String> attributes, ArrayList<String> excludedAttributes)
             throws CharonException, BadRequestException;
 
     public void deleteUser(String userId)
             throws NotFoundException, CharonException, NotImplementedException, BadRequestException;
 
-    public List<User> listUsers()
+    public List<User> listUsers(ArrayList<String> attributes, ArrayList<String> excludedAttributes)
             throws CharonException, NotImplementedException, BadRequestException;
 
     public List<User> listUsersWithPost(SearchRequest searchRequest)
             throws CharonException, NotImplementedException, BadRequestException;
 
-    public List<User> listUsersWithPagination (int startIndex, int count)
+    public List<User> listUsersWithPagination (
+            int startIndex, int count, ArrayList<String> attributes, ArrayList<String> excludedAttributes)
             throws NotImplementedException, CharonException, BadRequestException;
 
     public int getUserCount()
             throws NotImplementedException, CharonException, BadRequestException;
 
-    public User updateUser(User updatedUser)
+    public User updateUser(User updatedUser, ArrayList<String> attributes, ArrayList<String> excludedAttributes)
             throws NotImplementedException, CharonException, BadRequestException;
 
-    public List<User> filterUsers(Node rootNode)
+    public List<User> filterUsers(Node rootNode, ArrayList<String> attributes, ArrayList<String> excludedAttributes)
             throws NotImplementedException, CharonException, BadRequestException;
 
-    public List<User> sortUsers(String sortBy, String sortOrder)
+    public List<User> sortUsers(
+            String sortBy, String sortOrder, ArrayList<String> attributes, ArrayList<String> excludedAttributes)
             throws NotImplementedException, CharonException, BadRequestException;
 
-    public User getMe(String userName)
+    public User getMe(String userName, ArrayList<String> attributes, ArrayList<String> excludedAttributes)
             throws CharonException, BadRequestException, NotFoundException;
 
-    public User createMe(User user)
+    public User createMe(User user, ArrayList<String> attributes, ArrayList<String> excludedAttributes)
             throws CharonException, ConflictException, BadRequestException;
 
     public void deleteMe(String userName)
             throws NotFoundException, CharonException, NotImplementedException, BadRequestException;
 
-    public User updateMe(User updatedUser)
+    public User updateMe(User updatedUser, ArrayList<String> attributes, ArrayList<String> excludedAttributes)
             throws NotImplementedException, CharonException, BadRequestException;
 
 
    /* ****************Group manipulation operations.********************/
 
-    public Group createGroup(Group group)
+    public Group createGroup(Group group, ArrayList<String> attributes, ArrayList<String> excludedAttributes)
             throws CharonException, ConflictException, NotImplementedException, BadRequestException;
 
-    public Group getGroup(String id)
+    public Group getGroup(String id, ArrayList<String> attributes, ArrayList<String> excludedAttributes)
             throws NotImplementedException, BadRequestException, CharonException;
 
     public void deleteGroup(String id)
             throws NotFoundException, CharonException, NotImplementedException, BadRequestException;
 
-    public List<Group> listGroups()
+    public List<Group> listGroups(ArrayList<String> attributes, ArrayList<String> excludedAttributes)
             throws CharonException, NotImplementedException, BadRequestException;
 
     public int getGroupCount()
             throws NotImplementedException, BadRequestException, CharonException;
 
-    public List<Group> listGroupsWithPagination(int startIndex, int count)
+    public List<Group> listGroupsWithPagination(
+            int startIndex, int count, ArrayList<String> attributes, ArrayList<String> excludedAttributes)
             throws NotImplementedException, BadRequestException, CharonException;
 
-    public List<Group> filterGroups(Node rootNode)
+    public List<Group> filterGroups(
+            Node rootNode, ArrayList<String> attributes, ArrayList<String> excludedAttributes)
             throws NotImplementedException, BadRequestException, CharonException;
 
-    public List<Group> sortGroups(String sortByAttributeURI, String sortOrder)
+    public List<Group> sortGroups(
+            String sortByAttributeURI, String sortOrder, ArrayList<String> attributes, ArrayList<String> excludedAttributes)
             throws NotImplementedException, BadRequestException, CharonException;
 
-    public Group updateGroup(Group oldGroup, Group newGroup)
+    public Group updateGroup(Group oldGroup, Group newGroup, ArrayList<String> attributes, ArrayList<String> excludedAttributes)
             throws NotImplementedException, BadRequestException, CharonException;
 
     List<Group> listGroupsWithPost(SearchRequest searchRequest)

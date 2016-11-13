@@ -47,6 +47,7 @@ import org.wso2.charon.core.v2.utils.codeutils.SearchRequest;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -227,12 +228,16 @@ public class GroupResourceManager extends AbstractResourceManager {
 
             //obtain the json encoder
             encoder = getEncoder();
+            //obtain the  URIs for attributes
+            ArrayList<String> attributesURIList = getAttributeURIs(attributes);
+            //obtain the  URIs for excludedAttributes
+            ArrayList<String> excludedAttributesURIList = getAttributeURIs(excludeAttributes);
 
             List<Group> returnedGroups;
             int totalResults = 0;
             //API user should pass a UserManager storage to UserResourceEndpoint.
             if (userManager != null) {
-                returnedGroups = userManager.filterGroups(rootNode);
+                returnedGroups = userManager.filterGroups(rootNode, attributesURIList, excludedAttributesURIList);
 
                 //if user not found, return an error in relevant format.
                 if (returnedGroups == null || returnedGroups.isEmpty()) {
@@ -305,6 +310,10 @@ public class GroupResourceManager extends AbstractResourceManager {
             JSONEncoder encoder = null;
             //obtain the json encoder
             encoder = getEncoder();
+            //obtain the  URIs for attributes
+            ArrayList<String> attributesURIList = getAttributeURIs(attributes);
+            //obtain the  URIs for excludedAttributes
+            ArrayList<String> excludedAttributesURIList = getAttributeURIs(excludeAttributes);
 
             List<Group> returnedGroups;
 
@@ -318,7 +327,8 @@ public class GroupResourceManager extends AbstractResourceManager {
                 if (sortBy != null) {
                     sortByAttributeURI = AttributeUtil.getAttributeURI(sortBy, schema);
                 }
-                returnedGroups = usermanager.sortGroups(sortByAttributeURI, sortOrder.toLowerCase());
+                returnedGroups = usermanager.sortGroups(
+                        sortByAttributeURI, sortOrder.toLowerCase(), attributesURIList, excludedAttributesURIList);
 
                 //if user not found, return an error in relevant format.
                 if (returnedGroups == null || returnedGroups.isEmpty()) {
@@ -383,12 +393,17 @@ public class GroupResourceManager extends AbstractResourceManager {
         try {
             //obtain the json encoder
             encoder = getEncoder();
+            //obtain the  URIs for attributes
+            ArrayList<String> attributesURIList = getAttributeURIs(attributes);
+            //obtain the  URIs for excludedAttributes
+            ArrayList<String> excludedAttributesURIList = getAttributeURIs(excludeAttributes);
 
             List<Group> returnedGroups;
             int totalResults = 0;
             //API user should pass a UserManager storage to UserResourceEndpoint.
             if (userManager != null) {
-                returnedGroups = userManager.listGroupsWithPagination(startIndex, count);
+                returnedGroups = userManager.listGroupsWithPagination(
+                        startIndex, count, attributesURIList, excludedAttributesURIList);
 
                 //TODO: Are we having this method support from user core
                 totalResults = userManager.getGroupCount();
@@ -448,11 +463,15 @@ public class GroupResourceManager extends AbstractResourceManager {
         try {
             //obtain the json encoder
             encoder = getEncoder();
+            //obtain the  URIs for attributes
+            ArrayList<String> attributesURIList = getAttributeURIs(attributes);
+            //obtain the  URIs for excludedAttributes
+            ArrayList<String> excludedAttributesURIList = getAttributeURIs(excludeAttributes);
 
             List<Group> returnedGroups;
             //API group should pass a UserManager storage to GroupResourceEndpoint.
             if (userManager != null) {
-                returnedGroups = userManager.listGroups();
+                returnedGroups = userManager.listGroups(attributesURIList, excludedAttributesURIList);
 
                 //if groups not found, return an error in relevant format.
                 if (returnedGroups == null || returnedGroups.isEmpty()) {

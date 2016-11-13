@@ -20,13 +20,16 @@ package org.wso2.charon.core.v2.protocol.endpoints;
 import org.wso2.charon.core.v2.encoder.JSONDecoder;
 import org.wso2.charon.core.v2.encoder.JSONEncoder;
 import org.wso2.charon.core.v2.exceptions.AbstractCharonException;
+import org.wso2.charon.core.v2.exceptions.BadRequestException;
 import org.wso2.charon.core.v2.exceptions.CharonException;
 import org.wso2.charon.core.v2.exceptions.NotFoundException;
 import org.wso2.charon.core.v2.protocol.SCIMResponse;
 import org.wso2.charon.core.v2.schema.SCIMConstants;
+import org.wso2.charon.core.v2.schema.SCIMResourceSchemaManager;
+import org.wso2.charon.core.v2.schema.SCIMResourceTypeSchema;
+import org.wso2.charon.core.v2.utils.AttributeUtil;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This is an abstract layer for all the resource endpoints to abstract out common
@@ -110,6 +113,22 @@ public abstract class AbstractResourceManager implements ResourceManager {
         Map<String, String> ResponseHeaders = new HashMap<String, String>();
         ResponseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
         return new SCIMResponse(exception.getStatus(), encoder.encodeSCIMException(exception), ResponseHeaders);
+    }
+
+    /*
+     * return the list of URI corresponding to the given attribute names
+     * @param attributes
+     * @return
+     * @throws BadRequestException
+     */
+    protected ArrayList<String> getAttributeURIs(String attributes) throws BadRequestException {
+        ArrayList<String> URIList = new ArrayList<>();
+        SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+        List<String> items = Arrays.asList(attributes.split("\\s*,\\s*"));
+        for(String item : items){
+            URIList.add(AttributeUtil.getAttributeURI(item, schema));
+        }
+        return URIList;
     }
 
 

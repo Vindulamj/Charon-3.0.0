@@ -227,6 +227,11 @@ public class UserResourceManager extends AbstractResourceManager {
             filterTreeManager = new FilterTreeManager(filterString, schema);
             Node rootNode = filterTreeManager.buildTree();
 
+            //obtain the  URIs for attributes
+            ArrayList<String> attributesURIList = getAttributeURIs(attributes);
+            //obtain the  URIs for excludedAttributes
+            ArrayList<String> excludedAttributesURIList = getAttributeURIs(excludeAttributes);
+
             //obtain the json encoder
             encoder = getEncoder();
 
@@ -234,7 +239,7 @@ public class UserResourceManager extends AbstractResourceManager {
             int totalResults=0;
             //API user should pass a UserManager storage to UserResourceEndpoint.
             if (userManager != null) {
-                returnedUsers = userManager.filterUsers(rootNode);
+                returnedUsers = userManager.filterUsers(rootNode, attributesURIList, excludedAttributesURIList);
 
                 //if user not found, return an error in relevant format.
                 if (returnedUsers == null || returnedUsers.isEmpty()) {
@@ -307,6 +312,10 @@ public class UserResourceManager extends AbstractResourceManager {
             JSONEncoder encoder = null;
             //obtain the json encoder
             encoder = getEncoder();
+            //obtain the  URIs for attributes
+            ArrayList<String> attributesURIList = getAttributeURIs(attributes);
+            //obtain the  URIs for excludedAttributes
+            ArrayList<String> excludedAttributesURIList = getAttributeURIs(excludeAttributes);
 
             List<User> returnedUsers;
 
@@ -320,7 +329,8 @@ public class UserResourceManager extends AbstractResourceManager {
                 if(sortBy != null){
                     sortByAttributeURI = AttributeUtil.getAttributeURI(sortBy,schema);
                 }
-                returnedUsers = usermanager.sortUsers(sortByAttributeURI, sortOrder.toLowerCase());
+                returnedUsers = usermanager.sortUsers(sortByAttributeURI, sortOrder.toLowerCase(),
+                        attributesURIList, excludedAttributesURIList);
 
                 //if user not found, return an error in relevant format.
                 if (returnedUsers == null || returnedUsers.isEmpty()) {
@@ -386,11 +396,17 @@ public class UserResourceManager extends AbstractResourceManager {
             //obtain the json encoder
             encoder = getEncoder();
 
+            //obtain the  URIs for attributes
+            ArrayList<String> attributesURIList = getAttributeURIs(attributes);
+            //obtain the  URIs for excludedAttributes
+            ArrayList<String> excludedAttributesURIList = getAttributeURIs(excludeAttributes);
+
             List<User> returnedUsers;
             int totalResults=0;
             //API user should pass a UserManager storage to UserResourceEndpoint.
             if (userManager != null) {
-                returnedUsers = userManager.listUsersWithPagination(startIndex,count);
+                returnedUsers = userManager.listUsersWithPagination(
+                        startIndex, count, attributesURIList, excludedAttributesURIList);
 
                 //TODO: Are we having this method support from user core
                 totalResults =userManager.getUserCount();
@@ -452,11 +468,15 @@ public class UserResourceManager extends AbstractResourceManager {
         try {
             //obtain the json encoder
             encoder = getEncoder();
+            //obtain the  URIs for attributes
+            ArrayList<String> attributesURIList = getAttributeURIs(attributes);
+            //obtain the  URIs for excludedAttributes
+            ArrayList<String> excludedAttributesURIList = getAttributeURIs(excludeAttributes);
 
             List<User> returnedUsers;
             //API user should pass a UserManager storage to UserResourceEndpoint.
             if (userManager != null) {
-                returnedUsers = userManager.listUsers();
+                returnedUsers = userManager.listUsers(attributesURIList, excludedAttributesURIList);
 
                 //if user not found, return an error in relevant format.
                 if (returnedUsers == null || returnedUsers.isEmpty()) {
