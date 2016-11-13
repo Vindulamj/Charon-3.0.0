@@ -377,7 +377,7 @@ public class GroupResourceManager extends AbstractResourceManager {
         }
         //If count is not set, server default should be taken
         if (count == 0) {
-            CharonConfiguration.getInstance().getCountValueForPagination();
+            count = CharonConfiguration.getInstance().getCountValueForPagination();
         }
         JSONEncoder encoder = null;
         try {

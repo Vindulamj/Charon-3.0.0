@@ -2,45 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fcdcd64c-eb66-4bf8-a0b4-6f00065fa5b4" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/utils/codeutils/SearchRequest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/checkstyle-idea.xml" afterPath="$PROJECT_DIR$/.idea/checkstyle-idea.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/org.wso2.charon.core.iml" afterPath="$PROJECT_DIR$/modules/charon-core/org.wso2.charon.core.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/SCIMUserManager.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/SCIMUserManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/Test.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/Test.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/attributes/AbstractAttribute.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/attributes/AbstractAttribute.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/attributes/ComplexAttribute.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/attributes/ComplexAttribute.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/attributes/DefaultAttributeFactory.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/attributes/DefaultAttributeFactory.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/attributes/MultiValuedAttribute.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/attributes/MultiValuedAttribute.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/attributes/SimpleAttribute.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/attributes/SimpleAttribute.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/config/CharonConfiguration.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/config/CharonConfiguration.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/config/Configuration.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/config/Configuration.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/config/SCIMConfig.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/config/SCIMConfig.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/config/SCIMConfigConstants.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/config/SCIMConfigConstants.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/config/SCIMConfigProcessor.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/config/SCIMConfigProcessor.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/config/SCIMConsumer.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/config/SCIMConsumer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/config/SCIMProvider.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/config/SCIMProvider.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/config/SCIMUserSchemaExtensionBuilder.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/config/SCIMUserSchemaExtensionBuilder.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/encoder/JSONDecoder.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/encoder/JSONDecoder.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/encoder/JSONEncoder.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/encoder/JSONEncoder.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/exceptions/AbstractCharonException.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/exceptions/AbstractCharonException.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/exceptions/BadRequestException.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/exceptions/BadRequestException.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/exceptions/CharonException.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/exceptions/CharonException.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/exceptions/InternalErrorException.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/exceptions/InternalErrorException.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/exceptions/NotImplementedException.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/exceptions/NotImplementedException.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/exceptions/PayloadTooLargeException.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/exceptions/PayloadTooLargeException.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/extensions/UserManager.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/extensions/UserManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/objects/AbstractSCIMObject.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/objects/AbstractSCIMObject.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/objects/Group.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/objects/Group.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/objects/ListedResource.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/objects/ListedResource.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/objects/PaginatedListedResource.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/objects/PaginatedListedResource.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/objects/User.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/objects/User.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/AbstractResourceManager.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/AbstractResourceManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/BulkResourceManager.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/BulkResourceManager.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/GroupResourceManager.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/GroupResourceManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/MeResourceManager.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/MeResourceManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/UserResourceManager.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/UserResourceManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/schema/SCIMConstants.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/schema/SCIMConstants.java" />
     </list>
     <ignored path="Charon-3.0.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -84,10 +47,10 @@
       <file leaf-file-name="GroupResourceManager.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/GroupResourceManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1225">
-              <caret line="528" column="31" selection-start-line="528" selection-start-column="31" selection-end-line="528" selection-end-column="31" />
+            <state relative-caret-position="219">
+              <caret line="379" column="26" selection-start-line="379" selection-start-column="26" selection-end-line="379" selection-end-column="26" />
               <folding>
-                <element signature="e#25633#25649#0" expanded="true" />
+                <element signature="e#25641#25657#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -1360,7 +1323,7 @@
       <workItem from="1478761109161" duration="7361000" />
       <workItem from="1478837608392" duration="13500000" />
       <workItem from="1478935675118" duration="67000" />
-      <workItem from="1479015569775" duration="6904000" />
+      <workItem from="1479015569775" duration="6998000" />
     </task>
     <task id="LOCAL-00002" summary="Service Provider Config endpoint is added fully">
       <created>1477283464648</created>
@@ -1516,11 +1479,18 @@
       <option name="project" value="LOCAL" />
       <updated>1478774414861</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="POST querying is added for both groups and users">
+      <created>1479037501542</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1479037501542</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="182440000" />
+    <option name="totallyTimeSpent" value="182534000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="63" y="24" width="1857" height="1056" extended-state="6" />
@@ -1535,7 +1505,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21294363" sideWeight="0.50966316" order="11" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32965213" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32985386" sideWeight="0.49806738" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2546973" sideWeight="0.49033684" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2546973" sideWeight="0.49033684" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="CheckStyle" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.28705636" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32985386" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -1591,7 +1561,8 @@
     <MESSAGE value="Exception handling was corrected" />
     <MESSAGE value="Me endpoint getUsername is added" />
     <MESSAGE value="changed the way boolean type attributes are handled" />
-    <option name="LAST_COMMIT_MESSAGE" value="changed the way boolean type attributes are handled" />
+    <MESSAGE value="POST querying is added for both groups and users" />
+    <option name="LAST_COMMIT_MESSAGE" value="POST querying is added for both groups and users" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -2009,10 +1980,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/GroupResourceManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1225">
-          <caret line="528" column="31" selection-start-line="528" selection-start-column="31" selection-end-line="528" selection-end-column="31" />
+        <state relative-caret-position="219">
+          <caret line="379" column="26" selection-start-line="379" selection-start-column="26" selection-end-line="379" selection-end-column="26" />
           <folding>
-            <element signature="e#25633#25649#0" expanded="true" />
+            <element signature="e#25641#25657#0" expanded="true" />
           </folding>
         </state>
       </provider>
