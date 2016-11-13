@@ -33,14 +33,10 @@ public class MeResourceManager extends AbstractResourceManager{
         try {
             //obtain the json encoder
             encoder = getEncoder();
-            //obtain the  URIs for attributes
-            ArrayList<String> attributesURIList = getAttributeURIs(attributes);
-            //obtain the  URIs for excludedAttributes
-            ArrayList<String> excludedAttributesURIList = getAttributeURIs(excludeAttributes);
 
             /*API user should pass a UserManager impl to UserResourceEndpoint.
             retrieve the user from the provided UM handler.*/
-            User user = ((UserManager) userManager).getMe(userName, attributesURIList, excludedAttributesURIList);
+            User user = ((UserManager) userManager).getMe(userName);
 
             //if user not found, return an error in relevant format.
             if (user == null) {
@@ -79,10 +75,6 @@ public class MeResourceManager extends AbstractResourceManager{
 
             //obtain the json decoder
             JSONDecoder decoder = getDecoder();
-            //obtain the  URIs for attributes
-            ArrayList<String> attributesURIList = getAttributeURIs(attributes);
-            //obtain the  URIs for excludedAttributes
-            ArrayList<String> excludedAttributesURIList = getAttributeURIs(excludeAttributes);
 
             //obtain the schema corresponding to user
             // unless configured returns core-user schema or else returns extended user schema)
@@ -97,7 +89,7 @@ public class MeResourceManager extends AbstractResourceManager{
             if (userManager != null) {
             /*handover the SCIM User object to the user storage provided by the SP.
             need to send back the newly created user in the response payload*/
-                createdUser = userManager.createMe(user, attributesURIList, excludedAttributesURIList);
+                createdUser = userManager.createMe(user);
             }
             else{
                 String error = "Provided user manager handler is null.";
@@ -170,24 +162,17 @@ public class MeResourceManager extends AbstractResourceManager{
     }
 
     @Override
-    public SCIMResponse listByFilter(String filterString, UserManager userManager, String attributes, String excludeAttributes) throws IOException {
+    public SCIMResponse listWithGET(UserManager userManager, String filter,
+                                    int startIndex, int count, String sortBy,
+                                    String sortOrder, String attributes, String excludeAttributes) {
         return null;
     }
 
     @Override
-    public SCIMResponse listBySort(String sortBy, String sortOrder, UserManager usermanager, String attributes, String excludeAttributes) {
+    public SCIMResponse listWithPOST(String resourceString, UserManager userManager) {
         return null;
     }
 
-    @Override
-    public SCIMResponse listWithPagination(int startIndex, int count, UserManager userManager, String attributes, String excludeAttributes) {
-        return null;
-    }
-
-    @Override
-    public SCIMResponse list(UserManager userManager, String attributes, String excludeAttributes) {
-        return null;
-    }
 
     @Override
     public SCIMResponse updateWithPUT(String userName, String scimObjectString, UserManager userManager, String attributes, String excludeAttributes) {
@@ -201,10 +186,6 @@ public class MeResourceManager extends AbstractResourceManager{
             encoder = getEncoder();
             //obtain the json decoder.
             decoder = getDecoder();
-            //obtain the  URIs for attributes
-            ArrayList<String> attributesURIList = getAttributeURIs(attributes);
-            //obtain the  URIs for excludedAttributes
-            ArrayList<String> excludedAttributesURIList = getAttributeURIs(excludeAttributes);
 
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
 
@@ -213,10 +194,10 @@ public class MeResourceManager extends AbstractResourceManager{
             User updatedUser = null;
             if (userManager != null) {
                 //retrieve the old object
-                User oldUser = userManager.getMe(userName, null ,null);
+                User oldUser = userManager.getMe(userName);
                 if (oldUser != null) {
                     User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(oldUser, user, schema);
-                    updatedUser = userManager.updateMe(validatedUser, attributesURIList, excludedAttributesURIList);
+                    updatedUser = userManager.updateMe(validatedUser);
 
                 } else {
                     String error = "No user exists with the given userName: " + userName;

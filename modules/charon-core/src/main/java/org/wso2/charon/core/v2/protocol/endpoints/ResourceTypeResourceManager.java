@@ -136,28 +136,14 @@ public class ResourceTypeResourceManager extends AbstractResourceManager{
     }
 
     @Override
-    public SCIMResponse listByFilter(String filterString, UserManager userManager, String attributes, String excludeAttributes) throws IOException {
+    public SCIMResponse listWithGET(UserManager userManager, String filter, int startIndex, int count, String sortBy, String sortOrder, String attributes, String excludeAttributes) {
         String error= "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
         return encodeSCIMException(badRequestException);
     }
 
     @Override
-    public SCIMResponse listBySort(String sortBy, String sortOrder, UserManager usermanager, String attributes, String excludeAttributes) {
-        String error= "Request is undefined";
-        BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
-        return encodeSCIMException(badRequestException);
-    }
-
-    @Override
-    public SCIMResponse listWithPagination(int startIndex, int count, UserManager userManager, String attributes, String excludeAttributes) {
-        String error= "Request is undefined";
-        BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
-        return encodeSCIMException(badRequestException);
-    }
-
-    @Override
-    public SCIMResponse list(UserManager userManager, String attributes, String excludeAttributes) {
+    public SCIMResponse listWithPOST(String resourceString, UserManager userManager) {
         String error= "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
         return encodeSCIMException(badRequestException);

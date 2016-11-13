@@ -28,10 +28,9 @@ import org.wso2.charon.core.v2.exceptions.InternalErrorException;
 import org.wso2.charon.core.v2.exceptions.NotFoundException;
 import org.wso2.charon.core.v2.exceptions.NotImplementedException;
 import org.wso2.charon.core.v2.extensions.UserManager;
+import org.wso2.charon.core.v2.objects.AbstractSCIMObject;
 import org.wso2.charon.core.v2.objects.Group;
 import org.wso2.charon.core.v2.objects.ListedResource;
-import org.wso2.charon.core.v2.objects.PaginatedListedResource;
-import org.wso2.charon.core.v2.objects.User;
 import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.v2.protocol.SCIMResponse;
 import org.wso2.charon.core.v2.schema.SCIMConstants;
@@ -39,7 +38,6 @@ import org.wso2.charon.core.v2.schema.SCIMResourceSchemaManager;
 import org.wso2.charon.core.v2.schema.SCIMResourceTypeSchema;
 import org.wso2.charon.core.v2.schema.SCIMSchemaDefinitions;
 import org.wso2.charon.core.v2.schema.ServerSideValidator;
-import org.wso2.charon.core.v2.utils.AttributeUtil;
 import org.wso2.charon.core.v2.utils.CopyUtil;
 import org.wso2.charon.core.v2.utils.codeutils.FilterTreeManager;
 import org.wso2.charon.core.v2.utils.codeutils.Node;
@@ -47,7 +45,6 @@ import org.wso2.charon.core.v2.utils.codeutils.SearchRequest;
 
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,14 +72,10 @@ public class GroupResourceManager extends AbstractResourceManager {
         try {
             //obtain the correct encoder according to the format requested.
             encoder = getEncoder();
-            //obtain the  URIs for attributes
-            ArrayList<String> attributesURIList = getAttributeURIs(attributes);
-            //obtain the  URIs for excludedAttributes
-            ArrayList<String> excludedAttributesURIList = getAttributeURIs(excludeAttributes);
 
             //API user should pass a UserManager storage to GroupResourceEndpoint.
             //retrieve the group from the provided storage.
-            Group group = ((UserManager) userManager).getGroup(id, attributesURIList, excludedAttributesURIList);
+            Group group = ((UserManager) userManager).getGroup(id);
 
             //if group not found, return an error in relevant format.
             if (group == null) {
@@ -131,10 +124,6 @@ public class GroupResourceManager extends AbstractResourceManager {
             encoder = getEncoder();
             //obtain the json decoder
             decoder = getDecoder();
-            //obtain the  URIs for attributes
-            ArrayList<String> attributesURIList = getAttributeURIs(attributes);
-            //obtain the  URIs for excludedAttributes
-            ArrayList<String> excludedAttributesURIList = getAttributeURIs(excludeAttributes);
             // returns core-group schema
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
             //decode the SCIM group object, encoded in the submitted payload.
@@ -144,7 +133,7 @@ public class GroupResourceManager extends AbstractResourceManager {
             //handover the SCIM User object to the group storage provided by the SP.
             Group createdGroup;
             //need to send back the newly created group in the response payload
-            createdGroup = ((UserManager) userManager).createGroup(group, attributesURIList, excludedAttributesURIList);
+            createdGroup = ((UserManager) userManager).createGroup(group);
 
             //encode the newly created SCIM group object and add id attribute to Location header.
             String encodedGroup;
@@ -213,273 +202,66 @@ public class GroupResourceManager extends AbstractResourceManager {
         }
     }
 
-    /*
-     * Method to filter the groups based on parameters
-     * @param filterString
+    /**
+     * Method to list the groups at the /Groups endpoint
      * @param userManager
-     * @param attributes
-     * @param  excludeAttributes
-     * @return
-     */
-    @Override
-    public SCIMResponse listByFilter(String filterString, UserManager userManager,
-                                     String attributes, String excludeAttributes)  {
-        JSONEncoder encoder = null;
-
-        FilterTreeManager filterTreeManager = null;
-        try {
-            // unless configured returns core-user schema or else returns extended user schema)
-            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
-
-            filterTreeManager = new FilterTreeManager(filterString, schema);
-            Node rootNode = filterTreeManager.buildTree();
-
-            //obtain the json encoder
-            encoder = getEncoder();
-            //obtain the  URIs for attributes
-            ArrayList<String> attributesURIList = getAttributeURIs(attributes);
-            //obtain the  URIs for excludedAttributes
-            ArrayList<String> excludedAttributesURIList = getAttributeURIs(excludeAttributes);
-
-            List<Group> returnedGroups;
-            int totalResults = 0;
-            //API user should pass a UserManager storage to UserResourceEndpoint.
-            if (userManager != null) {
-                returnedGroups = userManager.filterGroups(rootNode, attributesURIList, excludedAttributesURIList);
-
-                //if user not found, return an error in relevant format.
-                if (returnedGroups == null || returnedGroups.isEmpty()) {
-                    String error = "No filter results are found";
-                    //throw resource not found.
-                    throw new NotFoundException(error);
-                }
-
-                for (Group group: returnedGroups) {
-                    //perform service provider side validation.
-                    ServerSideValidator.validateRetrievedSCIMObjectInList(group, schema, attributes, excludeAttributes);
-                }
-                //create a listed resource object out of the returned users list.
-                ListedResource listedResource = createListedResource(returnedGroups);
-                //convert the listed resource into specific format.
-                String encodedListedResource = encoder.encodeSCIMObject(listedResource);
-                //if there are any http headers to be added in the response header.
-                Map<String, String> ResponseHeaders = new HashMap<String, String>();
-                ResponseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
-                return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedListedResource, ResponseHeaders);
-
-            } else {
-                String error = "Provided user manager handler is null.";
-                //throw internal server error.
-                throw new InternalErrorException(error);
-            }
-        } catch (BadRequestException e) {
-            return encodeSCIMException(e);
-        } catch (IOException e) {
-            String error = "Error in tokenization of the input filter";
-            CharonException charonException = new CharonException(error);
-            return encodeSCIMException(charonException);
-        } catch (CharonException e) {
-            return encodeSCIMException(e);
-        } catch (NotFoundException e) {
-            return encodeSCIMException(e);
-        } catch (InternalErrorException e) {
-            return encodeSCIMException(e);
-        } catch (NotImplementedException e) {
-            return encodeSCIMException(e);
-        }
-    }
-
-    /*
-     * Method to sort the groups
+     * @param filter
+     * @param startIndex
+     * @param count
      * @param sortBy
      * @param sortOrder
-     * @param usermanager
      * @param attributes
      * @param excludeAttributes
      * @return
      */
     @Override
-    public SCIMResponse listBySort(String sortBy, String sortOrder, UserManager usermanager,
-                                   String attributes, String excludeAttributes) {
+    public SCIMResponse listWithGET(UserManager userManager, String filter, int startIndex,
+                                    int count, String sortBy, String sortOrder,
+                                    String attributes, String excludeAttributes) {
+
+        FilterTreeManager filterTreeManager = null;
+        JSONEncoder encoder = null;
         try {
+            //A value less than one shall be interpreted as 1
+            if(startIndex < 1) {
+                startIndex = 1;
+            }
+            //If count is not set, server default should be taken
+            if(count == 0) {
+                count = CharonConfiguration.getInstance().getCountValueForPagination();
+            }
+
             //check whether provided sortOrder is valid or not
-            if (sortOrder != null) {
-                if (!(sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.ASCENDING)
-                        || sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.DESCENDING))) {
+            if(sortOrder != null ){
+                if(!(sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.ASCENDING)
+                        || sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.DESCENDING))){
                     String error = " Invalid sortOrder value is specified";
                     throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
                 }
             }
-            //If a value for "sortBy" is provided and no "sortOrder" is specified,
-            // "sortOrder" SHALL default to ascending.
-            if (sortOrder == null && sortBy != null) {
+            //If a value for "sortBy" is provided and no "sortOrder" is specified, "sortOrder" SHALL default to ascending.
+            if(sortOrder == null && sortBy != null){
                 sortOrder = SCIMConstants.OperationalConstants.ASCENDING;
             }
-            JSONEncoder encoder = null;
+
+            // unless configured returns core-user schema or else returns extended user schema)
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+
+            filterTreeManager = new FilterTreeManager(filter, schema);
+            Node rootNode = filterTreeManager.buildTree();
+
             //obtain the json encoder
             encoder = getEncoder();
-            //obtain the  URIs for attributes
-            ArrayList<String> attributesURIList = getAttributeURIs(attributes);
-            //obtain the  URIs for excludedAttributes
-            ArrayList<String> excludedAttributesURIList = getAttributeURIs(excludeAttributes);
 
-            List<Group> returnedGroups;
-
-            //API user should pass a UserManager storage to UserResourceEndpoint.
-            if (usermanager != null) {
-                // unless configured returns core-user schema or else returns extended user schema)
-                SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
-
-                String sortByAttributeURI = null;
-
-                if (sortBy != null) {
-                    sortByAttributeURI = AttributeUtil.getAttributeURI(sortBy, schema);
-                }
-                returnedGroups = usermanager.sortGroups(
-                        sortByAttributeURI, sortOrder.toLowerCase(), attributesURIList, excludedAttributesURIList);
-
-                //if user not found, return an error in relevant format.
-                if (returnedGroups == null || returnedGroups.isEmpty()) {
-                    String error = "Users not found in the user store.";
-                    //throw resource not found.
-                    throw new NotFoundException(error);
-                }
-
-                for (Group group: returnedGroups){
-                    //perform service provider side validation.
-                    ServerSideValidator.validateRetrievedSCIMObjectInList(group, schema, attributes, excludeAttributes);
-                }
-                //create a listed resource object out of the returned users list.
-                ListedResource listedResource = createListedResource(returnedGroups);
-                //convert the listed resource into specific format.
-                String encodedListedResource = encoder.encodeSCIMObject(listedResource);
-                //if there are any http headers to be added in the response header.
-                Map<String, String> ResponseHeaders = new HashMap<String, String>();
-                ResponseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
-                return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedListedResource, ResponseHeaders);
-
-            } else {
-                String error = "Provided user manager handler is null.";
-                //log the error as well.
-                //throw internal server error.
-                throw new InternalErrorException(error);
-            }
-        } catch (CharonException e) {
-            return encodeSCIMException(e);
-        } catch (NotFoundException e) {
-            return encodeSCIMException(e);
-        } catch (InternalErrorException e) {
-            return encodeSCIMException(e);
-        } catch (BadRequestException e) {
-            return encodeSCIMException(e);
-        } catch (NotImplementedException e) {
-            return encodeSCIMException(e);
-        }
-    }
-
-    /*
-     * method to list the groups with pagination enable
-     * @param startIndex
-     * @param count
-     * @param userManager
-     * @param attributes
-     * @param excludeAttributes
-     * @return
-     */
-    @Override
-    public SCIMResponse listWithPagination(int startIndex, int count,
-                                           UserManager userManager, String attributes, String excludeAttributes) {
-        //A value less than one shall be interpreted as 1
-        if (startIndex < 1) {
-            startIndex = 1;
-        }
-        //If count is not set, server default should be taken
-        if (count == 0) {
-            count = CharonConfiguration.getInstance().getCountValueForPagination();
-        }
-        JSONEncoder encoder = null;
-        try {
-            //obtain the json encoder
-            encoder = getEncoder();
-            //obtain the  URIs for attributes
-            ArrayList<String> attributesURIList = getAttributeURIs(attributes);
-            //obtain the  URIs for excludedAttributes
-            ArrayList<String> excludedAttributesURIList = getAttributeURIs(excludeAttributes);
-
-            List<Group> returnedGroups;
+            List<Object> returnedGroups;
             int totalResults = 0;
-            //API user should pass a UserManager storage to UserResourceEndpoint.
-            if (userManager != null) {
-                returnedGroups = userManager.listGroupsWithPagination(
-                        startIndex, count, attributesURIList, excludedAttributesURIList);
-
-                //TODO: Are we having this method support from user core
-                totalResults = userManager.getGroupCount();
-
-                //if user not found, return an error in relevant format.
-                if (returnedGroups == null || returnedGroups.isEmpty()) {
-                    String error = "Groups not found in the user store.";
-                    //throw resource not found.
-                    throw new NotFoundException(error);
-                }
-
-                // returns core-group schema
-                SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
-
-                for (Group group : returnedGroups) {
-                    //perform service provider side validation.
-                    ServerSideValidator.validateRetrievedSCIMObjectInList(group, schema, attributes, excludeAttributes);
-                }
-                //create a listed resource object out of the returned users list.
-                PaginatedListedResource listedResource = createPaginatedListedResource(
-                        returnedGroups, startIndex, totalResults);
-                //convert the listed resource into specific format.
-                String encodedListedResource = encoder.encodeSCIMObject(listedResource);
-                //if there are any http headers to be added in the response header.
-                Map<String, String> ResponseHeaders = new HashMap<String, String>();
-                ResponseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
-                return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedListedResource, ResponseHeaders);
-
-            } else {
-                String error = "Provided user manager handler is null.";
-                //throw internal server error.
-                throw new InternalErrorException(error);
-            }
-        } catch (CharonException e) {
-            return encodeSCIMException(e);
-        } catch (NotFoundException e) {
-            return encodeSCIMException(e);
-        } catch (InternalErrorException e) {
-            return encodeSCIMException(e);
-        } catch (BadRequestException e) {
-            return encodeSCIMException(e);
-        } catch (NotImplementedException e) {
-            return encodeSCIMException(e);
-        }
-    }
-
-    /*
-     * Method to list the groups at the /Groups endpoint
-     * @param userManager
-     * @param attributes
-     * @param excludeAttributes
-     * @return
-     */
-    @Override
-    public SCIMResponse list(UserManager userManager, String attributes, String excludeAttributes) {
-        JSONEncoder encoder = null;
-        try {
-            //obtain the json encoder
-            encoder = getEncoder();
-            //obtain the  URIs for attributes
-            ArrayList<String> attributesURIList = getAttributeURIs(attributes);
-            //obtain the  URIs for excludedAttributes
-            ArrayList<String> excludedAttributesURIList = getAttributeURIs(excludeAttributes);
-
-            List<Group> returnedGroups;
             //API group should pass a UserManager storage to GroupResourceEndpoint.
             if (userManager != null) {
-                returnedGroups = userManager.listGroups(attributesURIList, excludedAttributesURIList);
+                List<Object> tempList = userManager.listGroupsWithGET(rootNode, startIndex, count, sortBy, sortOrder);
+
+                totalResults = (int) tempList.get(0);
+                tempList.remove(0);
+                returnedGroups = tempList;
 
                 //if groups not found, return an error in relevant format.
                 if (returnedGroups == null || returnedGroups.isEmpty()) {
@@ -488,14 +270,15 @@ public class GroupResourceManager extends AbstractResourceManager {
                     throw new NotFoundException(error);
                 }
 
-                for (Group group: returnedGroups){
+                totalResults = 100;
+
+                for (Object group: returnedGroups){
                     //perform service provider side validation.
-                    ServerSideValidator.validateRetrievedSCIMObjectInList(
-                            group, SCIMSchemaDefinitions.SCIM_GROUP_SCHEMA,
+                    ServerSideValidator.validateRetrievedSCIMObjectInList((Group) group, SCIMSchemaDefinitions.SCIM_GROUP_SCHEMA,
                             attributes, excludeAttributes);
                 }
                 //create a listed resource object out of the returned groups list.
-                ListedResource listedResource = createListedResource(returnedGroups);
+                ListedResource listedResource = createListedResource(returnedGroups, startIndex, totalResults);
                 //convert the listed resource into specific format.
                 String encodedListedResource = encoder.encodeSCIMObject(listedResource);
                 //if there are any http headers to be added in the response header.
@@ -519,8 +302,18 @@ public class GroupResourceManager extends AbstractResourceManager {
             return encodeSCIMException(e);
         } catch (NotImplementedException e) {
             return encodeSCIMException(e);
+        } catch (IOException e) {
+            String error = "Error in tokenization of the input filter";
+            CharonException charonException =new CharonException(error);
+            return AbstractResourceManager.encodeSCIMException(charonException);
         }
     }
+
+    @Override
+    public SCIMResponse listWithPOST(String resourceString, UserManager userManager) {
+        return null;
+    }
+
 
     /*
      * this facilitates the querying using HTTP POST
@@ -552,14 +345,16 @@ public class GroupResourceManager extends AbstractResourceManager {
                 searchRequest.setCount(CharonConfiguration.getInstance().getCountValueForPagination());
             }
 
-            List<Group> returnedGroups;
+            List<Object> returnedGroups;
             int totalResults = 0;
             //API user should pass a UserManager storage to UserResourceEndpoint.
             if (userManager != null) {
-                returnedGroups = userManager.listGroupsWithPost(searchRequest);
+                List<Object> tempList = userManager.listGroupsWithPost(searchRequest);
 
-                //TODO: Are we having this method support from user core
-                totalResults = userManager.getGroupCount();
+                totalResults = (int) tempList.get(0);
+                tempList.remove(0);
+
+                returnedGroups = tempList;
 
                 //if user not found, return an error in relevant format.
                 if (returnedGroups == null || returnedGroups.isEmpty()) {
@@ -571,13 +366,13 @@ public class GroupResourceManager extends AbstractResourceManager {
                 // unless configured returns core-user schema or else returns extended user schema)
                 SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
 
-                for(Group group:returnedGroups){
+                for(Object group:returnedGroups){
                     //perform service provider side validation.
-                    ServerSideValidator.validateRetrievedSCIMObjectInList(group, schema,
+                    ServerSideValidator.validateRetrievedSCIMObjectInList((Group) group, schema,
                             searchRequest.getAttributesAsString(), searchRequest.getExcludedAttributesAsString());
                 }
                 //create a listed resource object out of the returned users list.
-                PaginatedListedResource listedResource = createPaginatedListedResource(
+                ListedResource listedResource = createListedResource(
                         returnedGroups, searchRequest.getStartIndex(), totalResults);
                 //convert the listed resource into specific format.
                 String encodedListedResource = encoder.encodeSCIMObject(listedResource);
@@ -626,10 +421,6 @@ public class GroupResourceManager extends AbstractResourceManager {
             encoder = getEncoder();
             //obtain the json decoder.
             decoder = getDecoder();
-            //obtain the  URIs for attributes
-            ArrayList<String> attributesURIList = getAttributeURIs(attributes);
-            //obtain the  URIs for excludedAttributes
-            ArrayList<String> excludedAttributesURIList = getAttributeURIs(excludeAttributes);
 
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
 
@@ -638,10 +429,10 @@ public class GroupResourceManager extends AbstractResourceManager {
             Group updatedGroup = null;
             if (userManager != null) {
                 //retrieve the old object
-                Group oldGroup = userManager.getGroup(existingId, null, null);
+                Group oldGroup = userManager.getGroup(existingId);
                 if (oldGroup != null) {
                     Group newGroup = (Group) ServerSideValidator.validateUpdatedSCIMObject(oldGroup, group, schema);
-                    updatedGroup = userManager.updateGroup(oldGroup, newGroup, attributesURIList, excludedAttributesURIList);
+                    updatedGroup = userManager.updateGroup(oldGroup, newGroup);
 
                 } else {
                     String error = "No user exists with the given id: " + existingId;
@@ -700,38 +491,20 @@ public class GroupResourceManager extends AbstractResourceManager {
      * @param groups
      * @return
      */
-    public ListedResource createListedResource(List<Group> groups)
+    public ListedResource createListedResource(List<Object> groups, int startIndex, int totalResults)
             throws CharonException, NotFoundException {
         ListedResource listedResource = new ListedResource();
         listedResource.setSchema(SCIMConstants.LISTED_RESOURCE_CORE_SCHEMA_URI);
-        listedResource.setTotalResults(groups.size());
-        for (Group group : groups) {
-            Map<String, Attribute> userAttributes = group.getAttributeList();
+        listedResource.setTotalResults(totalResults);
+        listedResource.setStartIndex(startIndex);
+        listedResource.setItemsPerPage(groups.size());
+        for (Object group : groups) {
+            Map<String, Attribute> userAttributes = ((Group)group).getAttributeList();
             listedResource.setResources(userAttributes);
         }
         return listedResource;
     }
 
-    /*
-     * Creates the Paginated Listed Resource.
-     *
-     * @param groups
-     * @return
-     */
-    public PaginatedListedResource createPaginatedListedResource(List<Group> groups, int startIndex, int totalResults)
-            throws CharonException, NotFoundException {
-        PaginatedListedResource paginatedListedResource = new PaginatedListedResource();
-        paginatedListedResource.setSchema(SCIMConstants.LISTED_RESOURCE_CORE_SCHEMA_URI);
-        paginatedListedResource.setTotalResults(totalResults);
-        paginatedListedResource.setItemsPerPage(groups.size());
-        paginatedListedResource.setStartIndex(startIndex);
-
-        for (Group group : groups) {
-            Map<String, Attribute> userAttributes = group.getAttributeList();
-            paginatedListedResource.setResources(userAttributes);
-        }
-        return paginatedListedResource;
-    }
 
 
 }

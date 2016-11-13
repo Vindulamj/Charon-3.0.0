@@ -29,8 +29,6 @@ import java.util.HashMap;
  */
 public class GroupTest {
     public static void main(String [] args) {
-        AbstractResourceManager.setEncoder();
-        AbstractResourceManager.setDecoder();
 
         GroupResourceManager um = new GroupResourceManager();
         HashMap hmp = new HashMap<String, String>();

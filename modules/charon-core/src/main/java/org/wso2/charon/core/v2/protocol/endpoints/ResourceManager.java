@@ -47,7 +47,8 @@ public interface ResourceManager {
      *         client and server views of the new Resource. When a Resource is created, its URI must be returned
      *         in the response Location header.}
      */
-    public SCIMResponse create(String scimObjectString, UserManager userManager, String attributes, String excludeAttributes);
+    public SCIMResponse create(String scimObjectString, UserManager userManager,
+                               String attributes, String excludeAttributes);
 
     /**
      * Method of the ResourceManager that is mapped to HTTP Delete method..
@@ -56,55 +57,31 @@ public interface ResourceManager {
      * @param userManager
      * @return
      */
-    public SCIMResponse delete(String id,UserManager userManager);
+    public SCIMResponse delete(String id, UserManager userManager);
 
     /**
-     * Method that maps to HTTP GET with URL query parameter: "filter=filterString"
-     * This is to filter a sub set of resources matching the filter string
-     *
-     * @param filterString
+     * get resources
      * @param userManager
-     * @param attributes
-     * @param  excludeAttributes
-     */
-    public SCIMResponse listByFilter(String filterString, UserManager userManager,
-                                     String attributes, String excludeAttributes) throws IOException;
-
-    /**
-     * Method that maps to HTTP GET with URL query parameter: "sortBy=attributeName&sortOrder=ascending"
-     * This is to sort the resources in the given criteria
-     *
-     * @param sortBy
-     * @param sortOrder
-     * @param usermanager
-     * @param attributes
-     * @param excludeAttributes
-     */
-    public SCIMResponse listBySort(String sortBy, String sortOrder, UserManager usermanager,
-                                   String attributes, String excludeAttributes);
-
-    /**
-     * Method that maps to HTTP GET with URL query parameter: "startIndex=1&count=10"
-     * This is to retrieve only a set of resources without overwhelming SP or consumer.
-     *
+     * @param filter
      * @param startIndex
      * @param count
-     * @param userManager
-     * @param attributes
-     * @param excludeAttributes
-     * @return SCIMResponse
-     */
-    public SCIMResponse listWithPagination(int startIndex, int count, UserManager userManager,
-                                           String attributes, String excludeAttributes);
-
-    /**
-     * To list all the resources of resource endpoint.
-     * @param userManager
+     * @param sortBy
+     * @param sortOrder
      * @param attributes
      * @param excludeAttributes
      * @return
      */
-    public SCIMResponse list(UserManager userManager, String attributes, String excludeAttributes);
+    public SCIMResponse listWithGET(UserManager userManager, String filter,
+                                    int startIndex, int count, String sortBy, String sortOrder,
+                                    String attributes, String excludeAttributes);
+
+    /**
+     * query resources
+     * @param resourceString
+     * @param userManager
+     * @return
+     */
+    public SCIMResponse listWithPOST(String resourceString, UserManager userManager);
 
     /**
      * To update the user by giving entire attribute set

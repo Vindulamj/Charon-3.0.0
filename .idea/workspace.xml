@@ -2,9 +2,20 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fcdcd64c-eb66-4bf8-a0b4-6f00065fa5b4" name="Default" comment="">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/objects/PaginatedListedResource.java" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/GroupTest.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/GroupTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/SCIMUserManager.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/SCIMUserManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/Test.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/Test.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/extensions/UserManager.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/extensions/UserManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/objects/ListedResource.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/objects/ListedResource.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/AbstractResourceManager.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/AbstractResourceManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/BulkResourceManager.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/BulkResourceManager.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/GroupResourceManager.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/GroupResourceManager.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/MeResourceManager.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/MeResourceManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/ResourceManager.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/ResourceManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/ResourceTypeResourceManager.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/ResourceTypeResourceManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/ServiceProviderConfigResourceManager.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/ServiceProviderConfigResourceManager.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/UserResourceManager.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/UserResourceManager.java" />
     </list>
     <ignored path="Charon-3.0.iws" />
@@ -37,10 +48,22 @@
       <file leaf-file-name="UserResourceManager.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/UserResourceManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="461">
-              <caret line="720" column="107" selection-start-line="720" selection-start-column="107" selection-end-line="720" selection-end-column="107" />
+            <state relative-caret-position="323">
+              <caret line="344" column="39" selection-start-line="344" selection-start-column="39" selection-end-line="344" selection-end-column="39" />
               <folding>
-                <element signature="e#28921#28937#0" expanded="true" />
+                <element signature="e#17567#17583#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AbstractSCIMObject.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/objects/AbstractSCIMObject.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="748">
+              <caret line="394" column="5" selection-start-line="394" selection-start-column="5" selection-end-line="394" selection-end-column="5" />
+              <folding>
+                <element signature="imports" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -49,21 +72,9 @@
       <file leaf-file-name="AbstractResourceManager.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/AbstractResourceManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="558">
-              <caret line="118" column="25" selection-start-line="118" selection-start-column="25" selection-end-line="118" selection-end-column="25" />
+            <state relative-caret-position="-563">
+              <caret line="37" column="22" selection-start-line="37" selection-start-column="22" selection-end-line="37" selection-end-column="22" />
               <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="GroupResourceManager.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/GroupResourceManager.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1014">
-              <caret line="643" column="123" selection-start-line="643" selection-start-column="123" selection-end-line="643" selection-end-column="123" />
-              <folding>
-                <element signature="e#27643#27659#0" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -71,19 +82,65 @@
       <file leaf-file-name="UserManager.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/extensions/UserManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="703">
-              <caret line="115" column="127" selection-start-line="115" selection-start-column="127" selection-end-line="115" selection-end-column="127" />
+            <state relative-caret-position="1045">
+              <caret line="82" column="0" selection-start-line="82" selection-start-column="0" selection-end-line="82" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SCIMUserManager.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/SCIMUserManager.java">
+      <file leaf-file-name="ResourceManager.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/ResourceManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="304">
-              <caret line="47" column="0" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
+            <state relative-caret-position="494">
+              <caret line="78" column="22" selection-start-line="78" selection-start-column="22" selection-end-line="78" selection-end-column="22" />
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="GroupResourceManager.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/GroupResourceManager.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-1600">
+              <caret line="270" column="17" selection-start-line="270" selection-start-column="17" selection-end-line="270" selection-end-column="17" />
+              <folding>
+                <element signature="e#14254#14255#0" expanded="true" />
+                <element signature="e#14281#14282#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="BulkResourceManager.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/BulkResourceManager.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="259">
+              <caret line="35" column="0" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ServiceProviderConfigResourceManager.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/ServiceProviderConfigResourceManager.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1159">
+              <caret line="137" column="21" selection-start-line="137" selection-start-column="21" selection-end-line="137" selection-end-column="21" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ListedResource.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/objects/ListedResource.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="665">
+              <caret line="62" column="81" selection-start-line="62" selection-start-column="81" selection-end-line="62" selection-end-column="81" />
+              <folding>
+                <element signature="e#4474#4475#0" expanded="true" />
+                <element signature="e#4509#4510#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -91,29 +148,12 @@
       <file leaf-file-name="MeResourceManager.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/MeResourceManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="722">
-              <caret line="218" column="114" selection-start-line="218" selection-start-column="114" selection-end-line="218" selection-end-column="114" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ServiceProviderConfigResourceManager.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/ServiceProviderConfigResourceManager.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="190">
-              <caret line="47" column="13" selection-start-line="47" selection-start-column="13" selection-end-line="47" selection-end-column="13" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="AttributeUtil.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/utils/AttributeUtil.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="456">
-              <caret line="175" column="53" selection-start-line="175" selection-start-column="53" selection-end-line="175" selection-end-column="53" />
-              <folding />
+            <state relative-caret-position="-456">
+              <caret line="166" column="36" selection-start-line="166" selection-start-column="36" selection-end-line="166" selection-end-column="36" />
+              <folding>
+                <element signature="e#8160#8161#0" expanded="true" />
+                <element signature="e#8187#8188#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -139,12 +179,8 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/exceptions/ForbiddenException.java" />
-        <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/exceptions/PermanentRedirectException.java" />
-        <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/exceptions/PreConditionFailedException.java" />
         <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/exceptions/TemporyRedirectException.java" />
         <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/exceptions/UnauthorizedException.java" />
-        <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/ResourceTypeResourceManager.java" />
         <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/schema/AbstractValidator.java" />
         <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/schema/SCIMResourceSchemaManager.java" />
         <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/schema/SCIMResourceTypeSchema.java" />
@@ -174,22 +210,26 @@
         <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/exceptions/InternalErrorException.java" />
         <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/exceptions/NotImplementedException.java" />
         <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/exceptions/PayloadTooLargeException.java" />
-        <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/objects/AbstractSCIMObject.java" />
         <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/objects/Group.java" />
-        <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/objects/ListedResource.java" />
         <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/objects/PaginatedListedResource.java" />
         <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/objects/User.java" />
-        <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/BulkResourceManager.java" />
         <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/schema/SCIMConstants.java" />
         <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/utils/codeutils/SearchRequest.java" />
         <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/encoder/JSONDecoder.java" />
-        <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/Test.java" />
         <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/AbstractResourceManager.java" />
-        <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/extensions/UserManager.java" />
+        <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/GroupTest.java" />
+        <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/Test.java" />
         <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/SCIMUserManager.java" />
-        <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/UserResourceManager.java" />
+        <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/ResourceManager.java" />
         <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/MeResourceManager.java" />
+        <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/BulkResourceManager.java" />
+        <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/ResourceTypeResourceManager.java" />
+        <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/ServiceProviderConfigResourceManager.java" />
+        <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/objects/ListedResource.java" />
+        <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/objects/AbstractSCIMObject.java" />
+        <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/UserResourceManager.java" />
         <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/GroupResourceManager.java" />
+        <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/extensions/UserManager.java" />
       </list>
     </option>
   </component>
@@ -237,7 +277,9 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
+      <pane id="PackagesPane">
+        <subPane />
+      </pane>
       <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
@@ -737,9 +779,7 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="PackagesPane">
-        <subPane />
-      </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -761,7 +801,7 @@
       <recent name="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/objects" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Test (1)">
+  <component name="RunManager" selected="Remote.Unnamed">
     <configuration default="false" name="Test" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
@@ -890,10 +930,7 @@
       </Profilers>
       <option name="DEEP_LINK" value="" />
       <option name="ACTIVITY_CLASS" value="" />
-      <method>
-        <option name="Make" enabled="true" />
-        <option name="Android.Gradle.BeforeRunTask" enabled="true" />
-      </method>
+      <method />
     </configuration>
     <configuration default="true" type="AndroidTestRunConfigurationType" factoryName="Android Tests">
       <module name="" />
@@ -916,10 +953,7 @@
       <Profilers>
         <option name="GAPID_DISABLE_PCS" value="false" />
       </Profilers>
-      <method>
-        <option name="Make" enabled="true" />
-        <option name="Android.Gradle.BeforeRunTask" enabled="true" />
-      </method>
+      <method />
     </configuration>
     <configuration default="true" type="Applet" factoryName="Applet">
       <option name="HTML_USED" value="false" />
@@ -1365,7 +1399,8 @@
       <workItem from="1478761109161" duration="7361000" />
       <workItem from="1478837608392" duration="13500000" />
       <workItem from="1478935675118" duration="67000" />
-      <workItem from="1479015569775" duration="9548000" />
+      <workItem from="1479015569775" duration="10170000" />
+      <workItem from="1479049959082" duration="9678000" />
     </task>
     <task id="LOCAL-00002" summary="Service Provider Config endpoint is added fully">
       <created>1477283464648</created>
@@ -1542,11 +1577,18 @@
       <option name="project" value="LOCAL" />
       <updated>1479039074220</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="Few changes to UserManager APIs">
+      <created>1479040108781</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1479040108781</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="185084000" />
+    <option name="totallyTimeSpent" value="195384000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="63" y="24" width="1857" height="1056" extended-state="6" />
@@ -1557,9 +1599,9 @@
       <window_info id="FindBugs-IDEA" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32985386" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.454071" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21294363" sideWeight="0.50966316" order="11" side_tool="true" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32965213" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32965213" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32985386" sideWeight="0.49806738" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2546973" sideWeight="0.49033684" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="CheckStyle" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.28705636" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
@@ -1572,14 +1614,14 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24958587" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24958587" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32985386" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32985386" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32965213" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32965213" sideWeight="0.5" order="6" side_tool="true" content_ui="tabs" />
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -1594,7 +1636,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Service Provider Config endpoint is added fully" />
     <MESSAGE value="list with pagination is updated with config reading" />
     <MESSAGE value="List with pagination for groups is added" />
     <MESSAGE value="Filtering for groups is added" />
@@ -1619,11 +1660,12 @@
     <MESSAGE value="POST querying is added for both groups and users" />
     <MESSAGE value="list with pagination on groups is modified" />
     <MESSAGE value="All operations APIS were changed with attribute and excludedAttributes" />
-    <option name="LAST_COMMIT_MESSAGE" value="All operations APIS were changed with attribute and excludedAttributes" />
+    <MESSAGE value="Few changes to UserManager APIs" />
+    <option name="LAST_COMMIT_MESSAGE" value="Few changes to UserManager APIs" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="26" />
+      <option name="time" value="27" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -1632,34 +1674,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/attributes/ComplexAttribute.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="520">
-          <caret line="69" column="6" selection-start-line="69" selection-start-column="6" selection-end-line="69" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/attributes/DefaultAttributeFactory.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-126">
-          <caret line="79" column="86" selection-start-line="79" selection-start-column="86" selection-end-line="79" selection-end-column="86" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/attributes/MultiValuedAttribute.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1463">
-          <caret line="105" column="60" selection-start-line="105" selection-start-column="60" selection-end-line="105" selection-end-column="60" />
-          <folding>
-            <element signature="e#3516#3517#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/attributes/Attribute.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="304">
@@ -1827,14 +1841,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/objects/AbstractSCIMObject.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="31" column="22" selection-start-line="31" selection-start-column="22" selection-end-line="31" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/objects/Group.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="323">
@@ -1856,13 +1862,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/BulkResourceManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1216">
-          <caret line="80" column="12" selection-start-line="80" selection-start-column="12" selection-end-line="80" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/encoder/JSONEncoder.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2470">
@@ -1879,22 +1878,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/schema/AbstractValidator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="81">
-          <caret line="238" column="23" selection-start-line="238" selection-start-column="23" selection-end-line="238" selection-end-column="23" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/schema/ServerSideValidator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="214">
-          <caret line="107" column="33" selection-start-line="107" selection-start-column="33" selection-end-line="107" selection-end-column="33" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/schema/SCIMSchemaDefinitions.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="9785">
@@ -1906,26 +1889,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/objects/SearchRequest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="95">
-          <caret line="5" column="26" selection-start-line="5" selection-start-column="26" selection-end-line="5" selection-end-column="26" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/objects/SearchRequest.java" />
     <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/schema/SCIMConstants.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="672">
           <caret line="531" column="51" selection-start-line="531" selection-start-column="51" selection-end-line="531" selection-end-column="51" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/objects/ListedResource.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1169">
-          <caret line="97" column="16" selection-start-line="97" selection-start-column="16" selection-end-line="97" selection-end-column="16" />
           <folding />
         </state>
       </provider>
@@ -1941,28 +1909,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/objects/PaginatedListedResource.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="228">
-          <caret line="29" column="26" selection-start-line="29" selection-start-column="26" selection-end-line="29" selection-end-column="26" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/Test.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="205">
-          <caret line="203" column="9" selection-start-line="203" selection-start-column="9" selection-end-line="203" selection-end-column="9" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/encoder/JSONDecoder.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="529">
           <caret line="556" column="26" selection-start-line="556" selection-start-column="26" selection-end-line="556" selection-end-column="26" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1977,69 +1929,165 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/utils/AttributeUtil.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="456">
+        <state relative-caret-position="2793">
           <caret line="175" column="53" selection-start-line="175" selection-start-column="53" selection-end-line="175" selection-end-column="53" />
+          <folding>
+            <element signature="e#0#9075#0" expanded="false" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#5210#5211#0" expanded="false" />
+            <element signature="e#5246#5247#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/schema/ServerSideValidator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="380">
+          <caret line="72" column="17" selection-start-line="72" selection-start-column="17" selection-end-line="72" selection-end-column="17" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/AbstractResourceManager.java">
+    <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/schema/AbstractValidator.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="558">
-          <caret line="118" column="25" selection-start-line="118" selection-start-column="25" selection-end-line="118" selection-end-column="25" />
+        <state relative-caret-position="2147">
+          <caret line="138" column="67" selection-start-line="138" selection-start-column="67" selection-end-line="138" selection-end-column="67" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/extensions/UserManager.java">
+    <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/GroupTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="703">
-          <caret line="115" column="127" selection-start-line="115" selection-start-column="127" selection-end-line="115" selection-end-column="127" />
+        <state relative-caret-position="171">
+          <caret line="30" column="45" selection-start-line="30" selection-start-column="45" selection-end-line="30" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/Test.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="46" column="42" selection-start-line="46" selection-start-column="42" selection-end-line="46" selection-end-column="42" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/SCIMUserManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="304">
-          <caret line="47" column="0" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
+        <state relative-caret-position="1501">
+          <caret line="110" column="0" selection-start-line="110" selection-start-column="0" selection-end-line="110" selection-end-column="0" />
+          <folding>
+            <element signature="e#13222#13229#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/objects/PaginatedListedResource.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="748">
+          <caret line="74" column="5" selection-start-line="28" selection-start-column="4" selection-end-line="74" selection-end-column="5" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/ServiceProviderConfigResourceManager.java">
+    <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/BulkResourceManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="190">
-          <caret line="47" column="13" selection-start-line="47" selection-start-column="13" selection-end-line="47" selection-end-column="13" />
+        <state relative-caret-position="259">
+          <caret line="35" column="0" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/objects/ListedResource.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="665">
+          <caret line="62" column="81" selection-start-line="62" selection-start-column="81" selection-end-line="62" selection-end-column="81" />
+          <folding>
+            <element signature="e#4474#4475#0" expanded="true" />
+            <element signature="e#4509#4510#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/ResourceTypeResourceManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="691">
+          <caret line="148" column="56" selection-start-line="148" selection-start-column="56" selection-end-line="148" selection-end-column="56" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/objects/AbstractSCIMObject.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="748">
+          <caret line="394" column="5" selection-start-line="394" selection-start-column="5" selection-end-line="394" selection-end-column="5" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/AbstractResourceManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-563">
+          <caret line="37" column="22" selection-start-line="37" selection-start-column="22" selection-end-line="37" selection-end-column="22" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/UserResourceManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="461">
-          <caret line="720" column="107" selection-start-line="720" selection-start-column="107" selection-end-line="720" selection-end-column="107" />
+        <state relative-caret-position="323">
+          <caret line="344" column="39" selection-start-line="344" selection-start-column="39" selection-end-line="344" selection-end-column="39" />
           <folding>
-            <element signature="e#28921#28937#0" expanded="true" />
+            <element signature="e#17567#17583#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/MeResourceManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="722">
-          <caret line="218" column="114" selection-start-line="218" selection-start-column="114" selection-end-line="218" selection-end-column="114" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/GroupResourceManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1014">
-          <caret line="643" column="123" selection-start-line="643" selection-start-column="123" selection-end-line="643" selection-end-column="123" />
+        <state relative-caret-position="-1600">
+          <caret line="270" column="17" selection-start-line="270" selection-start-column="17" selection-end-line="270" selection-end-column="17" />
           <folding>
-            <element signature="e#27643#27659#0" expanded="true" />
+            <element signature="e#14254#14255#0" expanded="true" />
+            <element signature="e#14281#14282#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/extensions/UserManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1045">
+          <caret line="82" column="0" selection-start-line="82" selection-start-column="0" selection-end-line="82" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/ResourceManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="494">
+          <caret line="78" column="22" selection-start-line="78" selection-start-column="22" selection-end-line="78" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/MeResourceManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-456">
+          <caret line="166" column="36" selection-start-line="166" selection-start-column="36" selection-end-line="166" selection-end-column="36" />
+          <folding>
+            <element signature="e#8160#8161#0" expanded="true" />
+            <element signature="e#8187#8188#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/ServiceProviderConfigResourceManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1159">
+          <caret line="137" column="21" selection-start-line="137" selection-start-column="21" selection-end-line="137" selection-end-column="21" />
+          <folding />
         </state>
       </provider>
     </entry>

@@ -28,57 +28,39 @@ import java.io.IOException;
  * based on the HTTP requests received by SCIM Client.
  */
 public class BulkResourceManager extends AbstractResourceManager {
+
     @Override
-    public SCIMResponse get(
-            String id, UserManager userManager, String attributes, String excludeAttributes) {
+    public SCIMResponse get(String id, UserManager userManager, String attributes, String excludeAttributes) {
         return null;
     }
 
     @Override
-    public SCIMResponse create(
-            String scimObjectString, UserManager userManager, String attributes, String excludeAttributes) {
+    public SCIMResponse create(String scimObjectString, UserManager userManager, String attributes, String excludeAttributes) {
         return null;
     }
 
     @Override
-    public SCIMResponse delete(
-            String id, UserManager userManager) {
+    public SCIMResponse delete(String id, UserManager userManager) {
         return null;
     }
 
     @Override
-    public SCIMResponse listByFilter(
-            String filterString, UserManager userManager, String attributes, String excludeAttributes) throws IOException {
+    public SCIMResponse listWithGET(UserManager userManager, String filter, int startIndex, int count, String sortBy, String sortOrder, String attributes, String excludeAttributes) {
         return null;
     }
 
     @Override
-    public SCIMResponse listBySort(
-            String sortBy, String sortOrder, UserManager usermanager, String attributes, String excludeAttributes) {
+    public SCIMResponse listWithPOST(String resourceString, UserManager userManager) {
         return null;
     }
 
     @Override
-    public SCIMResponse listWithPagination(
-            int startIndex, int count, UserManager userManager, String attributes, String excludeAttributes) {
+    public SCIMResponse updateWithPUT(String existingId, String scimObjectString, UserManager userManager, String attributes, String excludeAttributes) {
         return null;
     }
 
     @Override
-    public SCIMResponse list(
-            UserManager userManager, String attributes, String excludeAttributes) {
-        return null;
-    }
-
-    @Override
-    public SCIMResponse updateWithPUT(
-            String existingId, String scimObjectString, UserManager userManager, String attributes, String excludeAttributes) {
-        return null;
-    }
-
-    @Override
-    public SCIMResponse updateWithPATCH(
-            String existingId, String scimObjectString, UserManager userManager, String attributes, String excludeAttributes) {
+    public SCIMResponse updateWithPATCH(String existingId, String scimObjectString, UserManager userManager, String attributes, String excludeAttributes) {
         return null;
     }
 }

@@ -49,7 +49,7 @@ public class SCIMUserManager implements UserManager {
     public SCIMUserManager() {
     }
 
-    public User createUser(User user, ArrayList<String> attributes, ArrayList<String> excludedAttributes) throws CharonException {
+    public User createUser(User user) throws CharonException {
 
         //TODO: Get the E-Tag(version) and add as a attribute of the cretated user
         try {
@@ -68,7 +68,7 @@ public class SCIMUserManager implements UserManager {
 
     @Override
 
-    public User getUser(String id, ArrayList<String> attributes, ArrayList<String> excludedAttributes) {
+    public User getUser(String id) {
 
         User e = null;
         try {
@@ -104,7 +104,12 @@ public class SCIMUserManager implements UserManager {
     }
 
     @Override
-    public List<User> listUsers(ArrayList<String> attributes, ArrayList<String> excludedAttributes) throws CharonException {
+    public List<User> listUsersWithGET(Node node, int startIndex, int count, String sortBy, String sortOrder) throws CharonException, NotImplementedException, BadRequestException {
+        return null;
+    }
+
+
+    public List<User> listUsers() throws CharonException {
         final File folder = new File("/home/vindula/Desktop/Charon/Storage/");
         List<User> userList = new ArrayList<User>();
         for (final File fileEntry : folder.listFiles()) {
@@ -134,12 +139,12 @@ public class SCIMUserManager implements UserManager {
 
     @Override
     public List<User> listUsersWithPost(SearchRequest searchRequest) throws CharonException, NotImplementedException, BadRequestException {
-        return listUsers(null,null);
+        return listUsers();
 
     }
 
-    @Override
-    public List<User> listUsersWithPagination(int startIndex, int count,ArrayList<String> attributes, ArrayList<String> excludedAttributes) {
+
+    public List<User> listUsersWithPagination(int startIndex, int count) {
         final File folder = new File("/home/vindula/Desktop/Charon/Storage/");
         List<User> userList = new ArrayList<User>();
         for (final File fileEntry : folder.listFiles()) {
@@ -174,7 +179,7 @@ public class SCIMUserManager implements UserManager {
     @Override
     public int getUserCount() {
         try {
-            return listUsers(null,null).size();
+            return listUsers().size();
         } catch (CharonException e) {
             e.printStackTrace();
             return 0;
@@ -182,9 +187,9 @@ public class SCIMUserManager implements UserManager {
     }
 
     @Override
-    public User updateUser(User validatedUser, ArrayList<String> attributes, ArrayList<String> excludedAttributes) {
+    public User updateUser(User validatedUser) {
         try {
-            User user = createUser(validatedUser, null, null);
+            User user = createUser(validatedUser);
             return user;
         } catch (CharonException e) {
             e.printStackTrace();
@@ -192,8 +197,8 @@ public class SCIMUserManager implements UserManager {
         }
     }
 
-    @Override
-    public List<User> filterUsers(Node rootNode, ArrayList<String> attributes, ArrayList<String> excludedAttributes) {
+
+    public List<User> filterUsers(Node rootNode) {
         ExpressionNode en = (ExpressionNode) rootNode;
         String attributeValue = en.getAttributeValue();
         String operation = en.getOperation();
@@ -203,24 +208,24 @@ public class SCIMUserManager implements UserManager {
         return null;
     }
 
-    @Override
-    public List<User> sortUsers(String sortBy, String sortOrder, ArrayList<String> attributes, ArrayList<String> excludedAttributes) {
+
+    public List<User> sortUsers(String sortBy, String sortOrder) {
         //let the user core to handle the sorting
         System.out.println(sortOrder);
         try {
-            return listUsers(null, null);
+            return listUsers();
         } catch (CharonException e) {
             return null;
         }
     }
 
     @Override
-    public User getMe(String userName, ArrayList<String> attributes, ArrayList<String> excludedAttributes) throws CharonException {
+    public User getMe(String userName) throws CharonException {
         return null;
     }
 
     @Override
-    public User createMe(User user, ArrayList<String> attributes, ArrayList<String> excludedAttributes) throws CharonException, ConflictException, BadRequestException {
+    public User createMe(User user) throws CharonException, ConflictException, BadRequestException {
         return null;
     }
 
@@ -230,12 +235,12 @@ public class SCIMUserManager implements UserManager {
     }
 
     @Override
-    public User updateMe(User updatedUser, ArrayList<String> attributes, ArrayList<String> excludedAttributes) throws NotImplementedException {
+    public User updateMe(User updatedUser) throws NotImplementedException {
         return null;
     }
 
     @Override
-    public Group createGroup(Group group, ArrayList<String> attributes, ArrayList<String> excludedAttributes) throws CharonException, ConflictException {
+    public Group createGroup(Group group) throws CharonException, ConflictException {
         //TODO: Get the E-Tag(version) and add as a attribute of the cretated user
         try {
             FileOutputStream fileOut =
@@ -252,7 +257,7 @@ public class SCIMUserManager implements UserManager {
     }
 
     @Override
-    public Group getGroup(String id, ArrayList<String> attributes, ArrayList<String> excludedAttributes) {
+    public Group getGroup(String id) {
         Group e = null;
         try {
             FileInputStream fileIn = new FileInputStream("/home/vindula/Desktop/Charon/GroupStorage/" + id + ".ser");
@@ -287,7 +292,12 @@ public class SCIMUserManager implements UserManager {
     }
 
     @Override
-    public List<Group> listGroups(ArrayList<String> attributes, ArrayList<String> excludedAttributes) throws CharonException {
+    public List<Group> listGroupsWithGET(Node node, int startIndex, int count, String sortBy, String sortOrder) throws CharonException, NotImplementedException, BadRequestException {
+        return null;
+    }
+
+
+    public List<Group> listGroups() throws CharonException {
         final File folder = new File("/home/vindula/Desktop/Charon/GroupStorage/");
         List<Group> userList = new ArrayList<Group>();
         for (final File fileEntry : folder.listFiles()) {
@@ -318,7 +328,7 @@ public class SCIMUserManager implements UserManager {
     @Override
     public int getGroupCount() {
         try {
-            return listGroups(null, null).size();
+            return listGroups().size();
         } catch (CharonException e) {
             e.printStackTrace();
         }
@@ -326,7 +336,7 @@ public class SCIMUserManager implements UserManager {
     }
 
 
-    public List<Group> listGroupsWithPagination(int startIndex, int count, ArrayList<String> attributes, ArrayList<String> excludedAttributes) {
+    public List<Group> listGroupsWithPagination(int startIndex, int count) {
         final File folder = new File("/home/vindula/Desktop/Charon/GroupStorage/");
         List<Group> groupList = new ArrayList<Group>();
         for (final File fileEntry : folder.listFiles()) {
@@ -359,14 +369,14 @@ public class SCIMUserManager implements UserManager {
 
     }
 
-    @Override
-    public List<Group> filterGroups(Node rootNode, ArrayList<String> attributes, ArrayList<String> excludedAttributes) {
+
+    public List<Group> filterGroups(Node rootNode) {
         ExpressionNode en = (ExpressionNode) rootNode;
         String attributeValue = en.getAttributeValue();
         String operation = en.getOperation();
         String value = en.getValue();
         try {
-            List<Group> list = listGroups(null, null);
+            List<Group> list = listGroups();
             List<Group> newList = new ArrayList<Group>();
             for (Group group : list) {
                 Map<String, Attribute> attributeList = group.getAttributeList();
@@ -384,21 +394,21 @@ public class SCIMUserManager implements UserManager {
         return null;
     }
 
-    @Override
-    public List<Group> sortGroups(String sortByAttributeURI, String sortOrder, ArrayList<String> attributes, ArrayList<String> excludedAttributes) {
+
+    public List<Group> sortGroups(String sortByAttributeURI, String sortOrder) {
         //let the user core to handle the sorting
         System.out.println(sortOrder);
         try {
-            return listGroups(null, null);
+            return listGroups();
         } catch (CharonException e) {
             return null;
         }
     }
 
     @Override
-    public Group updateGroup(Group oldGroup, Group validatedGroup, ArrayList<String> attributes, ArrayList<String> excludedAttributes) {
+    public Group updateGroup(Group oldGroup, Group validatedGroup) {
         try {
-            Group group = createGroup(validatedGroup, null, null);
+            Group group = createGroup(validatedGroup);
             return group;
         } catch (CharonException e) {
             e.printStackTrace();
@@ -411,7 +421,7 @@ public class SCIMUserManager implements UserManager {
 
     @Override
     public List<Group> listGroupsWithPost(SearchRequest searchRequest) throws NotImplementedException, BadRequestException, CharonException {
-        return listGroups(null, null);
+        return listGroups();
     }
 }
 

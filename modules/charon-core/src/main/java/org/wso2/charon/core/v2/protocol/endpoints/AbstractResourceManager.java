@@ -37,6 +37,7 @@ import java.util.*;
  */
 public abstract class AbstractResourceManager implements ResourceManager {
 
+
     private static JSONEncoder encoder;
 
     private static JSONDecoder decoder;
@@ -52,9 +53,7 @@ public abstract class AbstractResourceManager implements ResourceManager {
      */
     public static JSONEncoder getEncoder() throws CharonException {
         if (encoder == null) {
-            //if the encoder is not set, throw a charon exception
-            String error = "Encoder is not set";
-            throw new CharonException(error);
+           encoder = new JSONEncoder();
         }
         return encoder;
     }
@@ -69,9 +68,7 @@ public abstract class AbstractResourceManager implements ResourceManager {
     public static JSONDecoder getDecoder() throws CharonException {
 
         if (decoder == null) {
-            //if the decoder is not set, throw a charon exception
-            String error = "Decoder is not set";
-            throw new CharonException(error);
+            decoder = new JSONDecoder();
         }
         return decoder;
 
@@ -92,13 +89,6 @@ public abstract class AbstractResourceManager implements ResourceManager {
         }
     }
 
-    public static void setEncoder() {
-        encoder = new JSONEncoder(); }
-
-    public static void setDecoder() {
-        decoder = new JSONDecoder();
-    }
-
     public static void setEndpointURLMap(Map<String, String> endpointURLMap) {
         AbstractResourceManager.endpointURLMap = endpointURLMap;
     }
@@ -114,23 +104,5 @@ public abstract class AbstractResourceManager implements ResourceManager {
         ResponseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
         return new SCIMResponse(exception.getStatus(), encoder.encodeSCIMException(exception), ResponseHeaders);
     }
-
-    /*
-     * return the list of URI corresponding to the given attribute names
-     * @param attributes
-     * @return
-     * @throws BadRequestException
-     */
-    protected ArrayList<String> getAttributeURIs(String attributes) throws BadRequestException {
-        ArrayList<String> URIList = new ArrayList<>();
-        SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
-        List<String> items = Arrays.asList(attributes.split("\\s*,\\s*"));
-        for(String item : items){
-            URIList.add(AttributeUtil.getAttributeURI(item, schema));
-        }
-        return URIList;
-    }
-
-
 
 }

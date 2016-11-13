@@ -38,6 +38,11 @@ public class ListedResource implements SCIMObject {
     protected List<String> schemaList = new ArrayList<String>();
     //number of items in the scim object List  //default is 0
     protected int totalResults = 0;
+    //number of query results returned in a query response page
+    protected int itemsPerPage;
+    //The 1-based index of the first result in the
+    //current set of query results
+    protected int startIndex;
     /*Collection of attributes which constitute this resource.*/
     protected Map<String, Attribute> attributeList = new HashMap<String, Attribute>();
 
@@ -54,7 +59,7 @@ public class ListedResource implements SCIMObject {
             SimpleAttribute totalResultsAttribute =
                     new SimpleAttribute(SCIMConstants.ListedResourceSchemaConstants.TOTAL_RESULTS, totalResults);
             //No need to let the Default attribute factory to handle the attribute, as this is
-            //not officially defined as SCIM attribute, hence have no charactersitics defined
+            //not officially defined as SCIM attribute, hence have no characteristics defined
             //TODO: may be we can let the default attribute factory to handle it?
             attributeList.put(SCIMConstants.ListedResourceSchemaConstants.TOTAL_RESULTS, totalResultsAttribute);
         } else {
@@ -111,4 +116,46 @@ public class ListedResource implements SCIMObject {
         return attributeList.containsKey(attributeName);
     }
 
+    public int getItemsPerPage() {
+        return itemsPerPage;
+    }
+
+    /*
+     * paginated listed resource items per page settings
+     * @param itemsPerPage
+     */
+    public void setItemsPerPage(int itemsPerPage) {
+        if (!isAttributeExist(SCIMConstants.ListedResourceSchemaConstants.ITEMS_PER_PAGE)) {
+            SimpleAttribute totalResultsAttribute =
+                    new SimpleAttribute(SCIMConstants.ListedResourceSchemaConstants.ITEMS_PER_PAGE, itemsPerPage);
+            //No need to let the Default attribute factory to handle the attribute, as this is
+            //not officially defined as SCIM attribute, hence have no characteristics defined
+            //TODO: may be we can let the default attribute factory to handle it?
+            attributeList.put(SCIMConstants.ListedResourceSchemaConstants.ITEMS_PER_PAGE, totalResultsAttribute);
+        } else {
+            ((SimpleAttribute) attributeList.get(SCIMConstants.ListedResourceSchemaConstants.ITEMS_PER_PAGE))
+                    .setValue(itemsPerPage);
+        }
+    }
+
+    public int getStartIndex() {
+        return startIndex; }
+
+    /*
+     *  paginated listed resource start index settings
+     * @param startIndex
+     */
+    public void setStartIndex(int startIndex) {
+        if (!isAttributeExist(SCIMConstants.ListedResourceSchemaConstants.START_INDEX)) {
+            SimpleAttribute totalResultsAttribute =
+                    new SimpleAttribute(SCIMConstants.ListedResourceSchemaConstants.START_INDEX, startIndex);
+            //No need to let the Default attribute factory to handle the attribute, as this is
+            //not officially defined as SCIM attribute, hence have no charactersitics defined
+            //TODO: may be we can let the default attribute factory to handle it?
+            attributeList.put(SCIMConstants.ListedResourceSchemaConstants.START_INDEX, totalResultsAttribute);
+        } else {
+            ((SimpleAttribute) attributeList.get(SCIMConstants.ListedResourceSchemaConstants.START_INDEX))
+                    .setValue(startIndex);
+        }
+    }
 }

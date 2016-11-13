@@ -37,8 +37,6 @@ import java.util.HashMap;
 public class Test {
 
    public static void main(String [] args){
-       AbstractResourceManager.setEncoder();
-       AbstractResourceManager.setDecoder();
        //config charon
        CharonConfiguration.getInstance().setDocumentationURL("http://example.com/help/scim.html");
        CharonConfiguration.getInstance().setBulkSupport(false, 100, 1048576);
