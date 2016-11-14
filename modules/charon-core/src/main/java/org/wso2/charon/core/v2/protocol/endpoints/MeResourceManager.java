@@ -13,8 +13,6 @@ import org.wso2.charon.core.v2.schema.SCIMResourceTypeSchema;
 import org.wso2.charon.core.v2.schema.ServerSideValidator;
 import org.wso2.charon.core.v2.utils.CopyUtil;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -104,7 +102,7 @@ public class MeResourceManager extends AbstractResourceManager{
                 //create a deep copy of the user object since we are going to change it.
                 User copiedUser = (User) CopyUtil.deepCopy(createdUser);
                 //need to remove password before returning
-                ServerSideValidator.removeAttributesOnReturn(copiedUser, attributes, excludeAttributes);
+                ServerSideValidator.ValidateReturnedAttributes(copiedUser, attributes, excludeAttributes);
                 encodedUser = encoder.encodeSCIMObject(copiedUser);
                 //add location header
                 ResponseHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(
@@ -215,7 +213,7 @@ public class MeResourceManager extends AbstractResourceManager{
                 //create a deep copy of the user object since we are going to change it.
                 User copiedUser = (User) CopyUtil.deepCopy(updatedUser);
                 //need to remove password before returning
-                ServerSideValidator.removeAttributesOnReturn(copiedUser,attributes,excludeAttributes);
+                ServerSideValidator.ValidateReturnedAttributes(copiedUser,attributes,excludeAttributes);
                 encodedUser = encoder.encodeSCIMObject(copiedUser);
                 //add location header
                 httpHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(

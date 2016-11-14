@@ -243,7 +243,7 @@ public class Test {
                "   }";
 
        //-----UPDATE USERS WITH PATCH ---------
-       //SCIMResponse res= um.updateWithPATCH("3f0dda41-ce08-497c-917e-12b803acdfb3", patch_Request, new SCIMUserManager(),null, null);
+       SCIMResponse res= um.updateWithPATCH("3f0dda41-ce08-497c-917e-12b803acdfb3", patch_Request, new SCIMUserManager(),null, null);
 
 
        //-----SERVICE PROVIDER CONFIG  ---------
@@ -260,7 +260,7 @@ public class Test {
                "     \"startIndex\": 1,\n" +
                "     \"count\": 10}";
        //-----LIST USER  ---------
-       SCIMResponse res= um.listUsersWithPOST(x ,new SCIMUserManager());
+       //SCIMResponse res= um.listUsersWithPOST(x ,new SCIMUserManager());
 
        System.out.println(res.getResponseStatus());
        System.out.println("");

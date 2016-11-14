@@ -36,7 +36,7 @@ public class ListedResource implements SCIMObject {
 
     /*List of schemas which the resource is associated with*/
     protected List<String> schemaList = new ArrayList<String>();
-    //number of items in the scim object List  //default is 0
+    //Specifies the total number of results matching the client query
     protected int totalResults = 0;
     //number of query results returned in a query response page
     protected int itemsPerPage;

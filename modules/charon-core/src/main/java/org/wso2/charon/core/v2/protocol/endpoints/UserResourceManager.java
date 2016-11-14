@@ -7,7 +7,6 @@ import org.wso2.charon.core.v2.encoder.JSONDecoder;
 import org.wso2.charon.core.v2.encoder.JSONEncoder;
 import org.wso2.charon.core.v2.exceptions.*;
 import org.wso2.charon.core.v2.extensions.UserManager;
-import org.wso2.charon.core.v2.objects.AbstractSCIMObject;
 import org.wso2.charon.core.v2.objects.ListedResource;
 import org.wso2.charon.core.v2.objects.User;
 import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
@@ -132,7 +131,7 @@ public class UserResourceManager extends AbstractResourceManager {
                 //create a deep copy of the user object since we are going to change it.
                 User copiedUser = (User) CopyUtil.deepCopy(createdUser);
                 //need to remove password before returning
-                ServerSideValidator.removeAttributesOnReturn(copiedUser, attributes, excludeAttributes);
+                ServerSideValidator.ValidateReturnedAttributes(copiedUser, attributes, excludeAttributes);
                 encodedUser = encoder.encodeSCIMObject(copiedUser);
                 //add location header
                 ResponseHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(
@@ -219,6 +218,7 @@ public class UserResourceManager extends AbstractResourceManager {
                                     String attributes, String excludeAttributes) {
 
         FilterTreeManager filterTreeManager = null;
+        Node rootNode = null;
         JSONEncoder encoder = null;
         try {
             //A value less than one shall be interpreted as 1
@@ -246,8 +246,10 @@ public class UserResourceManager extends AbstractResourceManager {
             // unless configured returns core-user schema or else returns extended user schema)
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
 
-            filterTreeManager = new FilterTreeManager(filter, schema);
-            Node rootNode = filterTreeManager.buildTree();
+            if(filter != null){
+                filterTreeManager = new FilterTreeManager(filter, schema);
+                rootNode = filterTreeManager.buildTree();
+            }
 
             //obtain the json encoder
             encoder = getEncoder();
@@ -264,7 +266,7 @@ public class UserResourceManager extends AbstractResourceManager {
 
                 //if user not found, return an error in relevant format.
                 if (returnedUsers == null || returnedUsers.isEmpty()) {
-                    String error = "Users not found in the user store.";
+                    String error = "No resulted users found in the user store.";
                     //throw resource not found.
                     throw new NotFoundException(error);
                 }
@@ -437,7 +439,7 @@ public class UserResourceManager extends AbstractResourceManager {
                 //create a deep copy of the user object since we are going to change it.
                 User copiedUser = (User) CopyUtil.deepCopy(updatedUser);
                 //need to remove password before returning
-                ServerSideValidator.removeAttributesOnReturn(copiedUser,attributes,excludeAttributes);
+                ServerSideValidator.ValidateReturnedAttributes(copiedUser,attributes,excludeAttributes);
                 encodedUser = encoder.encodeSCIMObject(copiedUser);
                 //add location header
                 httpHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(

@@ -104,7 +104,7 @@ public class SCIMUserManager implements UserManager {
     }
 
     @Override
-    public List<User> listUsersWithGET(Node node, int startIndex, int count, String sortBy, String sortOrder) throws CharonException, NotImplementedException, BadRequestException {
+    public List<Object> listUsersWithGET(Node node, int startIndex, int count, String sortBy, String sortOrder) throws CharonException, NotImplementedException, BadRequestException {
         return null;
     }
 
@@ -138,8 +138,8 @@ public class SCIMUserManager implements UserManager {
     }
 
     @Override
-    public List<User> listUsersWithPost(SearchRequest searchRequest) throws CharonException, NotImplementedException, BadRequestException {
-        return listUsers();
+    public List<Object> listUsersWithPost(SearchRequest searchRequest) throws CharonException, NotImplementedException, BadRequestException {
+       return  null;
 
     }
 
@@ -176,7 +176,6 @@ public class SCIMUserManager implements UserManager {
         return userListNew;
     }
 
-    @Override
     public int getUserCount() {
         try {
             return listUsers().size();
@@ -292,7 +291,7 @@ public class SCIMUserManager implements UserManager {
     }
 
     @Override
-    public List<Group> listGroupsWithGET(Node node, int startIndex, int count, String sortBy, String sortOrder) throws CharonException, NotImplementedException, BadRequestException {
+    public List<Object> listGroupsWithGET(Node node, int startIndex, int count, String sortBy, String sortOrder) throws CharonException, NotImplementedException, BadRequestException {
         return null;
     }
 
@@ -325,7 +324,7 @@ public class SCIMUserManager implements UserManager {
         return userList;
     }
 
-    @Override
+
     public int getGroupCount() {
         try {
             return listGroups().size();
@@ -420,8 +419,8 @@ public class SCIMUserManager implements UserManager {
     }
 
     @Override
-    public List<Group> listGroupsWithPost(SearchRequest searchRequest) throws NotImplementedException, BadRequestException, CharonException {
-        return listGroups();
+    public List<Object> listGroupsWithPost(SearchRequest searchRequest) throws NotImplementedException, BadRequestException, CharonException {
+        return null;
     }
 }
 

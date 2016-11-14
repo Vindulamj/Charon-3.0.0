@@ -98,7 +98,7 @@ public class ServerSideValidator extends AbstractValidator{
                                                          String requestedExcludingAttributes)
             throws BadRequestException, CharonException {
         validateSCIMObjectForRequiredAttributes(scimObject, resourceSchema);
-        removeAttributesOnReturn(scimObject,reuqestedAttributes,requestedExcludingAttributes);
+        ValidateReturnedAttributes(scimObject,reuqestedAttributes,requestedExcludingAttributes);
     }
 
     /**
@@ -115,7 +115,7 @@ public class ServerSideValidator extends AbstractValidator{
                                                    String requestedExcludingAttributes)
             throws BadRequestException, CharonException {
         validateSCIMObjectForRequiredAttributes(scimObject, resourceSchema);
-        removeAttributesOnReturn(scimObject,reuqestedAttributes,requestedExcludingAttributes);
+        ValidateReturnedAttributes(scimObject,reuqestedAttributes,requestedExcludingAttributes);
         validateSchemaList(scimObject, resourceSchema);
     }
 

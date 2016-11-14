@@ -27,7 +27,6 @@ import org.wso2.charon.core.v2.objects.User;
 import org.wso2.charon.core.v2.utils.codeutils.Node;
 import org.wso2.charon.core.v2.utils.codeutils.SearchRequest;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

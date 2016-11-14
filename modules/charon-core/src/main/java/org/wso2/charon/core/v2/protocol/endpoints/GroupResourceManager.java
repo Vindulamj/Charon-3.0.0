@@ -28,7 +28,6 @@ import org.wso2.charon.core.v2.exceptions.InternalErrorException;
 import org.wso2.charon.core.v2.exceptions.NotFoundException;
 import org.wso2.charon.core.v2.exceptions.NotImplementedException;
 import org.wso2.charon.core.v2.extensions.UserManager;
-import org.wso2.charon.core.v2.objects.AbstractSCIMObject;
 import org.wso2.charon.core.v2.objects.Group;
 import org.wso2.charon.core.v2.objects.ListedResource;
 import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
@@ -450,7 +449,7 @@ public class GroupResourceManager extends AbstractResourceManager {
                 //create a deep copy of the user object since we are going to change it.
                 Group copiedGroup = (Group) CopyUtil.deepCopy(updatedGroup);
                 //need to remove password before returning
-                ServerSideValidator.removeAttributesOnReturn(copiedGroup, attributes, excludeAttributes);
+                ServerSideValidator.ValidateReturnedAttributes(copiedGroup, attributes, excludeAttributes);
                 encodedGroup = encoder.encodeSCIMObject(copiedGroup);
                 //add location header
                 httpHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(

@@ -236,8 +236,8 @@ public abstract class AbstractValidator {
      * @param requestedAttributes
      * @param requestedExcludingAttributes
      */
-    public static void removeAttributesOnReturn(AbstractSCIMObject scimObject, String requestedAttributes,
-                                                String requestedExcludingAttributes) throws CharonException {
+    public static void ValidateReturnedAttributes(AbstractSCIMObject scimObject, String requestedAttributes,
+                                                  String requestedExcludingAttributes) throws CharonException {
         List<String> requestedAttributesList = null;
         List<String> requestedExcludingAttributesList = null;
 
@@ -266,7 +266,7 @@ public abstract class AbstractValidator {
                     scimObject.deleteAttribute(attribute.getName());
                 }
             }
-            else{
+            else {
                 //A request should only contains either attributes or exclude attribute params. Not both
                 if(requestedAttributes !=null){
                     //if attributes are set, delete all the request and default attributes
