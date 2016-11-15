@@ -34,16 +34,14 @@ import org.wso2.charon.core.v2.exceptions.InternalErrorException;
 import org.wso2.charon.core.v2.objects.AbstractSCIMObject;
 import org.wso2.charon.core.v2.objects.SCIMObject;
 import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
-import org.wso2.charon.core.v2.schema.AttributeSchema;
-import org.wso2.charon.core.v2.schema.ResourceTypeSchema;
-import org.wso2.charon.core.v2.schema.SCIMAttributeSchema;
-import org.wso2.charon.core.v2.schema.SCIMConstants;
-import org.wso2.charon.core.v2.schema.SCIMDefinitions;
-import org.wso2.charon.core.v2.schema.SCIMResourceSchemaManager;
+import org.wso2.charon.core.v2.schema.*;
 import org.wso2.charon.core.v2.utils.AttributeUtil;
+import org.wso2.charon.core.v2.utils.codeutils.FilterTreeManager;
+import org.wso2.charon.core.v2.utils.codeutils.Node;
 import org.wso2.charon.core.v2.utils.codeutils.PatchOperation;
 import org.wso2.charon.core.v2.utils.codeutils.SearchRequest;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -497,6 +495,7 @@ public class JSONDecoder {
      */
     public ArrayList<PatchOperation> decodeRequest(String scimResourceString) throws BadRequestException {
 
+
         ArrayList<PatchOperation> operationList = new ArrayList<PatchOperation>();
         try {
             //decode the string into json representation
@@ -520,14 +519,17 @@ public class JSONDecoder {
     }
 
     /*
-     * deode the raw string and create a search object
+     * decode the raw string and create a search object
      * @param scimResourceString
      * @return
      * @throws BadRequestException
      */
-    public SearchRequest decodeSearchRequestBody(String scimResourceString) throws BadRequestException {
+    public SearchRequest decodeSearchRequestBody(String scimResourceString,
+                                                 SCIMResourceTypeSchema schema) throws BadRequestException {
+        FilterTreeManager filterTreeManager = null;
+        Node rootNode = null;
 
-        //decode the string and create serach object
+        //decode the string and create search object
         try {
             JSONObject decodedJsonObj = new JSONObject(new JSONTokener(scimResourceString));
             SearchRequest searchRequest = new SearchRequest();
@@ -538,6 +540,12 @@ public class JSONDecoder {
                     decodedJsonObj.opt(SCIMConstants.OperationalConstants.ATTRIBUTES);
             JSONArray excludedAttributesValues = (JSONArray)
                     decodedJsonObj.opt(SCIMConstants.OperationalConstants.EXCLUDED_ATTRIBUTES);
+            JSONArray schemas = (JSONArray)
+                    decodedJsonObj.opt(SCIMConstants.CommonSchemaConstants.SCHEMAS);
+
+            if(schemas.length() != 1){
+                throw new BadRequestException( "Schema is invalid", ResponseCodeConstants.INVALID_VALUE);
+            }
             if(attributesValues != null){
                 for(int i = 0; i < attributesValues.length(); i++ ){
                     attributes.add((String) attributesValues.get(i));
@@ -549,20 +557,28 @@ public class JSONDecoder {
                 }
             }
 
+            if(decodedJsonObj.optString(SCIMConstants.OperationalConstants.FILTER) != null){
+                filterTreeManager = new FilterTreeManager(
+                        decodedJsonObj.optString(SCIMConstants.OperationalConstants.FILTER), schema);
+                rootNode = filterTreeManager.buildTree();
+            }
             searchRequest.setAttributes(attributes);
             searchRequest.setExcludedAttributes(excludedAttributes);
+            searchRequest.setSchema((String) schemas.get(0));
             searchRequest.setCount(decodedJsonObj.optInt(SCIMConstants.OperationalConstants.COUNT));
             searchRequest.setStartIndex(decodedJsonObj.optInt(SCIMConstants.OperationalConstants.START_INDEX));
-            searchRequest.setFilter(decodedJsonObj.optString(SCIMConstants.OperationalConstants.FILTER));
-            searchRequest.setSortBy(decodedJsonObj.optString(SCIMConstants.OperationalConstants.SORT_BY));
-            searchRequest.setSortOder(decodedJsonObj.optString(SCIMConstants.OperationalConstants.SORT_ORDER));
-
+            searchRequest.setFilter(rootNode);
+            if(!decodedJsonObj.optString(SCIMConstants.OperationalConstants.SORT_BY).equals("")){
+                searchRequest.setSortBy(decodedJsonObj.optString(SCIMConstants.OperationalConstants.SORT_BY));
+            }
+            if(!decodedJsonObj.optString(SCIMConstants.OperationalConstants.SORT_ORDER).equals("")){
+                searchRequest.setSortOder(decodedJsonObj.optString(SCIMConstants.OperationalConstants.SORT_ORDER));
+            }
             return searchRequest;
 
-        } catch (JSONException e) {
-            logger.error("json error in decoding the resource");
+        } catch (JSONException | IOException e) {
+            logger.error("Error while decoding the resource string");
             throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
-
         }
     }
 

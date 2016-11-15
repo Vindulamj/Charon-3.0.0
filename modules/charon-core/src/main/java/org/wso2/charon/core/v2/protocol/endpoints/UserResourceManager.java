@@ -321,74 +321,85 @@ public class UserResourceManager extends AbstractResourceManager {
         try {
             //obtain the json encoder
             encoder = getEncoder();
-
             //obtain the json decoder
             decoder = getDecoder();
 
+            // unless configured returns core-user schema or else returns extended user schema)
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
             //create the search request object
-            SearchRequest searchRequest = decoder.decodeSearchRequestBody(resourceString);
+            SearchRequest searchRequest = decoder.decodeSearchRequestBody(resourceString, schema);
 
             //A value less than one shall be interpreted as 1
-            if(searchRequest.getStartIndex() < 1){
+            if(searchRequest.getStartIndex() < 1) {
                 searchRequest.setStartIndex(1);
             }
             //If count is not set, server default should be taken
-            if(searchRequest.getCount() == 0){
+            if(searchRequest.getCount() == 0) {
                 searchRequest.setCount(CharonConfiguration.getInstance().getCountValueForPagination());
             }
 
-                List<Object> returnedUsers;
-                int totalResults = 0;
-                //API user should pass a UserManager storage to UserResourceEndpoint.
-                if (userManager != null) {
-                    List<Object> tempList = userManager.listUsersWithPost(searchRequest);
-
-                    totalResults = (int) tempList.get(0);
-                    tempList.remove(0);
-
-                    returnedUsers = tempList;
-
-                    //if user not found, return an error in relevant format.
-                    if (returnedUsers == null || returnedUsers.isEmpty()) {
-                        String error = "Users not found in the user store.";
-                        //throw resource not found.
-                        throw new NotFoundException(error);
-                    }
-
-                    // unless configured returns core-user schema or else returns extended user schema)
-                    SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
-
-                    for(Object user : returnedUsers){
-                        //perform service provider side validation.
-                        ServerSideValidator.validateRetrievedSCIMObjectInList((User) user, schema,
-                                searchRequest.getAttributesAsString(), searchRequest.getExcludedAttributesAsString());
-                    }
-                    //create a listed resource object out of the returned users list.
-                    ListedResource listedResource = createListedResource(
-                            returnedUsers, searchRequest.getStartIndex(), totalResults);
-                    //convert the listed resource into specific format.
-                    String encodedListedResource = encoder.encodeSCIMObject(listedResource);
-                    //if there are any http headers to be added in the response header.
-                    Map<String, String> ResponseHeaders = new HashMap<String, String>();
-                    ResponseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
-                    return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedListedResource, ResponseHeaders);
-
-                } else {
-                    String error = "Provided user manager handler is null.";
-                    //throw internal server error.
-                    throw new InternalErrorException(error);
+            //check whether provided sortOrder is valid or not
+            if(searchRequest.getSortOder() != null ){
+                if(!(searchRequest.getSortOder().equalsIgnoreCase(SCIMConstants.OperationalConstants.ASCENDING)
+                        || searchRequest.getSortOder().equalsIgnoreCase(SCIMConstants.OperationalConstants.DESCENDING))){
+                    String error = " Invalid sortOrder value is specified";
+                    throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
                 }
-            } catch (CharonException e) {
-                return AbstractResourceManager.encodeSCIMException(e);
-            } catch (NotFoundException e) {
-                return AbstractResourceManager.encodeSCIMException(e);
-            } catch (InternalErrorException e) {
-                return AbstractResourceManager.encodeSCIMException(e);
-            } catch (BadRequestException e) {
-                return AbstractResourceManager.encodeSCIMException(e);
-            } catch (NotImplementedException e) {
-                return AbstractResourceManager.encodeSCIMException(e);
             }
+            //If a value for "sortBy" is provided and no "sortOrder" is specified, "sortOrder" SHALL default to ascending.
+            if(searchRequest.getSortOder() == null && searchRequest.getSortBy() != null){
+                searchRequest.setSortOder(SCIMConstants.OperationalConstants.ASCENDING);
+            }
+
+            List<Object> returnedUsers;
+            int totalResults = 0;
+            //API user should pass a UserManager storage to UserResourceEndpoint.
+            if (userManager != null) {
+                List<Object> tempList = userManager.listUsersWithPost(searchRequest);
+
+                totalResults = (int) tempList.get(0);
+                tempList.remove(0);
+
+                returnedUsers = tempList;
+
+                //if user not found, return an error in relevant format.
+                if (returnedUsers == null || returnedUsers.isEmpty()) {
+                    String error = "No resulted users are found in the user store.";
+                    //throw resource not found.
+                    throw new NotFoundException(error);
+                }
+
+                for(Object user : returnedUsers){
+                    //perform service provider side validation.
+                    ServerSideValidator.validateRetrievedSCIMObjectInList((User) user, schema,
+                            searchRequest.getAttributesAsString(), searchRequest.getExcludedAttributesAsString());
+                }
+                //create a listed resource object out of the returned users list.
+                ListedResource listedResource = createListedResource(
+                        returnedUsers, searchRequest.getStartIndex(), totalResults);
+                //convert the listed resource into specific format.
+                String encodedListedResource = encoder.encodeSCIMObject(listedResource);
+                //if there are any http headers to be added in the response header.
+                Map<String, String> ResponseHeaders = new HashMap<String, String>();
+                ResponseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
+                return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedListedResource, ResponseHeaders);
+
+            } else {
+                String error = "Provided user manager handler is null.";
+                //throw internal server error.
+                throw new InternalErrorException(error);
+            }
+        } catch (CharonException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (NotFoundException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (InternalErrorException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (BadRequestException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (NotImplementedException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        }
     }
 
     /**

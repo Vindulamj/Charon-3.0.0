@@ -14,14 +14,22 @@ import java.util.ArrayList;
  */
 public class SearchRequest {
 
+    private String schema;
     private ArrayList<String> attributes;
     private ArrayList<String> excludedAttributes;
     private int count;
     private int startIndex;
-    private String filter;
+    private Node filter;
     private String sortBy;
     private String sortOder;
 
+    public String getSchema() {
+        return schema;
+    }
+
+    public void setSchema(String schema) {
+        this.schema = schema;
+    }
 
     public int getCount() {
         return count;
@@ -55,11 +63,11 @@ public class SearchRequest {
         this.startIndex = startIndex;
     }
 
-    public String getFilter() {
+    public Node getFilter() {
         return filter;
     }
 
-    public void setFilter(String filter) {
+    public void setFilter(Node filter) {
         this.filter = filter;
     }
 

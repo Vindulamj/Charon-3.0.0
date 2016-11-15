@@ -30,6 +30,7 @@ import org.wso2.charon.core.v2.exceptions.NotImplementedException;
 import org.wso2.charon.core.v2.extensions.UserManager;
 import org.wso2.charon.core.v2.objects.Group;
 import org.wso2.charon.core.v2.objects.ListedResource;
+import org.wso2.charon.core.v2.objects.User;
 import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.v2.protocol.SCIMResponse;
 import org.wso2.charon.core.v2.schema.SCIMConstants;
@@ -219,6 +220,7 @@ public class GroupResourceManager extends AbstractResourceManager {
                                     String attributes, String excludeAttributes) {
 
         FilterTreeManager filterTreeManager = null;
+        Node rootNode = null;
         JSONEncoder encoder = null;
         try {
             //A value less than one shall be interpreted as 1
@@ -245,9 +247,10 @@ public class GroupResourceManager extends AbstractResourceManager {
 
             // unless configured returns core-user schema or else returns extended user schema)
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
-
-            filterTreeManager = new FilterTreeManager(filter, schema);
-            Node rootNode = filterTreeManager.buildTree();
+            if(filter != null){
+                filterTreeManager = new FilterTreeManager(filter, schema);
+                rootNode = filterTreeManager.buildTree();
+            }
 
             //obtain the json encoder
             encoder = getEncoder();
@@ -268,8 +271,6 @@ public class GroupResourceManager extends AbstractResourceManager {
                     //throw resource not found.
                     throw new NotFoundException(error);
                 }
-
-                totalResults = 100;
 
                 for (Object group: returnedGroups){
                     //perform service provider side validation.
@@ -308,12 +309,6 @@ public class GroupResourceManager extends AbstractResourceManager {
         }
     }
 
-    @Override
-    public SCIMResponse listWithPOST(String resourceString, UserManager userManager) {
-        return null;
-    }
-
-
     /*
      * this facilitates the querying using HTTP POST
      * @param resourceString
@@ -321,27 +316,45 @@ public class GroupResourceManager extends AbstractResourceManager {
      * @return
      */
 
-    public SCIMResponse listGroupsWithPOST(String resourceString, UserManager userManager)
-    {
+    @Override
+    public SCIMResponse listWithPOST(String resourceString, UserManager userManager) {
         JSONEncoder encoder = null;
         JSONDecoder decoder = null;
         try {
             //obtain the json encoder
             encoder = getEncoder();
-
             //obtain the json decoder
             decoder = getDecoder();
 
+            // return core group schema
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
             //create the search request object
-            SearchRequest searchRequest = decoder.decodeSearchRequestBody(resourceString);
+            SearchRequest searchRequest = decoder.decodeSearchRequestBody(resourceString, schema);
+
+            if(searchRequest.getSchema() != null && !searchRequest.getSchema().equals(SCIMConstants.SEARCH_SCHEMA_URI )){
+                throw new BadRequestException("Provided schema is invalid",ResponseCodeConstants.INVALID_VALUE);
+            }
 
             //A value less than one shall be interpreted as 1
-            if(searchRequest.getStartIndex() < 1){
+            if(searchRequest.getStartIndex() < 1) {
                 searchRequest.setStartIndex(1);
             }
             //If count is not set, server default should be taken
-            if(searchRequest.getCount() == 0){
+            if(searchRequest.getCount() == 0) {
                 searchRequest.setCount(CharonConfiguration.getInstance().getCountValueForPagination());
+            }
+
+            //check whether provided sortOrder is valid or not
+            if(searchRequest.getSortOder() != null ){
+                if(!(searchRequest.getSortOder().equalsIgnoreCase(SCIMConstants.OperationalConstants.ASCENDING)
+                        || searchRequest.getSortOder().equalsIgnoreCase(SCIMConstants.OperationalConstants.DESCENDING))){
+                    String error = " Invalid sortOrder value is specified";
+                    throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
+                }
+            }
+            //If a value for "sortBy" is provided and no "sortOrder" is specified, "sortOrder" SHALL default to ascending.
+            if(searchRequest.getSortOder() == null && searchRequest.getSortBy() != null){
+                searchRequest.setSortOder(SCIMConstants.OperationalConstants.ASCENDING);
             }
 
             List<Object> returnedGroups;
@@ -357,15 +370,12 @@ public class GroupResourceManager extends AbstractResourceManager {
 
                 //if user not found, return an error in relevant format.
                 if (returnedGroups == null || returnedGroups.isEmpty()) {
-                    String error = "Groups not found in the user store.";
+                    String error = "No resulted users are found in the user store.";
                     //throw resource not found.
                     throw new NotFoundException(error);
                 }
 
-                // unless configured returns core-user schema or else returns extended user schema)
-                SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
-
-                for(Object group:returnedGroups){
+                for(Object group : returnedGroups){
                     //perform service provider side validation.
                     ServerSideValidator.validateRetrievedSCIMObjectInList((Group) group, schema,
                             searchRequest.getAttributesAsString(), searchRequest.getExcludedAttributesAsString());
