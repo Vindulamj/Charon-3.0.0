@@ -2,19 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fcdcd64c-eb66-4bf8-a0b4-6f00065fa5b4" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/EndpointUtil.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/EndpointUtil.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/ResourceManagerUtil.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/SCIMUserManager.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/SCIMUserManager.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/Test.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/Test.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/extensions/UserManager.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/extensions/UserManager.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/GroupResourceManager.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/GroupResourceManager.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/MeResourceManager.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/MeResourceManager.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/UserResourceManager.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/UserResourceManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/schema/AbstractValidator.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/schema/AbstractValidator.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/schema/AttributeSchema.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/schema/AttributeSchema.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/schema/SCIMAttributeSchema.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/schema/SCIMAttributeSchema.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/schema/SCIMResourceTypeSchema.java" afterPath="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/schema/SCIMResourceTypeSchema.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scim-schema-extension.config" afterPath="$PROJECT_DIR$/scim-schema-extension.config" />
     </list>
     <ignored path="Charon-3.0.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -43,11 +36,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="EndpointUtil.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/EndpointUtil.java">
+      <file leaf-file-name="ResourceManagerUtil.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/ResourceManagerUtil.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="368">
-              <caret line="233" column="0" selection-start-line="233" selection-start-column="0" selection-end-line="233" selection-end-column="0" />
+            <state relative-caret-position="475">
+              <caret line="244" column="104" selection-start-line="244" selection-start-column="104" selection-end-line="244" selection-end-column="104" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -58,8 +51,18 @@
       <file leaf-file-name="Test.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/Test.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="114">
-              <caret line="34" column="9" selection-start-line="34" selection-start-column="9" selection-end-line="34" selection-end-column="9" />
+            <state relative-caret-position="266">
+              <caret line="198" column="56" selection-start-line="198" selection-start-column="56" selection-end-line="198" selection-end-column="56" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="GroupResourceManager.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/GroupResourceManager.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="9234">
+              <caret line="532" column="30" selection-start-line="532" selection-start-column="30" selection-end-line="532" selection-end-column="30" />
               <folding />
             </state>
           </provider>
@@ -86,7 +89,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/schema/SCIMSchemaDefinitions.java" />
         <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/utils/AttributeUtil.java" />
         <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/attributes/AbstractAttribute.java" />
         <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/attributes/ComplexAttribute.java" />
@@ -135,8 +137,9 @@
         <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/MeResourceManager.java" />
         <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/GroupResourceManager.java" />
         <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/extensions/UserManager.java" />
-        <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/Test.java" />
         <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/EndpointUtil.java" />
+        <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/ResourceManagerUtil.java" />
+        <option value="$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/Test.java" />
       </list>
     </option>
   </component>
@@ -1324,7 +1327,7 @@
       <workItem from="1479704867432" duration="1610000" />
       <workItem from="1479717683116" duration="6231000" />
       <workItem from="1479743536376" duration="23522000" />
-      <workItem from="1479828989095" duration="2950000" />
+      <workItem from="1479828989095" duration="4738000" />
     </task>
     <task id="LOCAL-00002" summary="Service Provider Config endpoint is added fully">
       <created>1477283464648</created>
@@ -1529,11 +1532,18 @@
       <option name="project" value="LOCAL" />
       <updated>1479214442883</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="APIs were re-designed to send attribute URIs mentioned in attributes and excludedAttributes">
+      <created>1479835860410</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1479835860410</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="258536000" />
+    <option name="totallyTimeSpent" value="260324000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="63" y="24" width="1857" height="1056" extended-state="6" />
@@ -1547,7 +1557,7 @@
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21294363" sideWeight="0.50966316" order="11" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32965213" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.282881" sideWeight="0.49033684" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.51148224" sideWeight="0.49033684" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32985386" sideWeight="0.49806738" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="CheckStyle" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.28705636" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32985386" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
@@ -1582,7 +1592,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Sorting for groups is added" />
     <MESSAGE value="Update with PUT is added for Groups" />
     <MESSAGE value="Resource Type Endpoint is added fully" />
     <MESSAGE value="Meta support for Resource Type Endpoint" />
@@ -1607,7 +1616,8 @@
     <MESSAGE value="sorting, pagination and filtering were made one API" />
     <MESSAGE value="sorting, pagination and filtering separate API design is removed" />
     <MESSAGE value="Search with POST is modified to fix the bugs" />
-    <option name="LAST_COMMIT_MESSAGE" value="Search with POST is modified to fix the bugs" />
+    <MESSAGE value="APIs were re-designed to send attribute URIs mentioned in attributes and excludedAttributes" />
+    <option name="LAST_COMMIT_MESSAGE" value="APIs were re-designed to send attribute URIs mentioned in attributes and excludedAttributes" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1924,6 +1934,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="190">
           <caret line="27" column="36" selection-start-line="27" selection-start-column="36" selection-end-line="27" selection-end-column="36" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1987,6 +1998,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="494">
           <caret line="78" column="22" selection-start-line="78" selection-start-column="22" selection-end-line="78" selection-end-column="22" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -2014,18 +2026,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/GroupResourceManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="468">
-          <caret line="532" column="30" selection-start-line="532" selection-start-column="30" selection-end-line="532" selection-end-column="30" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/extensions/UserManager.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-221">
           <caret line="50" column="41" selection-start-line="50" selection-start-column="41" selection-end-line="50" selection-end-column="41" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -2037,10 +2042,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/EndpointUtil.java">
+    <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/endpoints/GroupResourceManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="368">
-          <caret line="233" column="0" selection-start-line="233" selection-start-column="0" selection-end-line="233" selection-end-column="0" />
+        <state relative-caret-position="9234">
+          <caret line="532" column="30" selection-start-line="532" selection-start-column="30" selection-end-line="532" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/protocol/ResourceManagerUtil.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="475">
+          <caret line="244" column="104" selection-start-line="244" selection-start-column="104" selection-end-line="244" selection-end-column="104" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -2049,8 +2062,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/modules/charon-core/src/main/java/org/wso2/charon/core/v2/Test.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="114">
-          <caret line="34" column="9" selection-start-line="34" selection-start-column="9" selection-end-line="34" selection-end-column="9" />
+        <state relative-caret-position="266">
+          <caret line="198" column="56" selection-start-line="198" selection-start-column="56" selection-end-line="198" selection-end-column="56" />
           <folding />
         </state>
       </provider>

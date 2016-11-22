@@ -5,7 +5,7 @@ import org.wso2.charon.core.v2.encoder.JSONEncoder;
 import org.wso2.charon.core.v2.exceptions.*;
 import org.wso2.charon.core.v2.extensions.UserManager;
 import org.wso2.charon.core.v2.objects.User;
-import org.wso2.charon.core.v2.protocol.EndpointUtil;
+import org.wso2.charon.core.v2.protocol.ResourceManagerUtil;
 import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.v2.protocol.SCIMResponse;
 import org.wso2.charon.core.v2.schema.SCIMConstants;
@@ -39,7 +39,7 @@ public class MeResourceManager extends AbstractResourceManager{
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
             //get the URIs of required attributes which must be given a value
 
-            List<String> requiredAttributes = EndpointUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
+            List<String> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
                     CopyUtil.deepCopy(schema),attributes, excludeAttributes);
 
             /*API user should pass a UserManager impl to UserResourceEndpoint.
@@ -85,7 +85,7 @@ public class MeResourceManager extends AbstractResourceManager{
             // unless configured returns core-user schema or else returns extended user schema)
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
             //get the URIs of required attributes which must be given a value
-            List<String> requiredAttributes = EndpointUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
+            List<String> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
                     CopyUtil.deepCopy(schema),attributes, excludeAttributes);
             //decode the SCIM User object, encoded in the submitted payload.
             User user = (User) decoder.decodeResource(scimObjectString, schema, new User());
@@ -198,7 +198,7 @@ public class MeResourceManager extends AbstractResourceManager{
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
 
             //get the URIs of required attributes which must be given a value
-            List<String> requiredAttributes = EndpointUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
+            List<String> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
                     CopyUtil.deepCopy(schema),attributes, excludeAttributes);
             //decode the SCIM User object, encoded in the submitted payload.
             User user = (User) decoder.decodeResource(scimObjectString, schema, new User());

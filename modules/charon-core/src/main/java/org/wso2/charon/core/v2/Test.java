@@ -196,10 +196,10 @@ public class Test {
                "}";
 
        String attributes="nickName,photos.value,EnterpriseUser.manager.value";
-       String excludeAttributes="externalId,emails.value,wso2Extension.employeeNumber.display";
+       String excludeAttributes="externalId,emails.value,EnterpriseUser.manager";
 
        //----CREATE USER --------
-       SCIMResponse res=um.create(array,new SCIMUserManager(),attributes, null);
+       SCIMResponse res=um.create(array,new SCIMUserManager(),null, excludeAttributes);
 
 
        //-----GET USER  ---------

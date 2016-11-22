@@ -12,8 +12,17 @@ import java.util.*;
 /**
  * This class will act as a support class for endpoints
  */
-public class EndpointUtil {
+public class ResourceManagerUtil {
 
+    /**
+     * this method is to get the URI list of the attributes which need to retrieved from the databases.
+     * Note that we should consider the 'attributes' and 'excludedAttributes' parameters for this process.
+     * @param schema
+     * @param requestedAttributes
+     * @param requestedExcludingAttributes
+     * @return
+     * @throws CharonException
+     */
     public static List<String> getOnlyRequiredAttributesURIs(SCIMResourceTypeSchema schema,
                                                                       String requestedAttributes,
                                                                       String requestedExcludingAttributes)
@@ -78,7 +87,17 @@ public class EndpointUtil {
        return convertSchemasToURIs(attributeSchemaArrayList);
     }
 
-
+    /**
+     * this method is to get the URI list of the sub attributes which need to retrieved from the databases.
+     * Note that we should consider the 'attributes' and 'excludedAttributes' parameters for this process.
+     * @param attributeSchema
+     * @param attributeSchemaArrayList
+     * @param requestedAttributes
+     * @param requestedExcludingAttributes
+     * @param requestedAttributesList
+     * @param requestedExcludingAttributesList
+     * @throws CharonException
+     */
     private static void getOnlyRequiredSubAttributesURIs(AttributeSchema attributeSchema,
                                                          ArrayList<AttributeSchema> attributeSchemaArrayList,
                                                          String requestedAttributes,
@@ -89,7 +108,7 @@ public class EndpointUtil {
         if (attributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
 
             AttributeSchema realAttributeSchema = null;
-
+            //need to get the right reference first as we are going to delete by reference.
             for (AttributeSchema schema : attributeSchemaArrayList) {
                 if (schema.getName().equals(attributeSchema.getName())) {
                     realAttributeSchema = schema;
@@ -133,7 +152,8 @@ public class EndpointUtil {
                             //if exclude attribute is set, set of exclude attributes need to be
                             // removed from the default set of attributes
                             if ((subAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.DEFAULT))
-                                    && requestedExcludingAttributesList.contains(subAttributeSchema.getName())) {
+                                    && requestedExcludingAttributesList.contains(attributeSchema.getName()
+                                    + "." + subAttributeSchema.getName())) {
                                 realAttributeSchema.removeSubAttribute(subAttributeSchema.getName());
                             }
                         }
@@ -147,6 +167,18 @@ public class EndpointUtil {
         }
     }
 
+    /**
+     * this method is to get the URI list of the sub sub attributes which need to retrieved from the databases.
+     * Note that we should consider the 'attributes' and 'excludedAttributes' parameters for this process.
+     * @param attribute
+     * @param subAttribute
+     * @param attributeSchemaArrayList
+     * @param requestedAttributes
+     * @param requestedExcludingAttributes
+     * @param requestedAttributesList
+     * @param requestedExcludingAttributesList
+     * @throws CharonException
+     */
     private static void getOnlyRequiredSubSubAttributesURIs(AttributeSchema attribute,
                                                             AttributeSchema subAttribute,
                                                             ArrayList<AttributeSchema> attributeSchemaArrayList,
@@ -159,7 +191,7 @@ public class EndpointUtil {
         if (subAttribute.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
 
             AttributeSchema realAttributeSchema = null;
-
+            //need to get the right reference first as we are going to delete by reference
             if (realAttributeSchema == null) {
                 for (AttributeSchema schema : attributeSchemaArrayList) {
                     List<SCIMAttributeSchema> subSchemas = schema.getSubAttributeSchemas();
@@ -174,43 +206,44 @@ public class EndpointUtil {
                 }
             }
             if (realAttributeSchema != null) {
-                List<SCIMAttributeSchema> subAttributeList = subAttribute.getSubAttributeSchemas();
+                List<SCIMAttributeSchema> subSubAttributeList = subAttribute.getSubAttributeSchemas();
 
-                for (SCIMAttributeSchema subAttributeSchema : subAttributeList) {
+                for (SCIMAttributeSchema subSubAttributeSchema : subSubAttributeList) {
 
                     //check for never/request attributes.
-                    if (subAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.NEVER)) {
-                        realAttributeSchema.removeSubAttribute(subAttributeSchema.getName());
+                    if (subSubAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.NEVER)) {
+                        realAttributeSchema.removeSubAttribute(subSubAttributeSchema.getName());
                     }
                     //if the returned property is request, need to check whether is it specifically requested by the user.
                     // If so return it.
                     if (requestedAttributes == null && requestedExcludingAttributes == null) {
-                        if (subAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.REQUEST)) {
-                            realAttributeSchema.removeSubAttribute(subAttributeSchema.getName());
+                        if (subSubAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.REQUEST)) {
+                            realAttributeSchema.removeSubAttribute(subSubAttributeSchema.getName());
                         }
                     } else {
                         //A request should only contains either attributes or exclude attribute params. Not both
                         if (requestedAttributes != null) {
                             //if attributes are set, delete all the request and default attributes
                             //and add only the requested attributes
-                            if ((subAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.DEFAULT)
-                                    || subAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.REQUEST))
+                            if ((subSubAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.DEFAULT)
+                                    || subSubAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.REQUEST))
                                     && (!requestedAttributesList.contains(attribute.getName() + "." +
-                                    subAttribute.getName() + "." + subAttributeSchema.getName()))
+                                    subAttribute.getName() + "." + subSubAttributeSchema.getName()))
                                     && (!requestedAttributesList.contains(attribute.getName()))
                                     && (!requestedAttributesList.contains(attribute.getName() + "." + subAttribute.getName()))) {
-                                realAttributeSchema.removeSubAttribute(subAttributeSchema.getName());
+                                realAttributeSchema.removeSubAttribute(subSubAttributeSchema.getName());
                             }
                         } else if (requestedExcludingAttributes != null) {
                             //removing attributes which has returned as request. This is because no request is made
-                            if (subAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.REQUEST)) {
-                                realAttributeSchema.removeSubAttribute(subAttributeSchema.getName());
+                            if (subSubAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.REQUEST)) {
+                                realAttributeSchema.removeSubAttribute(subSubAttributeSchema.getName());
                             }
                             //if exclude attribute is set, set of exclude attributes need to be
                             // removed from the default set of attributes
-                            if ((subAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.DEFAULT))
-                                    && requestedExcludingAttributesList.contains(subAttributeSchema.getName())) {
-                                realAttributeSchema.removeSubAttribute(subAttributeSchema.getName());
+                            if ((subSubAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.DEFAULT))
+                                    && requestedExcludingAttributesList.contains(attribute.getName() +
+                                    "." + subAttribute.getName() + "." + subSubAttributeSchema.getName())) {
+                                realAttributeSchema.removeSubAttribute(subSubAttributeSchema.getName());
                             }
                         }
                     }
@@ -219,7 +252,12 @@ public class EndpointUtil {
         }
     }
 
-
+    /**
+     * this checks whether the sub attribute or sub sub attribute is exist in the given list.
+     * @param requestedAttributes
+     * @param attributeSchema
+     * @return
+     */
     private static boolean isSubAttributeExistsInList(List<String> requestedAttributes, AttributeSchema attributeSchema) {
         if(attributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)){
             List<SCIMAttributeSchema> subAttributeSchemas = attributeSchema.getSubAttributeSchemas();
@@ -248,6 +286,13 @@ public class EndpointUtil {
         }
      }
 
+    /**
+     * this checks whether sub attribute is exist in the given list.
+     * @param requestedAttributes
+     * @param attributeSchema
+     * @param subAttributeSchema
+     * @return
+     */
     private static boolean isSubSubAttributeExistsInList(List<String> requestedAttributes,
                                                          AttributeSchema attributeSchema,
                                                          AttributeSchema subAttributeSchema) {
@@ -267,6 +312,11 @@ public class EndpointUtil {
         }
     }
 
+    /**
+     * this makes a list of URIs from the list of schemas.
+     * @param schemas
+     * @return
+     */
     private static List<String> convertSchemasToURIs(List<AttributeSchema> schemas){
 
          List<String> URIList = new ArrayList<>();
@@ -290,6 +340,12 @@ public class EndpointUtil {
          return  URIList;
      }
 
+    /**
+     * this is to remove given attribute from the given list.
+     * @param attributeSchemaList
+     * @param attributeName
+     * @throws CharonException
+     */
      private static void removeAttributesFromList(List<AttributeSchema> attributeSchemaList, String attributeName)
              throws CharonException {
          List<AttributeSchema> tempList = (List<AttributeSchema>) CopyUtil.deepCopy(attributeSchemaList);

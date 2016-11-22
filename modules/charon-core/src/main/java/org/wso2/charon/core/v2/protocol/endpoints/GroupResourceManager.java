@@ -30,7 +30,7 @@ import org.wso2.charon.core.v2.exceptions.NotImplementedException;
 import org.wso2.charon.core.v2.extensions.UserManager;
 import org.wso2.charon.core.v2.objects.Group;
 import org.wso2.charon.core.v2.objects.ListedResource;
-import org.wso2.charon.core.v2.protocol.EndpointUtil;
+import org.wso2.charon.core.v2.protocol.ResourceManagerUtil;
 import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.v2.protocol.SCIMResponse;
 import org.wso2.charon.core.v2.schema.SCIMConstants;
@@ -75,7 +75,7 @@ public class GroupResourceManager extends AbstractResourceManager {
             // returns core-group schema
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
             //get the URIs of required attributes which must be given a value
-            List<String> requiredAttributes = EndpointUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
+            List<String> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
                     CopyUtil.deepCopy(schema),attributes, excludeAttributes);
 
             //API user should pass a UserManager storage to GroupResourceEndpoint.
@@ -130,7 +130,7 @@ public class GroupResourceManager extends AbstractResourceManager {
             // returns core-group schema
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
             //get the URIs of required attributes which must be given a value
-            List<String> requiredAttributes = EndpointUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
+            List<String> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
                     CopyUtil.deepCopy(schema),attributes, excludeAttributes);
             //decode the SCIM group object, encoded in the submitted payload.
             Group group = (Group) decoder.decodeResource(scimObjectString, schema, new Group());
@@ -262,7 +262,7 @@ public class GroupResourceManager extends AbstractResourceManager {
             encoder = getEncoder();
 
             //get the URIs of required attributes which must be given a value
-            List<String> requiredAttributes = EndpointUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
+            List<String> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
                     CopyUtil.deepCopy(schema),attributes, excludeAttributes);
 
             List<Object> returnedGroups;
@@ -370,7 +370,7 @@ public class GroupResourceManager extends AbstractResourceManager {
             }
 
             //get the URIs of required attributes which must be given a value
-            List<String> requiredAttributes = EndpointUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
+            List<String> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
                     CopyUtil.deepCopy(schema), searchRequest.getAttributesAsString(),
                     searchRequest.getExcludedAttributesAsString());
 
@@ -450,7 +450,7 @@ public class GroupResourceManager extends AbstractResourceManager {
 
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
             //get the URIs of required attributes which must be given a value
-            List<String> requiredAttributes = EndpointUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
+            List<String> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
                     CopyUtil.deepCopy(schema), attributes, excludeAttributes);
             //decode the SCIM User object, encoded in the submitted payload.
             Group group = (Group) decoder.decodeResource(scimObjectString, schema, new Group());
