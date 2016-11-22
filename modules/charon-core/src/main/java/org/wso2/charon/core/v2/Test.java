@@ -195,11 +195,11 @@ public class Test {
                "  ],\n" +
                "}";
 
-       String attributes="wso2Extension.sister,nickName,photos.value,wso2Extension.employeeNumber.value";
+       String attributes="nickName,photos.value,EnterpriseUser.manager.value";
        String excludeAttributes="externalId,emails.value,wso2Extension.employeeNumber.display";
 
        //----CREATE USER --------
-       //SCIMResponse res=um.create(array,new SCIMUserManager(),null, null);
+       SCIMResponse res=um.create(array,new SCIMUserManager(),attributes, null);
 
 
        //-----GET USER  ---------
@@ -243,7 +243,7 @@ public class Test {
                "   }";
 
        //-----UPDATE USERS WITH PATCH ---------
-       SCIMResponse res= um.updateWithPATCH("3f0dda41-ce08-497c-917e-12b803acdfb3", patch_Request, new SCIMUserManager(),null, null);
+       //SCIMResponse res= um.updateWithPATCH("3f0dda41-ce08-497c-917e-12b803acdfb3", patch_Request, new SCIMUserManager(),null, null);
 
 
        //-----SERVICE PROVIDER CONFIG  ---------

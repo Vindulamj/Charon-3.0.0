@@ -38,54 +38,56 @@ public interface UserManager {
 
         /***************User Manipulation operations.*******************/
 
-    public User createUser (User user)
+    public User createUser(User user, List<String> requiredAttributes)
             throws CharonException, ConflictException, BadRequestException;
 
-    public User getUser(String id)
+    public User getUser(String id, List<String> requiredAttributes)
             throws CharonException, BadRequestException;
 
     public void deleteUser(String userId)
             throws NotFoundException, CharonException, NotImplementedException, BadRequestException;
 
-    public List<Object> listUsersWithGET(Node node, int startIndex, int count, String sortBy, String sortOrder)
+    public List<Object> listUsersWithGET(Node node, int startIndex, int count,
+                                         String sortBy, String sortOrder, List<String> requiredAttributes)
             throws CharonException, NotImplementedException, BadRequestException;
 
-    public List<Object> listUsersWithPost(SearchRequest searchRequest)
+    public List<Object> listUsersWithPost(SearchRequest searchRequest, List<String> requiredAttributes)
             throws CharonException, NotImplementedException, BadRequestException;
 
-    public User updateUser(User updatedUser)
+    public User updateUser(User updatedUser, List<String> requiredAttributes)
             throws NotImplementedException, CharonException, BadRequestException;
 
-    public User getMe(String userName)
+    public User getMe(String userName, List<String> requiredAttributes)
             throws CharonException, BadRequestException, NotFoundException;
 
-    public User createMe(User user)
+    public User createMe(User user, List<String> requiredAttributes)
             throws CharonException, ConflictException, BadRequestException;
 
     public void deleteMe(String userName)
             throws NotFoundException, CharonException, NotImplementedException, BadRequestException;
 
-    public User updateMe(User updatedUser)
+    public User updateMe(User updatedUser, List<String> requiredAttributes)
             throws NotImplementedException, CharonException, BadRequestException;
 
 
    /* ****************Group manipulation operations.********************/
 
-    public Group createGroup(Group group)
+    public Group createGroup(Group group, List<String> requiredAttributes)
             throws CharonException, ConflictException, NotImplementedException, BadRequestException;
 
-    public Group getGroup(String id)
+    public Group getGroup(String id, List<String> requiredAttributes)
             throws NotImplementedException, BadRequestException, CharonException;
 
     public void deleteGroup(String id)
             throws NotFoundException, CharonException, NotImplementedException, BadRequestException;
 
-    public List<Object> listGroupsWithGET(Node node, int startIndex, int count, String sortBy, String sortOrder )
+    public List<Object> listGroupsWithGET(Node node, int startIndex, int count, String sortBy,
+                                          String sortOrder, List<String> requiredAttributes)
             throws CharonException, NotImplementedException, BadRequestException;
 
-    public Group updateGroup(Group oldGroup, Group newGroup)
+    public Group updateGroup(Group oldGroup, Group newGroup, List<String> requiredAttributes)
             throws NotImplementedException, BadRequestException, CharonException;
 
-    public List<Object> listGroupsWithPost(SearchRequest searchRequest)
+    public List<Object> listGroupsWithPost(SearchRequest searchRequest, List<String> requiredAttributes)
             throws NotImplementedException, BadRequestException, CharonException;;
 }

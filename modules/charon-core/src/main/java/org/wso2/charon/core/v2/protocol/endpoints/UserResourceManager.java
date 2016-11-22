@@ -9,6 +9,7 @@ import org.wso2.charon.core.v2.exceptions.*;
 import org.wso2.charon.core.v2.extensions.UserManager;
 import org.wso2.charon.core.v2.objects.ListedResource;
 import org.wso2.charon.core.v2.objects.User;
+import org.wso2.charon.core.v2.protocol.EndpointUtil;
 import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.v2.protocol.SCIMResponse;
 import org.wso2.charon.core.v2.schema.SCIMResourceSchemaManager;
@@ -54,18 +55,23 @@ public class UserResourceManager extends AbstractResourceManager {
             //obtain the json encoder
             encoder = getEncoder();
 
+            //obtain the schema corresponding to user
+            // unless configured returns core-user schema or else returns extended user schema)
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+
+            //get the URIs of required attributes which must be given a value
+            List<String> requiredAttributes = EndpointUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
+                    CopyUtil.deepCopy(schema),attributes, excludeAttributes);
+
             /*API user should pass a UserManager impl to UserResourceEndpoint.
             retrieve the user from the provided UM handler.*/
-            User user = ((UserManager) userManager).getUser(id);
+            User user = ((UserManager) userManager).getUser(id, requiredAttributes);
 
             //if user not found, return an error in relevant format.
             if (user == null) {
                 String error = "User not found in the user store.";
                 throw new NotFoundException(error);
             }
-            //obtain the schema corresponding to user
-            // unless configured returns core-user schema or else returns extended user schema)
-            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
             //perform service provider side validation.
             ServerSideValidator.validateRetrievedSCIMObject(user, schema, attributes, excludeAttributes);
             //convert the user into requested format.
@@ -110,13 +116,15 @@ public class UserResourceManager extends AbstractResourceManager {
             User user = (User) decoder.decodeResource(scimObjectString, schema, new User());
             //validate the created user.
             ServerSideValidator.validateCreatedSCIMObject(user, schema);
-
+            //get the URIs of required attributes which must be given a value
+            List<String> requiredAttributes = EndpointUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
+                                    CopyUtil.deepCopy(schema),attributes, excludeAttributes);
             User createdUser ;
 
             if (userManager != null) {
             /*handover the SCIM User object to the user storage provided by the SP.
             need to send back the newly created user in the response payload*/
-                createdUser = userManager.createUser(user);
+                createdUser = userManager.createUser(user, requiredAttributes);
             }
             else{
                 String error = "Provided user manager handler is null.";
@@ -254,11 +262,16 @@ public class UserResourceManager extends AbstractResourceManager {
             //obtain the json encoder
             encoder = getEncoder();
 
+            //get the URIs of required attributes which must be given a value
+            List<String> requiredAttributes = EndpointUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
+                    CopyUtil.deepCopy(schema),attributes, excludeAttributes);
+
             List<Object> returnedUsers;
             int totalResults = 0 ;
             //API user should pass a UserManager storage to UserResourceEndpoint.
             if (userManager != null) {
-                List<Object> tempList = userManager.listUsersWithGET(rootNode, startIndex, count, sortBy, sortOrder);
+                List<Object> tempList = userManager.listUsersWithGET(rootNode, startIndex, count,
+                        sortBy, sortOrder, requiredAttributes);
 
                 totalResults = (int) tempList.get(0);
                 tempList.remove(0);
@@ -351,11 +364,16 @@ public class UserResourceManager extends AbstractResourceManager {
                 searchRequest.setSortOder(SCIMConstants.OperationalConstants.ASCENDING);
             }
 
+            //get the URIs of required attributes which must be given a value
+            List<String> requiredAttributes = EndpointUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
+                    CopyUtil.deepCopy(schema), searchRequest.getAttributesAsString(),
+                    searchRequest.getExcludedAttributesAsString());
+
             List<Object> returnedUsers;
             int totalResults = 0;
             //API user should pass a UserManager storage to UserResourceEndpoint.
             if (userManager != null) {
-                List<Object> tempList = userManager.listUsersWithPost(searchRequest);
+                List<Object> tempList = userManager.listUsersWithPost(searchRequest, requiredAttributes);
 
                 totalResults = (int) tempList.get(0);
                 tempList.remove(0);
@@ -424,15 +442,19 @@ public class UserResourceManager extends AbstractResourceManager {
 
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
 
+            //get the URIs of required attributes which must be given a value
+            List<String> requiredAttributes = EndpointUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
+                    CopyUtil.deepCopy(schema),attributes, excludeAttributes);
+
             //decode the SCIM User object, encoded in the submitted payload.
             User user = (User) decoder.decodeResource(scimObjectString, schema, new User());
             User updatedUser = null;
             if (userManager != null) {
                 //retrieve the old object
-                User oldUser = userManager.getUser(existingId);
+                User oldUser = userManager.getUser(existingId, null);
                 if (oldUser != null) {
                     User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(oldUser, user, schema);
-                    updatedUser = userManager.updateUser(validatedUser);
+                    updatedUser = userManager.updateUser(validatedUser, requiredAttributes);
 
                 } else {
                     String error = "No user exists with the given id: " + existingId;
@@ -450,7 +472,7 @@ public class UserResourceManager extends AbstractResourceManager {
                 //create a deep copy of the user object since we are going to change it.
                 User copiedUser = (User) CopyUtil.deepCopy(updatedUser);
                 //need to remove password before returning
-                ServerSideValidator.ValidateReturnedAttributes(copiedUser,attributes,excludeAttributes);
+                ServerSideValidator.ValidateReturnedAttributes(copiedUser, attributes, excludeAttributes);
                 encodedUser = encoder.encodeSCIMObject(copiedUser);
                 //add location header
                 httpHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(
@@ -490,52 +512,6 @@ public class UserResourceManager extends AbstractResourceManager {
      */
     public SCIMResponse updateWithPATCH(String existingId, String scimObjectString, UserManager userManager,
                                         String attributes, String excludeAttributes) {
-
-        JSONEncoder encoder = null;
-        JSONDecoder decoder = null;
-
-        ArrayList<PatchOperation> operationList = new ArrayList<PatchOperation>();
-        try {
-            //obtain the json encoder
-            encoder = getEncoder();
-            //obtain the json decoder.
-            decoder = getDecoder();
-
-            if (existingId != null) {
-                //retrieve the old object
-                User oldUser = userManager.getUser(existingId);
-                if (oldUser == null) {
-                    String error = "No user exists with the given id: " + existingId;
-                    throw new NotFoundException(error);
-                }
-                operationList = decoder.decodeRequest(scimObjectString);
-                for(PatchOperation patchOperation : operationList){
-                    if(patchOperation.getOperation().equals(SCIMConstants.OperationalConstants.ADD)){
-                        patchOperationAdd(oldUser, patchOperation);
-                    }
-                    else if(patchOperation.getOperation().equals(SCIMConstants.OperationalConstants.REMOVE)){
-                        patchOperationRemove(oldUser, patchOperation);
-                    }
-                    else if(patchOperation.getOperation().equals(SCIMConstants.OperationalConstants.REPLACE)){
-                        patchOperationReplace(oldUser, patchOperation);
-                    }
-                }
-            }
-            else{
-                //PATCH is for modifying resources, not endpoints, hence if existing id is not specified,
-                // an error need to be thrown
-                String error = "No user resource is specified in the request";
-                throw new BadRequestException(error, ResponseCodeConstants.NO_TARGET);
-            }
-        } catch (CharonException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (NotFoundException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (BadRequestException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (InternalErrorException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        }
         return null;
     }
 
@@ -562,30 +538,4 @@ public class UserResourceManager extends AbstractResourceManager {
         return listedResource;
     }
 
-
-    private void patchOperationAdd(User oldUser, PatchOperation patchOperation) throws CharonException,
-            BadRequestException, InternalErrorException {
-        //obtain the json decoder.
-        JSONDecoder decoder = getDecoder();
-        SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
-        User newUser = (User) decoder.decodeResource((String) patchOperation.getValues().toString(), schema, new User());
-        Map<String,Attribute> attributeMap = newUser.getAttributeList();
-
-        for(Attribute attribute : attributeMap.values()){
-            if(attribute instanceof SimpleAttribute){
-
-            }
-        }
-
-    }
-
-    private void patchOperationReplace(User oldUser, PatchOperation patchOperation) throws CharonException {
-        //obtain the json decoder.
-        JSONDecoder decoder = getDecoder();
-    }
-
-    private void patchOperationRemove(User oldUser, PatchOperation patchOperation) throws CharonException {
-        //obtain the json decoder.
-        JSONDecoder decoder = getDecoder();
-    }
 }
