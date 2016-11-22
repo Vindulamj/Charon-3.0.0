@@ -1,4 +1,4 @@
-package org.wso2.charon.core.v2.protocol;
+package org.wso2.charon.core.v2.utils.codeutils;
 
 import org.wso2.charon.core.v2.exceptions.CharonException;
 import org.wso2.charon.core.v2.schema.AttributeSchema;
