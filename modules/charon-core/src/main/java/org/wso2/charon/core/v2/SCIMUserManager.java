@@ -51,9 +51,6 @@ public class SCIMUserManager implements UserManager {
 
     public User createUser(User user, Map<String, Boolean> requiredAttributes) throws CharonException {
 
-        for(String x : requiredAttributes){
-            System.out.println(x);
-        }
         //TODO: Get the E-Tag(version) and add as a attribute of the cretated user
         try {
             FileOutputStream fileOut =
