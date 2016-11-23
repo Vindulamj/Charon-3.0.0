@@ -58,7 +58,7 @@ public class UserResourceManager extends AbstractResourceManager {
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
 
             //get the URIs of required attributes which must be given a value
-            List<String> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
+            Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
                     CopyUtil.deepCopy(schema),attributes, excludeAttributes);
 
             /*API user should pass a UserManager impl to UserResourceEndpoint.
@@ -115,7 +115,7 @@ public class UserResourceManager extends AbstractResourceManager {
             //validate the created user.
             ServerSideValidator.validateCreatedSCIMObject(user, schema);
             //get the URIs of required attributes which must be given a value
-            List<String> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
+            Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
                                     CopyUtil.deepCopy(schema),attributes, excludeAttributes);
             User createdUser ;
 
@@ -261,7 +261,7 @@ public class UserResourceManager extends AbstractResourceManager {
             encoder = getEncoder();
 
             //get the URIs of required attributes which must be given a value
-            List<String> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
+            Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
                     CopyUtil.deepCopy(schema),attributes, excludeAttributes);
 
             List<Object> returnedUsers;
@@ -363,7 +363,7 @@ public class UserResourceManager extends AbstractResourceManager {
             }
 
             //get the URIs of required attributes which must be given a value
-            List<String> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
+            Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
                     CopyUtil.deepCopy(schema), searchRequest.getAttributesAsString(),
                     searchRequest.getExcludedAttributesAsString());
 
@@ -441,7 +441,7 @@ public class UserResourceManager extends AbstractResourceManager {
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
 
             //get the URIs of required attributes which must be given a value
-            List<String> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
+            Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
                     CopyUtil.deepCopy(schema),attributes, excludeAttributes);
 
             //decode the SCIM User object, encoded in the submitted payload.

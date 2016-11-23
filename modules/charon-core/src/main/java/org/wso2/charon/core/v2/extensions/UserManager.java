@@ -28,6 +28,7 @@ import org.wso2.charon.core.v2.utils.codeutils.Node;
 import org.wso2.charon.core.v2.utils.codeutils.SearchRequest;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * This is the interface for UserManager extension.
@@ -38,56 +39,56 @@ public interface UserManager {
 
         /***************User Manipulation operations.*******************/
 
-    public User createUser(User user, List<String> requiredAttributes)
+    public User createUser(User user, Map<String, Boolean> requiredAttributes)
             throws CharonException, ConflictException, BadRequestException;
 
-    public User getUser(String id, List<String> requiredAttributes)
+    public User getUser(String id, Map<String, Boolean> requiredAttributes)
             throws CharonException, BadRequestException;
 
     public void deleteUser(String userId)
             throws NotFoundException, CharonException, NotImplementedException, BadRequestException;
 
     public List<Object> listUsersWithGET(Node node, int startIndex, int count,
-                                         String sortBy, String sortOrder, List<String> requiredAttributes)
+                                         String sortBy, String sortOrder, Map<String, Boolean> requiredAttributes)
             throws CharonException, NotImplementedException, BadRequestException;
 
-    public List<Object> listUsersWithPost(SearchRequest searchRequest, List<String> requiredAttributes)
+    public List<Object> listUsersWithPost(SearchRequest searchRequest, Map<String, Boolean> requiredAttributes)
             throws CharonException, NotImplementedException, BadRequestException;
 
-    public User updateUser(User updatedUser, List<String> requiredAttributes)
+    public User updateUser(User updatedUser, Map<String, Boolean> requiredAttributes)
             throws NotImplementedException, CharonException, BadRequestException;
 
-    public User getMe(String userName, List<String> requiredAttributes)
+    public User getMe(String userName, Map<String, Boolean> requiredAttributes)
             throws CharonException, BadRequestException, NotFoundException;
 
-    public User createMe(User user, List<String> requiredAttributes)
+    public User createMe(User user, Map<String, Boolean> requiredAttributes)
             throws CharonException, ConflictException, BadRequestException;
 
     public void deleteMe(String userName)
             throws NotFoundException, CharonException, NotImplementedException, BadRequestException;
 
-    public User updateMe(User updatedUser, List<String> requiredAttributes)
+    public User updateMe(User updatedUser, Map<String, Boolean> requiredAttributes)
             throws NotImplementedException, CharonException, BadRequestException;
 
 
    /* ****************Group manipulation operations.********************/
 
-    public Group createGroup(Group group, List<String> requiredAttributes)
+    public Group createGroup(Group group, Map<String, Boolean> requiredAttributes)
             throws CharonException, ConflictException, NotImplementedException, BadRequestException;
 
-    public Group getGroup(String id, List<String> requiredAttributes)
+    public Group getGroup(String id, Map<String, Boolean> requiredAttributes)
             throws NotImplementedException, BadRequestException, CharonException;
 
     public void deleteGroup(String id)
             throws NotFoundException, CharonException, NotImplementedException, BadRequestException;
 
     public List<Object> listGroupsWithGET(Node node, int startIndex, int count, String sortBy,
-                                          String sortOrder, List<String> requiredAttributes)
+                                          String sortOrder, Map<String, Boolean> requiredAttributes)
             throws CharonException, NotImplementedException, BadRequestException;
 
-    public Group updateGroup(Group oldGroup, Group newGroup, List<String> requiredAttributes)
+    public Group updateGroup(Group oldGroup, Group newGroup, Map<String, Boolean> requiredAttributes)
             throws NotImplementedException, BadRequestException, CharonException;
 
-    public List<Object> listGroupsWithPost(SearchRequest searchRequest, List<String> requiredAttributes)
+    public List<Object> listGroupsWithPost(SearchRequest searchRequest, Map<String, Boolean> requiredAttributes)
             throws NotImplementedException, BadRequestException, CharonException;;
 }
