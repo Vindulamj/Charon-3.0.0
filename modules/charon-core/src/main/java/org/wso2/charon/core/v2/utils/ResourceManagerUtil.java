@@ -1,11 +1,10 @@
-package org.wso2.charon.core.v2.utils.codeutils;
+package org.wso2.charon.core.v2.utils;
 
 import org.wso2.charon.core.v2.exceptions.CharonException;
 import org.wso2.charon.core.v2.schema.AttributeSchema;
 import org.wso2.charon.core.v2.schema.SCIMAttributeSchema;
 import org.wso2.charon.core.v2.schema.SCIMDefinitions;
 import org.wso2.charon.core.v2.schema.SCIMResourceTypeSchema;
-import org.wso2.charon.core.v2.utils.CopyUtil;
 
 import java.util.*;
 
@@ -23,7 +22,7 @@ public class ResourceManagerUtil {
      * @return
      * @throws CharonException
      */
-    public static List<String> getOnlyRequiredAttributesURIs(SCIMResourceTypeSchema schema,
+    public static Map<String,Boolean> getOnlyRequiredAttributesURIs(SCIMResourceTypeSchema schema,
                                                                       String requestedAttributes,
                                                                       String requestedExcludingAttributes)
             throws CharonException {
@@ -317,9 +316,9 @@ public class ResourceManagerUtil {
      * @param schemas
      * @return
      */
-    private static List<String> convertSchemasToURIs(List<AttributeSchema> schemas){
+    private static Map<String, Boolean> convertSchemasToURIs(List<AttributeSchema> schemas){
 
-         List<String> URIList = new ArrayList<>();
+         Map<String, Boolean> URIList = new HashMap<>();
          for(AttributeSchema schema : schemas){
              if(schema.getType().equals(SCIMDefinitions.DataType.COMPLEX)){
                  List<SCIMAttributeSchema> subAttributeSchemas = schema.getSubAttributeSchemas();
@@ -327,14 +326,14 @@ public class ResourceManagerUtil {
                      if(subAttributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)){
                          List<SCIMAttributeSchema> subSubAttributeSchemas = subAttributeSchema.getSubAttributeSchemas();
                          for(SCIMAttributeSchema subSubAttributeSchema : subSubAttributeSchemas){
-                             URIList.add(subSubAttributeSchema.getURI());
+                             URIList.put(subSubAttributeSchema.getURI(), subSubAttributeSchema.getMultiValued());
                          }
                      } else {
-                         URIList.add(subAttributeSchema.getURI());
+                         URIList.put(subAttributeSchema.getURI(), subAttributeSchema.getMultiValued());
                      }
                  }
              } else {
-                 URIList.add(schema.getURI());
+                 URIList.put(schema.getURI(), schema.getMultiValued());
              }
          }
          return  URIList;
