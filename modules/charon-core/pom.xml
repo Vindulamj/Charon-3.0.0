@@ -57,13 +57,14 @@
                         <Import-Package>
                             org.json.*,
                             org.apache.commons.logging.*; version="${commons-logging.osgi.version.range}",
-                            org.apache.axiom.om.*; version="${axiom.osgi.version.range}",
-                            javax.xml.namespace.*,
-                            javax.xml.stream.*,
+                            <!--org.apache.axiom.om.*; version="${axiom.osgi.version.range}",-->
+                            <!--javax.xml.namespace.*,-->
+                            <!--javax.xml.stream.*;version=0.0.0-->
                         </Import-Package>
                     </instructions>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+
 </project>
