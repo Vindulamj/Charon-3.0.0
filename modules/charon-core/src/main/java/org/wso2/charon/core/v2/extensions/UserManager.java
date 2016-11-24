@@ -28,6 +28,7 @@ import org.wso2.charon.core.v2.utils.codeutils.Node;
 import org.wso2.charon.core.v2.utils.codeutils.SearchRequest;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * This is the interface for UserManager extension.
@@ -38,54 +39,56 @@ public interface UserManager {
 
         /***************User Manipulation operations.*******************/
 
-    public User createUser (User user)
+    public User createUser(User user, Map<String, Boolean> requiredAttributes)
             throws CharonException, ConflictException, BadRequestException;
 
-    public User getUser(String id)
+    public User getUser(String id, Map<String, Boolean> requiredAttributes)
             throws CharonException, BadRequestException;
 
     public void deleteUser(String userId)
             throws NotFoundException, CharonException, NotImplementedException, BadRequestException;
 
-    public List<Object> listUsersWithGET(Node node, int startIndex, int count, String sortBy, String sortOrder)
+    public List<Object> listUsersWithGET(Node node, int startIndex, int count,
+                                         String sortBy, String sortOrder, Map<String, Boolean> requiredAttributes)
             throws CharonException, NotImplementedException, BadRequestException;
 
-    public List<Object> listUsersWithPost(SearchRequest searchRequest)
+    public List<Object> listUsersWithPost(SearchRequest searchRequest, Map<String, Boolean> requiredAttributes)
             throws CharonException, NotImplementedException, BadRequestException;
 
-    public User updateUser(User updatedUser)
+    public User updateUser(User updatedUser, Map<String, Boolean> requiredAttributes)
             throws NotImplementedException, CharonException, BadRequestException;
 
-    public User getMe(String userName)
+    public User getMe(String userName, Map<String, Boolean> requiredAttributes)
             throws CharonException, BadRequestException, NotFoundException;
 
-    public User createMe(User user)
+    public User createMe(User user, Map<String, Boolean> requiredAttributes)
             throws CharonException, ConflictException, BadRequestException;
 
     public void deleteMe(String userName)
             throws NotFoundException, CharonException, NotImplementedException, BadRequestException;
 
-    public User updateMe(User updatedUser)
+    public User updateMe(User updatedUser, Map<String, Boolean> requiredAttributes)
             throws NotImplementedException, CharonException, BadRequestException;
 
 
    /* ****************Group manipulation operations.********************/
 
-    public Group createGroup(Group group)
+    public Group createGroup(Group group, Map<String, Boolean> requiredAttributes)
             throws CharonException, ConflictException, NotImplementedException, BadRequestException;
 
-    public Group getGroup(String id)
+    public Group getGroup(String id, Map<String, Boolean> requiredAttributes)
             throws NotImplementedException, BadRequestException, CharonException;
 
     public void deleteGroup(String id)
             throws NotFoundException, CharonException, NotImplementedException, BadRequestException;
 
-    public List<Object> listGroupsWithGET(Node node, int startIndex, int count, String sortBy, String sortOrder )
+    public List<Object> listGroupsWithGET(Node node, int startIndex, int count, String sortBy,
+                                          String sortOrder, Map<String, Boolean> requiredAttributes)
             throws CharonException, NotImplementedException, BadRequestException;
 
-    public Group updateGroup(Group oldGroup, Group newGroup)
+    public Group updateGroup(Group oldGroup, Group newGroup, Map<String, Boolean> requiredAttributes)
             throws NotImplementedException, BadRequestException, CharonException;
 
-    public List<Object> listGroupsWithPost(SearchRequest searchRequest)
+    public List<Object> listGroupsWithPost(SearchRequest searchRequest, Map<String, Boolean> requiredAttributes)
             throws NotImplementedException, BadRequestException, CharonException;;
 }

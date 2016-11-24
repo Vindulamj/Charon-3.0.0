@@ -49,7 +49,7 @@ public class SCIMUserManager implements UserManager {
     public SCIMUserManager() {
     }
 
-    public User createUser(User user) throws CharonException {
+    public User createUser(User user, Map<String, Boolean> requiredAttributes) throws CharonException {
 
         //TODO: Get the E-Tag(version) and add as a attribute of the cretated user
         try {
@@ -68,7 +68,7 @@ public class SCIMUserManager implements UserManager {
 
     @Override
 
-    public User getUser(String id) {
+    public User getUser(String id, Map<String, Boolean> requiredAttributes) {
 
         User e = null;
         try {
@@ -104,7 +104,7 @@ public class SCIMUserManager implements UserManager {
     }
 
     @Override
-    public List<Object> listUsersWithGET(Node node, int startIndex, int count, String sortBy, String sortOrder) throws CharonException, NotImplementedException, BadRequestException {
+    public List<Object> listUsersWithGET(Node node, int startIndex, int count, String sortBy, String sortOrder, Map<String, Boolean> requiredAttributes) throws CharonException, NotImplementedException, BadRequestException {
         return null;
     }
 
@@ -138,7 +138,7 @@ public class SCIMUserManager implements UserManager {
     }
 
     @Override
-    public List<Object> listUsersWithPost(SearchRequest searchRequest) throws CharonException, NotImplementedException, BadRequestException {
+    public List<Object> listUsersWithPost(SearchRequest searchRequest, Map<String, Boolean> requiredAttributes) throws CharonException, NotImplementedException, BadRequestException {
        return  null;
 
     }
@@ -186,9 +186,9 @@ public class SCIMUserManager implements UserManager {
     }
 
     @Override
-    public User updateUser(User validatedUser) {
+    public User updateUser(User validatedUser, Map<String, Boolean> requiredAttributes) {
         try {
-            User user = createUser(validatedUser);
+            User user = createUser(validatedUser, null);
             return user;
         } catch (CharonException e) {
             e.printStackTrace();
@@ -219,12 +219,12 @@ public class SCIMUserManager implements UserManager {
     }
 
     @Override
-    public User getMe(String userName) throws CharonException {
+    public User getMe(String userName, Map<String, Boolean> requiredAttributes) throws CharonException {
         return null;
     }
 
     @Override
-    public User createMe(User user) throws CharonException, ConflictException, BadRequestException {
+    public User createMe(User user, Map<String, Boolean> requiredAttributes) throws CharonException, ConflictException, BadRequestException {
         return null;
     }
 
@@ -234,12 +234,12 @@ public class SCIMUserManager implements UserManager {
     }
 
     @Override
-    public User updateMe(User updatedUser) throws NotImplementedException {
+    public User updateMe(User updatedUser, Map<String, Boolean> requiredAttributes) throws NotImplementedException {
         return null;
     }
 
     @Override
-    public Group createGroup(Group group) throws CharonException, ConflictException {
+    public Group createGroup(Group group, Map<String, Boolean> requiredAttributes) throws CharonException, ConflictException {
         //TODO: Get the E-Tag(version) and add as a attribute of the cretated user
         try {
             FileOutputStream fileOut =
@@ -256,7 +256,7 @@ public class SCIMUserManager implements UserManager {
     }
 
     @Override
-    public Group getGroup(String id) {
+    public Group getGroup(String id, Map<String, Boolean> requiredAttributes) {
         Group e = null;
         try {
             FileInputStream fileIn = new FileInputStream("/home/vindula/Desktop/Charon/GroupStorage/" + id + ".ser");
@@ -291,7 +291,7 @@ public class SCIMUserManager implements UserManager {
     }
 
     @Override
-    public List<Object> listGroupsWithGET(Node node, int startIndex, int count, String sortBy, String sortOrder) throws CharonException, NotImplementedException, BadRequestException {
+    public List<Object> listGroupsWithGET(Node node, int startIndex, int count, String sortBy, String sortOrder, Map<String, Boolean> requiredAttributes) throws CharonException, NotImplementedException, BadRequestException {
         return null;
     }
 
@@ -405,9 +405,9 @@ public class SCIMUserManager implements UserManager {
     }
 
     @Override
-    public Group updateGroup(Group oldGroup, Group validatedGroup) {
+    public Group updateGroup(Group oldGroup, Group validatedGroup, Map<String, Boolean> requiredAttributes) {
         try {
-            Group group = createGroup(validatedGroup);
+            Group group = createGroup(validatedGroup, requiredAttributes);
             return group;
         } catch (CharonException e) {
             e.printStackTrace();
@@ -419,7 +419,7 @@ public class SCIMUserManager implements UserManager {
     }
 
     @Override
-    public List<Object> listGroupsWithPost(SearchRequest searchRequest) throws NotImplementedException, BadRequestException, CharonException {
+    public List<Object> listGroupsWithPost(SearchRequest searchRequest, Map<String, Boolean> requiredAttributes) throws NotImplementedException, BadRequestException, CharonException {
         return null;
     }
 }

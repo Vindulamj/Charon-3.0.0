@@ -5,6 +5,7 @@ import org.wso2.charon.core.v2.encoder.JSONEncoder;
 import org.wso2.charon.core.v2.exceptions.*;
 import org.wso2.charon.core.v2.extensions.UserManager;
 import org.wso2.charon.core.v2.objects.User;
+import org.wso2.charon.core.v2.utils.ResourceManagerUtil;
 import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.v2.protocol.SCIMResponse;
 import org.wso2.charon.core.v2.schema.SCIMConstants;
@@ -14,6 +15,7 @@ import org.wso2.charon.core.v2.schema.ServerSideValidator;
 import org.wso2.charon.core.v2.utils.CopyUtil;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,18 +34,23 @@ public class MeResourceManager extends AbstractResourceManager{
             //obtain the json encoder
             encoder = getEncoder();
 
+            //obtain the schema corresponding to user
+            // unless configured returns core-user schema or else returns extended user schema)
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+            //get the URIs of required attributes which must be given a value
+
+            Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
+                    CopyUtil.deepCopy(schema),attributes, excludeAttributes);
+
             /*API user should pass a UserManager impl to UserResourceEndpoint.
             retrieve the user from the provided UM handler.*/
-            User user = ((UserManager) userManager).getMe(userName);
+            User user = ((UserManager) userManager).getMe(userName, requiredAttributes);
 
             //if user not found, return an error in relevant format.
             if (user == null) {
                 String error = "User not found in the user store.";
                 throw new NotFoundException(error);
             }
-            //obtain the schema corresponding to user
-            // unless configured returns core-user schema or else returns extended user schema)
-            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
             //perform service provider side validation.
             ServerSideValidator.validateRetrievedSCIMObject(user, schema, attributes, excludeAttributes);
             //convert the user into requested format.
@@ -77,6 +84,9 @@ public class MeResourceManager extends AbstractResourceManager{
             //obtain the schema corresponding to user
             // unless configured returns core-user schema or else returns extended user schema)
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+            //get the URIs of required attributes which must be given a value
+            Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
+                    CopyUtil.deepCopy(schema),attributes, excludeAttributes);
             //decode the SCIM User object, encoded in the submitted payload.
             User user = (User) decoder.decodeResource(scimObjectString, schema, new User());
             //validate the created user.
@@ -87,7 +97,7 @@ public class MeResourceManager extends AbstractResourceManager{
             if (userManager != null) {
             /*handover the SCIM User object to the user storage provided by the SP.
             need to send back the newly created user in the response payload*/
-                createdUser = userManager.createMe(user);
+                createdUser = userManager.createMe(user,requiredAttributes);
             }
             else{
                 String error = "Provided user manager handler is null.";
@@ -187,15 +197,19 @@ public class MeResourceManager extends AbstractResourceManager{
 
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
 
+            //get the URIs of required attributes which must be given a value
+            Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
+                    CopyUtil.deepCopy(schema),attributes, excludeAttributes);
             //decode the SCIM User object, encoded in the submitted payload.
             User user = (User) decoder.decodeResource(scimObjectString, schema, new User());
+
             User updatedUser = null;
             if (userManager != null) {
                 //retrieve the old object
-                User oldUser = userManager.getMe(userName);
+                User oldUser = userManager.getMe(userName, null);
                 if (oldUser != null) {
                     User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(oldUser, user, schema);
-                    updatedUser = userManager.updateMe(validatedUser);
+                    updatedUser = userManager.updateMe(validatedUser, requiredAttributes);
 
                 } else {
                     String error = "No user exists with the given userName: " + userName;

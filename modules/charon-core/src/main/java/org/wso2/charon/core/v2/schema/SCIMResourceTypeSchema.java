@@ -17,6 +17,7 @@
  */
 package org.wso2.charon.core.v2.schema;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +25,7 @@ import java.util.List;
  * This declares the SCIM resources schema as specified in SCIM core specification 2.0.
  */
 
-public class SCIMResourceTypeSchema implements ResourceTypeSchema {
+public class SCIMResourceTypeSchema implements ResourceTypeSchema, Serializable {
 
     //The core schema for the resource type is identified using the following schemas URIs
     //e.g.: for 'User' - urn:ietf:params:scim:schemasList:core:2.0:User

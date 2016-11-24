@@ -230,7 +230,8 @@ public abstract class AbstractValidator {
     }
 
     /**
-     * This method is to remove any defined and requested attributes and include requested attributes.
+     * This method is to remove any defined and requested attributes and include
+     * requested attributes if not they have been removed.
      *
      * @param scimObject
      * @param requestedAttributes

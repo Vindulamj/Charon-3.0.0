@@ -17,6 +17,10 @@
  */
 package org.wso2.charon.core.v2.schema;
 
+import org.wso2.charon.core.v2.exceptions.CharonException;
+import org.wso2.charon.core.v2.utils.CopyUtil;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +28,7 @@ import java.util.List;
  * This defines the attributes schema as in SCIM Spec.
  */
 
-public class SCIMAttributeSchema implements AttributeSchema {
+public class SCIMAttributeSchema implements AttributeSchema, Serializable {
     //unique identifier for the attribute
     private String URI;
     //name of the attribute
@@ -142,6 +146,20 @@ public class SCIMAttributeSchema implements AttributeSchema {
             }
         }
         return null;
+    }
+
+    @Override
+    public void removeSubAttribute(String subAttributeName) throws CharonException {
+        ArrayList<AttributeSchema> tempSubAttributes = (ArrayList<AttributeSchema>) CopyUtil.deepCopy(subAttributes);
+        int count = 0;
+        for(AttributeSchema subAttributeSchema : tempSubAttributes){
+
+            if(subAttributeSchema.getName().equals(subAttributeName)){
+                subAttributes.remove(count);
+                return;
+            }
+            count++;
+        }
     }
 
     public void setSubAttributes(ArrayList<SCIMAttributeSchema> subAttributes) { this.subAttributes = subAttributes; }

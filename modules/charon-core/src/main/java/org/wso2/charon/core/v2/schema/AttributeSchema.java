@@ -17,6 +17,8 @@
  */
 package org.wso2.charon.core.v2.schema;
 
+import org.wso2.charon.core.v2.exceptions.CharonException;
+
 import java.util.List;
 
 /*
@@ -69,6 +71,8 @@ public interface AttributeSchema {
     public List<SCIMAttributeSchema> getSubAttributeSchemas();
 
     public AttributeSchema getSubAttributeSchema(String subAttribute);
+
+    public void removeSubAttribute(String subAttributeName) throws CharonException;
 
 }
 
