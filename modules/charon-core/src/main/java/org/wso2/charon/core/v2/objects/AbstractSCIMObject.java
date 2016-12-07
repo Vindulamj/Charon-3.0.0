@@ -26,6 +26,7 @@ import org.wso2.charon.core.v2.exceptions.BadRequestException;
 import org.wso2.charon.core.v2.exceptions.CharonException;
 import org.wso2.charon.core.v2.schema.ResourceTypeSchema;
 import org.wso2.charon.core.v2.schema.SCIMConstants;
+import org.wso2.charon.core.v2.schema.SCIMDefinitions;
 import org.wso2.charon.core.v2.schema.SCIMSchemaDefinitions;
 
 import java.util.ArrayList;
@@ -392,5 +393,193 @@ public class AbstractSCIMObject implements SCIMObject {
         } else {
             return null;
         }
+    }
+
+    public String toString() {
+
+        String scimObjectStringValue = null;
+        Map<String, Attribute> attributeList = this.getAttributeList();
+        for (Attribute attribute : attributeList.values()) {
+            if (attribute instanceof SimpleAttribute) {
+                scimObjectStringValue = simpleAttributeToString(scimObjectStringValue, attribute);
+
+            } else if (attribute instanceof ComplexAttribute) {
+                ComplexAttribute complexAttribute = (ComplexAttribute) attribute;
+                String complexValue = null;
+                Map<String, Attribute> subAttributes = complexAttribute.getSubAttributesList();
+                for (Attribute subAttribute : subAttributes.values()) {
+                    if (subAttribute instanceof SimpleAttribute) {
+
+                        complexValue = simpleAttributeToString(complexValue,
+                                (Attribute) ((SimpleAttribute) subAttribute));
+
+                    } else if (subAttribute instanceof MultiValuedAttribute) {
+                        if (!subAttribute.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
+                            String primitiveValue = null;
+                            primitiveValue = multiValuedPrimitiveAttributeToString(
+                                    ((MultiValuedAttribute) subAttribute).getAttributePrimitiveValues(),
+                                    subAttribute.getName());
+                            if (complexValue == null) {
+                                complexValue = primitiveValue;
+                            } else {
+                                complexValue = complexValue + "," + primitiveValue;
+                            }
+
+                        } else {
+                            String multiValue = null;
+
+                            List<Attribute> subAttributeList  =
+                                    ((MultiValuedAttribute) (subAttribute)).getAttributeValues();
+
+                            for (Attribute subValue : subAttributeList) {
+
+                                ComplexAttribute complexSubAttribute = (ComplexAttribute) subValue;
+                                String complexSubValue = null;
+                                Map<String, Attribute> subSubAttributes = complexSubAttribute.getSubAttributesList();
+
+                                for (Attribute subSubAttribute : subSubAttributes.values()) {
+                                    if (subSubAttribute instanceof SimpleAttribute) {
+
+                                        complexSubValue =  simpleAttributeToString(complexSubValue,
+                                                (Attribute) ((SimpleAttribute) subSubAttribute));
+
+                                    } else if (subSubAttribute instanceof MultiValuedAttribute) {
+                                        complexSubValue = multiValuedPrimitiveAttributeToString(
+                                                ((MultiValuedAttribute) subSubAttribute).getAttributePrimitiveValues(),
+                                                subSubAttribute.getName());
+                                    }
+                                }
+                                complexSubValue = "{" + complexSubValue + "}";
+                                if (multiValue == null) {
+                                    multiValue = complexSubValue;
+                                } else {
+                                    multiValue = multiValue + "," + complexSubValue;
+                                }
+                            }
+
+                            if (scimObjectStringValue != null) {
+                                scimObjectStringValue = scimObjectStringValue + "," +
+                                        attribute.getName() + ":{" + subAttribute.getName() + ":[" + multiValue + "]}";
+
+                            } else {
+                                scimObjectStringValue =  attribute.getName() +
+                                        ":{" + subAttribute.getName() + ":[" + multiValue + "]}";
+                            }
+                        }
+
+                    } else if (subAttribute instanceof ComplexAttribute) {
+
+                        ComplexAttribute complexSubAttribute = (ComplexAttribute) subAttribute;
+                        String complexSubValue = null;
+                        Map<String, Attribute> subSubAttributes = complexSubAttribute.getSubAttributesList();
+
+                        for (Attribute subSubAttribute : subSubAttributes.values()) {
+                            if (subSubAttribute instanceof SimpleAttribute) {
+                                complexSubValue = simpleAttributeToString(complexSubValue,
+                                        (Attribute) ((SimpleAttribute) subSubAttribute));
+
+                            } else if (subSubAttribute instanceof MultiValuedAttribute) {
+                                complexSubValue = multiValuedPrimitiveAttributeToString(
+                                        ((MultiValuedAttribute) subSubAttribute).getAttributePrimitiveValues(),
+                                        subSubAttribute.getName());
+                            }
+                        }
+                        complexSubValue = subAttribute.getName() + ":{" + complexSubValue + "}";
+                        complexValue =  complexSubValue;
+                    }
+
+                }
+
+                if (scimObjectStringValue == null) {
+                    scimObjectStringValue = attribute.getName() + ":{" + complexValue + "}";
+
+                } else {
+                    scimObjectStringValue = scimObjectStringValue + ","
+                            + attribute.getName() + ":{" + complexValue + "}";
+                }
+            } else if (attribute instanceof MultiValuedAttribute) {
+
+                MultiValuedAttribute multiValuedAttribute = (MultiValuedAttribute) attribute;
+
+                if (multiValuedAttribute.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
+                    String multiValue = null;
+
+                    List<Attribute> subAttributeList  = multiValuedAttribute.getAttributeValues();
+
+                    for (Attribute subAttribute : subAttributeList) {
+
+                        ComplexAttribute complexSubAttribute = (ComplexAttribute) subAttribute;
+                        String complexSubValue = null;
+                        Map<String, Attribute> subSubAttributes = complexSubAttribute.getSubAttributesList();
+
+                        for (Attribute subSubAttribute : subSubAttributes.values()) {
+                            if (subSubAttribute instanceof SimpleAttribute) {
+
+                                complexSubValue = simpleAttributeToString(complexSubValue,
+                                        (Attribute) ((SimpleAttribute) subSubAttribute));
+
+                            } else if (subSubAttribute instanceof MultiValuedAttribute) {
+                                complexSubValue = multiValuedPrimitiveAttributeToString(
+                                        ((MultiValuedAttribute) subSubAttribute).getAttributePrimitiveValues(),
+                                        subSubAttribute.getName());
+                            }
+                        }
+                        complexSubValue = "{" + complexSubValue + "}";
+                        if (multiValue == null) {
+                            multiValue = complexSubValue;
+                        } else {
+                            multiValue = multiValue + "," + complexSubValue;
+                        }
+                    }
+
+                    if (scimObjectStringValue != null) {
+                        scimObjectStringValue = scimObjectStringValue + "," +
+                                attribute.getName() + ":[" + multiValue + "]";
+
+                    } else {
+                        scimObjectStringValue = attribute.getName() + ":[" + multiValue + "]";
+                    }
+
+                } else {
+                    List<Object> primitiveValueList = multiValuedAttribute.getAttributePrimitiveValues();
+                    String complexValue = null;
+                    complexValue = multiValuedPrimitiveAttributeToString(primitiveValueList,
+                            multiValuedAttribute.getName());
+
+                    if (scimObjectStringValue == null) {
+                        scimObjectStringValue = complexValue;
+                    } else {
+                        scimObjectStringValue = scimObjectStringValue + "," + complexValue;
+                    }
+                }
+
+            }
+        }
+        return scimObjectStringValue;
+    }
+
+    private String simpleAttributeToString (String stringValue, Attribute attribute) {
+        SimpleAttribute simpleAttribute = (SimpleAttribute) attribute;
+        String simpleValue = simpleAttribute.getName() + " : " + simpleAttribute.getValue();
+        if (stringValue != null) {
+            stringValue = stringValue + "," + simpleValue;
+        } else {
+            stringValue = simpleValue;
+        }
+        return stringValue;
+    }
+
+    private String multiValuedPrimitiveAttributeToString(List<Object> attributePrimitiveValues, String attributeName) {
+        String complexValue = attributeName + ":[";
+        for (Object item  : attributePrimitiveValues) {
+            if (complexValue.equals(attributeName + "[")) {
+                complexValue = (String) item;
+
+            } else {
+                complexValue = complexValue + "," + (String) item;
+            }
+        }
+        complexValue = complexValue + "]";
+        return complexValue;
     }
 }

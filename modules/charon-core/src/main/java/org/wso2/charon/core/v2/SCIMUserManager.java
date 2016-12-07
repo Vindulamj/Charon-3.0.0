@@ -54,12 +54,12 @@ public class SCIMUserManager implements UserManager {
         //TODO: Get the E-Tag(version) and add as a attribute of the cretated user
         try {
             FileOutputStream fileOut =
-                    new FileOutputStream("/home/vindula/Desktop/Charon/Storage/" + user.getId() + ".ser");
+                    new FileOutputStream("/home/vindula/Desktop/" + user.getId() + ".ser");
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
             out.writeObject(user);
             out.close();
             fileOut.close();
-            System.out.printf("Serialized data is saved in /home/vindula/Desktop/Charon/Storage/" + user.getId() + ".ser\n\n");
+            System.out.printf("Serialized data is saved in /home/vindula/Desktop/" + user.getId() + ".ser\n\n");
         } catch (IOException i) {
             i.printStackTrace();
         }
@@ -72,13 +72,13 @@ public class SCIMUserManager implements UserManager {
 
         User e = null;
         try {
-            FileInputStream fileIn = new FileInputStream("/home/vindula/Desktop/Charon/Storage/" + id + ".ser");
+            FileInputStream fileIn = new FileInputStream("/home/vindula/Desktop/" + id + ".ser");
             ObjectInputStream in = new ObjectInputStream(fileIn);
             e = (User) in.readObject();
             in.close();
             fileIn.close();
         } catch (IOException i) {
-            return null;
+            System.out.println(i);
         } catch (ClassNotFoundException c) {
             System.out.println("Employee class not found");
             c.printStackTrace();

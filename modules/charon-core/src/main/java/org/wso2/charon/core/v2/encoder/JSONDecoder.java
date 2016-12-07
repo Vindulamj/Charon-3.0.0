@@ -33,6 +33,7 @@ import org.wso2.charon.core.v2.exceptions.CharonException;
 import org.wso2.charon.core.v2.exceptions.InternalErrorException;
 import org.wso2.charon.core.v2.objects.AbstractSCIMObject;
 import org.wso2.charon.core.v2.objects.SCIMObject;
+import org.wso2.charon.core.v2.objects.User;
 import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.v2.schema.*;
 import org.wso2.charon.core.v2.utils.AttributeUtil;
@@ -506,7 +507,14 @@ public class JSONDecoder {
             for (int count = 0; count < operationJsonList.length(); count++) {
                 JSONObject operation = (JSONObject) operationJsonList.get(count);
                 PatchOperation patchOperation = new PatchOperation();
-                patchOperation.setOperation((String) operation.opt(SCIMConstants.OperationalConstants.OP));
+                String op = (String) operation.opt(SCIMConstants.OperationalConstants.OP);
+                if(op.equalsIgnoreCase(SCIMConstants.OperationalConstants.ADD)){
+                    patchOperation.setOperation(SCIMConstants.OperationalConstants.ADD);
+                } else if (op.equalsIgnoreCase(SCIMConstants.OperationalConstants.REMOVE)) {
+                    patchOperation.setOperation(SCIMConstants.OperationalConstants.REMOVE);
+                } else if (op.equalsIgnoreCase(SCIMConstants.OperationalConstants.REPLACE)) {
+                    patchOperation.setOperation(SCIMConstants.OperationalConstants.REPLACE);
+                }
                 patchOperation.setPath((String) operation.opt(SCIMConstants.OperationalConstants.PATH));
                 patchOperation.setValues(operation.opt(SCIMConstants.OperationalConstants.VALUE));
                 operationList.add(patchOperation);
@@ -518,6 +526,25 @@ public class JSONDecoder {
         return  operationList;
     }
 
+    public User decode(String scimResourceString, SCIMResourceTypeSchema schema) {
+        try {
+            JSONArray decodedJsonAry = new JSONArray(new JSONTokener(scimResourceString));
+
+            User scimUser = (User) decodeResource(decodedJsonAry.optString(0), schema, new User());
+
+            return scimUser;
+
+        } catch (BadRequestException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (InternalErrorException e) {
+            e.printStackTrace();
+        } catch (CharonException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
     /*
      * decode the raw string and create a search object
      * @param scimResourceString

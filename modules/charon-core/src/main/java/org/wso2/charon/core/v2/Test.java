@@ -78,7 +78,7 @@ public class Test {
        //-----Extension User schema support------
        SCIMUserSchemaExtensionBuilder extensionBuilder= new SCIMUserSchemaExtensionBuilder();
        try {
-           extensionBuilder.buildUserSchemaExtension("/home/vindula/Desktop/Charon-3.0/scim-schema-extension.config");
+           extensionBuilder.buildUserSchemaExtension("/home/vindula/Desktop/C4/Charon-3.0/scim-schema-extension.config");
        } catch (CharonException e) {
            e.printStackTrace();
        } catch (InternalErrorException e) {
@@ -193,13 +193,19 @@ public class Test {
                "       \"MIIDQzCCAqygAwIBAgICEAAwDQYJKoZIhvcNAQEFBQAwTjELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFDASBgNVBAoMC2V4YW1wbGUuY29tMRQwEgYDVQQDDAtleGFtcGxlLmNvbTAeFw0xMTEwMjIwNjI0MzFaFw0xMjEwMDQwNjI0MzFaMH8xCzAJBgNVBAYTAlVTMRMwEQYDVQQIDApDYWxpZm9ybmlhMRQwEgYDVQQKDAtl eGFtcGxlLmNvbTEhMB8GA1UEAwwYTXMuIEJhcmJhcmEgSiBKZW5zZW4gSUlJMSIw IAYJKoZIhvcNAQkBFhNiamVuc2VuQGV4YW1wbGUuY29tMIIBIjANBgkqhkiG9w0B AQEFAAOCAQ8AMIIBCgKCAQEA7Kr+Dcds/JQ5GwejJFcBIP682X3xpjis56AK02bc 1FLgzdLI8auoR+cC9/Vrh5t66HkQIOdA4unHh0AaZ4xL5PhVbXIPMB5vAPKpzz5i PSi8xO8SL7I7SDhcBVJhqVqr3HgllEG6UClDdHO7nkLuwXq8HcISKkbT5WFTVfFZ zidPl8HZ7DhXkZIRtJwBweq4bvm3hM1Os7UQH05ZS6cVDgweKNwdLLrT51ikSQG3 DYrl+ft781UQRIqxgwqCfXEuDiinPh0kkvIi5jivVu1Z9QiwlYEdRbLJ4zJQBmDr SGTMYn4lRc2HgHO4DqB/bnMVorHB0CC6AV1QoFK4GPe1LwIDAQABo3sweTAJBgNV HRMEAjAAMCwGCWCGSAGG+EIBDQQfFh1PcGVuU1NMIEdlbmVyYXRlZCBDZXJ0aWZp Y2F0ZTAdBgNVHQ4EFgQU8pD0U0vsZIsaA16lL8En8bx0F/gwHwYDVR0jBBgwFoAU dGeKitcaF7gnzsNwDx708kqaVt0wDQYJKoZIhvcNAQEFBQADgYEAA81SsFnOdYJt Ng5Tcq+/ByEDrBgnusx0jloUhByPMEVkoMZ3J7j1ZgI8rAbOkNngX8+pKfTiDz1R C4+dx8oU6Za+4NJXUjlL5CvV6BEYb1+QAEJwitTVvxB/A67g42/vzgAtoRUeDov1+GFiBZ+GNF/cAYKcMtGcrs2i97ZkJMo=\"\n" +
                "    }\n" +
                "  ],\n" +
+               "  \"EnterpriseUser\":{\n" +
+               "       \"employeeNumber\" :\"111222333444555\",\n" +
+               "       \"manager\": {\n" +
+               "            \"value\": \"Maxxa\",\n" +
+               "         },\n" +
+               "   }\n" +
                "}";
 
        String attributes="nickName,photos.value,EnterpriseUser.manager.value";
        String excludeAttributes="externalId,emails.value,EnterpriseUser.manager";
 
        //----CREATE USER --------
-       SCIMResponse res=um.create(array,new SCIMUserManager(),null, excludeAttributes);
+       SCIMResponse res=um.create(array,new SCIMUserManager(),null, null);
 
 
        //-----GET USER  ---------
@@ -262,11 +268,42 @@ public class Test {
        //-----LIST USER  ---------
        //SCIMResponse res= um.listUsersWithPOST(x ,new SCIMUserManager());
 
-       System.out.println(res.getResponseStatus());
+       //System.out.println(res.getResponseStatus());
        System.out.println("");
-       System.out.println(res.getHeaderParamMap());
+       //System.out.println(res.getHeaderParamMap());
        System.out.println("");
-       System.out.println(res.getResponseMessage());
-   }
+       //System.out.println(res.getResponseMessage());
+
+
+       String test = "{ \"schemas\":\n" +
+               "      [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n" +
+               "     \"Operations\":[\n" +
+               "       {\n" +
+               "        \"op\":\"add\",\n" +
+               "        \"value\":[\n" +
+               "         {\n" +
+               "         \"emails\":[\n" +
+               "           {\n" +
+               "             \"value\":\"kakka@jensen.org\",\n" +
+               "             \"type\":\"fuck\"\n" +
+               "           }\n" +
+               "         ],\n" +
+               "           \"nickName\": \"paka\",\n" +
+               "         \"EnterpriseUser\":{\n" +
+               "           \"employeeNumber\" :\"111222333444555\",\n" +
+               "           \"manager\":{\n" +
+               "               \"value\" :\"Gayan\",\n" +
+               "               \"$ref\" :\"Gayan1\"\n" +
+               "             },\n" +
+               "           },\n" +
+               "         }\n" +
+               "        ]\n" +
+               "       }\n" +
+               "     ]\n" +
+               "   }";
+
+       um.updateWithPATCH("6fef1fc2-2551-4d61-90e4-7d42d835d7c9",test, new SCIMUserManager(), null,null);
+
+    }
 
 }

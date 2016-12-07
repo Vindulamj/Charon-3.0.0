@@ -92,6 +92,9 @@ public class SearchRequest {
         for (String attributeValue : this.attributes){
             attributes = attributes + "," + attributeValue;
         }
+        if(attributes.equals("")){
+            return null;
+        }
         return  attributes;
     }
 
@@ -99,6 +102,9 @@ public class SearchRequest {
         String excludedAttributes = null;
         for (String attributeValue : this.excludedAttributes){
             excludedAttributes = excludedAttributes + "," + attributeValue;
+        }
+        if(excludedAttributes.equals("")){
+            return null;
         }
         return  excludedAttributes;
     }
