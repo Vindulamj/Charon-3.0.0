@@ -284,11 +284,11 @@ public class Test {
                "         {\n" +
                "         \"emails\":[\n" +
                "           {\n" +
-               "             \"value\":\"kakka@jensen.org\",\n" +
-               "             \"type\":\"fuck\"\n" +
+               "             \"value\":\"lovedy@jensen.org\",\n" +
+               "             \"type\":\"Ofc\"\n" +
                "           }\n" +
                "         ],\n" +
-               "           \"nickName\": \"paka\",\n" +
+               "           \"nickName\": \"Chandi\",\n" +
                "         \"EnterpriseUser\":{\n" +
                "           \"employeeNumber\" :\"111222333444555\",\n" +
                "           \"manager\":{\n" +
