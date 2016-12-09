@@ -105,4 +105,5 @@ public abstract class AbstractResourceManager implements ResourceManager {
         return new SCIMResponse(exception.getStatus(), encoder.encodeSCIMException(exception), ResponseHeaders);
     }
 
+
 }

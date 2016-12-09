@@ -46,6 +46,8 @@ public interface Attribute extends Serializable {
 
     public SCIMDefinitions.Uniqueness getUniqueness();
 
+    public Boolean getRequired();
+
     public Attribute getSubAttribute(String attributeName) throws CharonException;
 
     public void deleteSubAttributes() throws CharonException;

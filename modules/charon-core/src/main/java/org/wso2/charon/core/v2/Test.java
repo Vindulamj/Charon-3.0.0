@@ -205,7 +205,7 @@ public class Test {
        String excludeAttributes="externalId,emails.value,EnterpriseUser.manager";
 
        //----CREATE USER --------
-       SCIMResponse res=um.create(array,new SCIMUserManager(),null, null);
+       //SCIMResponse res=um.create(array,new SCIMUserManager(),null, null);
 
 
        //-----GET USER  ---------
@@ -302,7 +302,18 @@ public class Test {
                "     ]\n" +
                "   }";
 
-       um.updateWithPATCH("6fef1fc2-2551-4d61-90e4-7d42d835d7c9",test, new SCIMUserManager(), null,null);
+       String test1 = "{ \"schemas\":\n" +
+               "      [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n" +
+               "     \"Operations\":[\n" +
+               "       {\n" +
+               "        \"op\":\"remove\",\n" +
+               "        \"path\":\"emails.value\",\n" +
+               "       }\n" +
+               "     ]\n" +
+               "   }";
+
+       um.updateWithPATCH("904bde09-6c55-4339-b567-33d673c33c09",test1, new SCIMUserManager(), null,null);
+
 
     }
 

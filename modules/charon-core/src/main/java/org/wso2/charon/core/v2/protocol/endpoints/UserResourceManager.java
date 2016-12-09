@@ -15,14 +15,11 @@ import org.wso2.charon.core.v2.schema.*;
 import org.wso2.charon.core.v2.utils.ResourceManagerUtil;
 import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.v2.protocol.SCIMResponse;
-import org.wso2.charon.core.v2.utils.codeutils.FilterTreeManager;
-import org.wso2.charon.core.v2.utils.codeutils.Node;
+import org.wso2.charon.core.v2.utils.codeutils.*;
 import org.wso2.charon.core.v2.attributes.Attribute;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
 import org.wso2.charon.core.v2.utils.CopyUtil;
-import org.wso2.charon.core.v2.utils.codeutils.PatchOperation;
-import org.wso2.charon.core.v2.utils.codeutils.SearchRequest;
 
 import java.io.IOException;
 import java.util.*;
@@ -515,154 +512,39 @@ public class UserResourceManager extends AbstractResourceManager {
             //decode the SCIM User object, encoded in the submitted payload.
             List<PatchOperation> opList = decoder.decodeRequest(scimObjectString);
 
-            User newUser;
+            User oldUser = userManager.getUser(existingId, null);
+            User copyOfOldUser = (User) CopyUtil.deepCopy(oldUser);
+            User originalUser = (User) CopyUtil.deepCopy(copyOfOldUser);
+
+            User newUser = null;
+
             for(PatchOperation operation : opList){
 
                 if(operation.getOperation().equals(SCIMConstants.OperationalConstants.ADD)){
-                   newUser= doPatchAdd(operation, getDecoder(), existingId, userManager);
-                   System.out.println(newUser.toString());
+                    if(newUser == null ){
+                        newUser = PatchOperationSupport.doPatchAdd(operation, getDecoder(), oldUser, copyOfOldUser);
+                        copyOfOldUser = (User) CopyUtil.deepCopy(newUser);
+                        System.out.println(newUser.toString());
+                    } else {
+                        newUser = PatchOperationSupport.doPatchAdd(operation, getDecoder(), newUser, copyOfOldUser);
+                        copyOfOldUser = (User) CopyUtil.deepCopy(newUser);
+                        System.out.println(newUser.toString());
+                    }
+                } else if (operation.getOperation().equals(SCIMConstants.OperationalConstants.REMOVE)) {
+                    if (newUser == null ) {
+                        newUser = PatchOperationSupport.doPatchRemove(operation, getDecoder(), oldUser, copyOfOldUser);
+                        System.out.println(newUser.toString());
+                    } else {
+
+                    }
                 }
             }
-
             return null;
 
         } catch (Exception e){
             System.out.println(e);
             return null;
         }
-
-    }
-
-    private User doPatchAdd(PatchOperation operation, JSONDecoder decoder, String existingId, UserManager userManager) {
-
-        SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
-        User attributeHoldingSCIMUser = decoder.decode(operation.getValues().toString(), schema);
-        try {
-            User oldUser = userManager.getUser(existingId, null);
-
-            User copyOfOldUser = (User) CopyUtil.deepCopy(oldUser);
-
-            if(oldUser != null){
-                for(String attributeName : attributeHoldingSCIMUser.getAttributeList().keySet()){
-                    Attribute oldAttribute = oldUser.getAttribute(attributeName);
-                    if( oldAttribute != null){
-                        // if the attribute is there, append it.
-                        if(oldAttribute.getMultiValued() &&
-                                oldAttribute.getType().equals(SCIMDefinitions.DataType.COMPLEX)){
-                            //this is multivalued complex case.
-                            MultiValuedAttribute attributeValue = (MultiValuedAttribute)
-                                    attributeHoldingSCIMUser.getAttribute(attributeName);
-
-                            for(Attribute attribute : attributeValue.getAttributeValues()){
-                                ((MultiValuedAttribute)oldAttribute).setAttributeValue(attribute);
-                            }
-
-                        } else if (oldAttribute.getMultiValued()){
-
-                            //this is multivalued primitive case.
-                            MultiValuedAttribute attributeValue = (MultiValuedAttribute)
-                                    attributeHoldingSCIMUser.getAttribute(attributeName);
-
-                            for(Object obj : attributeValue.getAttributePrimitiveValues()){
-                                ((MultiValuedAttribute)oldAttribute).setAttributePrimitiveValue(obj);
-                            }
-
-                        } else if (oldAttribute.getType().equals(SCIMDefinitions.DataType.COMPLEX)){
-                            //this is the complex attribute case.
-                            Map<String, Attribute> subAttributeList =
-                                    ((ComplexAttribute)attributeHoldingSCIMUser.
-                                            getAttribute(attributeName)).getSubAttributesList();
-
-                            for(String subAttributeName : subAttributeList.keySet()){
-                                Attribute subAttribute = oldAttribute.getSubAttribute(subAttributeName);
-
-                                if(subAttribute != null){
-                                    if(subAttribute.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
-                                        if(subAttribute.getMultiValued()){
-
-                                            MultiValuedAttribute attributeSubValue = (MultiValuedAttribute)((ComplexAttribute)
-                                                    attributeHoldingSCIMUser.getAttribute(attributeName)).
-                                                    getSubAttribute(subAttributeName);
-
-                                            for(Attribute attribute : attributeSubValue.getAttributeValues()){
-                                                ((MultiValuedAttribute)subAttribute).setAttributeValue(attribute);
-                                            }
-
-                                        } else {
-
-                                            Map<String, Attribute> subSubAttributeList = ((ComplexAttribute)
-                                                    (attributeHoldingSCIMUser.getAttribute(attributeName).
-                                                            getSubAttribute(subAttributeName))).getSubAttributesList();
-
-                                            for(String subSubAttributeName : subSubAttributeList.keySet()) {
-                                                Attribute subSubAttribute = oldAttribute.getSubAttribute(subAttributeName).
-                                                        getSubAttribute(subSubAttributeName);
-
-                                                if(subSubAttribute != null){
-                                                    if(subSubAttribute.getMultiValued()){
-                                                        List<Object> items = ((MultiValuedAttribute)
-                                                                (subSubAttributeList.get(subSubAttributeName))).
-                                                                getAttributePrimitiveValues();
-                                                        for(Object item : items){
-                                                            ((MultiValuedAttribute)subSubAttribute).
-                                                                    setAttributePrimitiveValue(item);
-                                                        }
-                                                    } else {
-                                                        ((SimpleAttribute)subSubAttribute).setValue(((SimpleAttribute)
-                                                                subSubAttributeList.get(subSubAttributeName)).getValue());
-                                                    }
-
-                                                } else {
-                                                    ((ComplexAttribute)(subAttribute)).setSubAttribute(
-                                                            subSubAttributeList.get(subSubAttributeName));
-                                                }
-                                            }
-
-                                        }
-                                    } else {
-                                        if(subAttribute.getMultiValued()){
-                                            List<Object> items = ((MultiValuedAttribute)
-                                                    (subAttributeList.get(subAttributeName))).
-                                                    getAttributePrimitiveValues();
-                                            for(Object item : items){
-                                                ((MultiValuedAttribute)subAttribute).setAttributePrimitiveValue(item);
-                                            }
-                                        } else {
-                                            ((SimpleAttribute)subAttribute).setValue(((SimpleAttribute)
-                                                    subAttributeList.get(subAttributeName)).getValue());
-                                        }
-                                    }
-                                } else {
-                                    ((ComplexAttribute)oldAttribute).setSubAttribute
-                                            (subAttributeList.get(subAttributeName));
-                                }
-                            }
-                        } else {
-                            // this is the simple attribute case.replace the value
-                            ((SimpleAttribute)oldAttribute).setValue
-                                    (((SimpleAttribute)attributeHoldingSCIMUser.getAttribute
-                                            (oldAttribute.getName())).getValue());
-                        }
-                    } else {
-                        //if the attribute is not already set, set it.
-                        oldUser.setAttribute(attributeHoldingSCIMUser.getAttribute(attributeName));
-                    }
-                }
-                User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject
-                        (copyOfOldUser, oldUser, schema);
-
-                return validatedUser;
-            }
-        } catch (CharonException e) {
-            e.printStackTrace();
-        } catch (BadRequestException e) {
-            e.printStackTrace();
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-        }
-
-
-        return null;
     }
 
     /**
