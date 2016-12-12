@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2010, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * WSO2 Inc. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package org.wso2.charon.core.v2.utils;
 
 import org.wso2.charon.core.v2.attributes.Attribute;
@@ -23,10 +41,6 @@ import java.util.Map;
  * This provides the methods on the PATCH operation of any resource type.
  */
 public class PatchOperationUtil {
-
-
-
-
 
     /*
      * This method corresponds to the remove operation in patch requests.
@@ -710,7 +724,8 @@ public class PatchOperationUtil {
     }
 
     public static AbstractSCIMObject doPatchReplace(PatchOperation operation, AbstractSCIMObject oldResource,
-                                                    AbstractSCIMObject copyOfOldResource, SCIMResourceTypeSchema schema) {
+                                                    AbstractSCIMObject copyOfOldResource,
+                                                    SCIMResourceTypeSchema schema) {
 
         return null;
     }
