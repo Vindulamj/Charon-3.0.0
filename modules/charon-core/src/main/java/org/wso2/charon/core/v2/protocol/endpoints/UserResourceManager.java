@@ -503,7 +503,7 @@ public class UserResourceManager extends AbstractResourceManager {
      */
 
     public SCIMResponse updateWithPATCH(String existingId, String scimObjectString, UserManager userManager,
-                                        String attributes, String excludeAttributes) throws NotFoundException, BadRequestException {
+                                        String attributes, String excludeAttributes) {
         try {
             //obtain the json decoder.
             JSONDecoder decoder = getDecoder();
@@ -543,11 +543,12 @@ public class UserResourceManager extends AbstractResourceManager {
                     }
                 } else if (operation.getOperation().equals(SCIMConstants.OperationalConstants.REPLACE)) {
                     if (newUser == null) {
-                        newUser = (User) PatchOperationUtil.doPatchReplace(operation, oldUser, copyOfOldUser, schema);
+                        newUser = (User) PatchOperationUtil.doPatchReplace(operation, getDecoder(), oldUser, copyOfOldUser, schema);
                         copyOfOldUser = (User) CopyUtil.deepCopy(newUser);
+                        System.out.println(newUser.toString());
 
                     } else {
-                        newUser = (User) PatchOperationUtil.doPatchReplace(operation, newUser, copyOfOldUser, schema);
+                        newUser = (User) PatchOperationUtil.doPatchReplace(operation, getDecoder(), newUser, copyOfOldUser, schema);
                         copyOfOldUser = (User) CopyUtil.deepCopy(newUser);
                     }
                 }

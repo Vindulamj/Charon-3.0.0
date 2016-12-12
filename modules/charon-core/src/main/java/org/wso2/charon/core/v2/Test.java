@@ -317,7 +317,34 @@ public class Test {
                "     ]\n" +
                "   }";
 
-       um.updateWithPATCH("cfe6ee18-8170-44a6-84f8-11f35756e53c",test1, new SCIMUserManager(), null,null);
+
+       String test2 = "{ \"schemas\":\n" +
+               "      [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n" +
+               "     \"Operations\":[\n" +
+               "       {\n" +
+               "        \"op\":\"replace\",\n" +
+               "        \"value\":[\n" +
+               "         {\n" +
+               "         \"EnterpriseUser\":{\n" +
+               "           \"employeeNumber\": \"234\",\n" +
+               "           \"manager\":[{\n" +
+               "               \"value\" :\"Gayan\",\n" +
+               "             }],\n" +
+               "           },\n" +
+               "         \"emails\":[\n" +
+               "           {\n" +
+               "             \"value\":\"lovedy@jensen.org\",\n" +
+               "             \"type\":\"Ofc\"\n" +
+               "           }\n" +
+               "         ],\n" +
+               "           \"nickName\": \"Chandi\",\n" +
+               "         }\n" +
+               "        ]\n" +
+               "       }\n" +
+               "     ]\n" +
+               "   }";
+
+       um.updateWithPATCH("cfe6ee18-8170-44a6-84f8-11f35756e53c",test2, new SCIMUserManager(), null,null);
 
 
     }

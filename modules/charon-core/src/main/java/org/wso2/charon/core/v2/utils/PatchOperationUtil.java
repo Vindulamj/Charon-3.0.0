@@ -723,10 +723,181 @@ public class PatchOperationUtil {
         }
     }
 
-    public static AbstractSCIMObject doPatchReplace(PatchOperation operation, AbstractSCIMObject oldResource,
+    public static AbstractSCIMObject doPatchReplace(PatchOperation operation, JSONDecoder decoder,
+                                                    AbstractSCIMObject oldResource,
                                                     AbstractSCIMObject copyOfOldResource,
-                                                    SCIMResourceTypeSchema schema) {
+                                                    SCIMResourceTypeSchema schema)
+            throws CharonException {
+        if (operation.getPath() != null) {
+            doPatchReplaceOnPath(oldResource, copyOfOldResource, schema, operation);
+        } else {
+            doPatchReplaceOnResource(oldResource, copyOfOldResource, schema, decoder, operation);
+        }
+        return oldResource;
+    }
 
-        return null;
+    private static void doPatchReplaceOnPath(AbstractSCIMObject oldResource, AbstractSCIMObject copyOfOldResource,
+                                             SCIMResourceTypeSchema schema, PatchOperation operation) {
+    }
+
+
+    private static AbstractSCIMObject doPatchReplaceOnResource(AbstractSCIMObject oldResource, AbstractSCIMObject
+            copyOfOldResource, SCIMResourceTypeSchema schema, JSONDecoder decoder, PatchOperation operation)
+            throws CharonException {
+
+        try {
+            User attributeHoldingSCIMUser = decoder.decode(operation.getValues().toString(), schema);
+
+            if (oldResource != null) {
+
+                for (String attributeName : attributeHoldingSCIMUser.getAttributeList().keySet()) {
+                    Attribute oldAttribute = oldResource.getAttribute(attributeName);
+                    if (oldAttribute != null) {
+                        // if the attribute is there, append it.
+                        if (oldAttribute.getMultiValued()) {
+                            //this is multivalued complex case.
+                            MultiValuedAttribute attributeValue = (MultiValuedAttribute)
+                                    attributeHoldingSCIMUser.getAttribute(attributeName);
+                            if (oldAttribute.getMutability().equals(SCIMDefinitions.Mutability.IMMUTABLE) ||
+                                    oldAttribute.getMutability().equals(SCIMDefinitions.Mutability.READ_ONLY)) {
+
+                                throw new BadRequestException("Immutable or Read-Only attributes can not be modified.",
+                                        ResponseCodeConstants.MUTABILITY);
+                            } else {
+                                //delete the old attribute
+                                oldResource.deleteAttribute(attributeName);
+                                //replace with new attribute
+                                oldResource.setAttribute(attributeValue);
+                            }
+
+                        } else if (oldAttribute.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
+                            //this is the complex attribute case.
+                            Map<String, Attribute> subAttributeList =
+                                    ((ComplexAttribute) attributeHoldingSCIMUser.
+                                            getAttribute(attributeName)).getSubAttributesList();
+
+                            for (String subAttributeName : subAttributeList.keySet()) {
+                                Attribute subAttribute = oldAttribute.getSubAttribute(subAttributeName);
+
+                                if (subAttribute != null) {
+                                    if (subAttribute.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
+                                        if (subAttribute.getMultiValued()) {
+                                            //extension schema is the only one who reaches here.
+                                            MultiValuedAttribute attributeSubValue = (MultiValuedAttribute)
+                                                    ((ComplexAttribute) attributeHoldingSCIMUser.
+                                                            getAttribute(attributeName)).
+                                                            getSubAttribute(subAttributeName);
+
+                                            if (subAttribute.getMutability().equals
+                                                    (SCIMDefinitions.Mutability.IMMUTABLE) ||
+                                                    subAttribute.getMutability().equals
+                                                            (SCIMDefinitions.Mutability.READ_ONLY)) {
+
+                                                throw new BadRequestException
+                                                        ("Immutable or Read-Only attributes can not be modified.",
+                                                        ResponseCodeConstants.MUTABILITY);
+                                            } else {
+                                                //delete the old attribute
+                                                ((ComplexAttribute) (oldAttribute)).removeSubAttribute
+                                                        (subAttribute.getName());
+                                                //replace with new attribute
+                                                ((ComplexAttribute) (oldAttribute)).setSubAttribute(attributeSubValue);
+                                            }
+
+                                        } else {
+                                            //extension schema is the only one who reaches here.
+                                            Map<String, Attribute> subSubAttributeList = ((ComplexAttribute)
+                                                    (attributeHoldingSCIMUser.getAttribute(attributeName).
+                                                            getSubAttribute(subAttributeName))).getSubAttributesList();
+
+                                            for (String subSubAttributeName : subSubAttributeList.keySet()) {
+                                                Attribute subSubAttribute = oldAttribute.getSubAttribute
+                                                        (subAttributeName).getSubAttribute(subSubAttributeName);
+
+                                                if (subSubAttribute != null) {
+                                                    if (subSubAttribute.getMultiValued()) {
+
+                                                        if (subSubAttribute.getMutability().equals
+                                                                (SCIMDefinitions.Mutability.IMMUTABLE) ||
+                                                                subSubAttribute.getMutability().equals
+                                                                        (SCIMDefinitions.Mutability.READ_ONLY)) {
+
+                                                            throw new BadRequestException
+                                                                    ("Immutable or Read-Only attributes " +
+                                                                            "can not be modified.",
+                                                                            ResponseCodeConstants.MUTABILITY);
+                                                        } else {
+                                                            //delete the old attribute
+                                                            ((ComplexAttribute) (oldAttribute.getSubAttribute
+                                                                    (subAttributeName))).removeSubAttribute
+                                                                    (subSubAttribute.getName());
+                                                            //replace with new attribute
+                                                            ((ComplexAttribute) (oldAttribute.getSubAttribute
+                                                                    (subAttributeName))).setSubAttribute
+                                                                    (subSubAttribute);
+                                                        }
+                                                    } else {
+                                                        ((SimpleAttribute) subSubAttribute).setValue(
+                                                                ((SimpleAttribute) subSubAttributeList.get
+                                                                        (subSubAttributeName)).getValue());
+                                                    }
+                                                } else {
+                                                    ((ComplexAttribute) (subAttribute)).setSubAttribute(
+                                                            subSubAttributeList.get(subSubAttributeName));
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        if (subAttribute.getMutability().equals
+                                                (SCIMDefinitions.Mutability.IMMUTABLE) ||
+                                                subAttribute.getMutability().equals
+                                                        (SCIMDefinitions.Mutability.READ_ONLY)) {
+
+                                            throw new BadRequestException("Immutable or Read-Only " +
+                                                    "attributes can not be modified.",
+                                                    ResponseCodeConstants.MUTABILITY);
+                                        } else {
+                                            //delete the old attribute
+                                            ((ComplexAttribute) (oldAttribute)).removeSubAttribute
+                                                    (subAttribute.getName());
+                                            //replace with new attribute
+                                            ((ComplexAttribute) (oldAttribute)).setSubAttribute
+                                                    (subAttributeList.get(subAttribute.getName()));
+                                        }
+                                    }
+                                } else {
+                                    //add the attribute
+                                    ((ComplexAttribute) oldAttribute).setSubAttribute
+                                            (subAttributeList.get(subAttributeName));
+                                }
+                            }
+                        } else {
+                            if (oldAttribute.getMutability().equals(SCIMDefinitions.Mutability.IMMUTABLE) ||
+                                    oldAttribute.getMutability().equals(SCIMDefinitions.Mutability.READ_ONLY)) {
+
+                                throw new BadRequestException("Immutable or Read-Only attributes can not be modified.",
+                                        ResponseCodeConstants.MUTABILITY);
+                            } else {
+                                // this is the simple attribute case.replace the value
+                                ((SimpleAttribute) oldAttribute).setValue
+                                        (((SimpleAttribute) attributeHoldingSCIMUser.getAttribute
+                                                (oldAttribute.getName())).getValue());
+                            }
+                        }
+                    } else {
+                        //add the attribute
+                        oldResource.setAttribute(attributeHoldingSCIMUser.getAttributeList().get(attributeName));
+                    }
+                }
+                AbstractSCIMObject validatedResource = ServerSideValidator.validateUpdatedSCIMObject
+                        (copyOfOldResource, oldResource, schema);
+
+                return validatedResource;
+            } else  {
+                throw new CharonException("Error in getting the old resource.");
+            }
+        } catch (BadRequestException | CharonException e) {
+            throw new CharonException("Error in performing the add operation", e);
+        }
     }
 }
