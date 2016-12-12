@@ -165,7 +165,7 @@ public class AttributeUtil {
     }
 
     /**
-     * Will iterate through <code>{@code SCIMAttributeSchema}</code> objects
+     * return attribute URI
      *
      *
      * @param attributeName

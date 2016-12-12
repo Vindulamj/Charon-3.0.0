@@ -1,9 +1,6 @@
 package org.wso2.charon.core.v2.protocol.endpoints;
 
 
-import org.wso2.charon.core.v2.attributes.ComplexAttribute;
-import org.wso2.charon.core.v2.attributes.MultiValuedAttribute;
-import org.wso2.charon.core.v2.attributes.SimpleAttribute;
 import org.wso2.charon.core.v2.config.CharonConfiguration;
 import org.wso2.charon.core.v2.encoder.JSONDecoder;
 import org.wso2.charon.core.v2.encoder.JSONEncoder;
@@ -12,6 +9,7 @@ import org.wso2.charon.core.v2.extensions.UserManager;
 import org.wso2.charon.core.v2.objects.ListedResource;
 import org.wso2.charon.core.v2.objects.User;
 import org.wso2.charon.core.v2.schema.*;
+import org.wso2.charon.core.v2.utils.PatchOperationUtil;
 import org.wso2.charon.core.v2.utils.ResourceManagerUtil;
 import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.v2.protocol.SCIMResponse;
@@ -522,17 +520,17 @@ public class UserResourceManager extends AbstractResourceManager {
 
                 if(operation.getOperation().equals(SCIMConstants.OperationalConstants.ADD)){
                     if(newUser == null ){
-                        newUser = PatchOperationSupport.doPatchAdd(operation, getDecoder(), oldUser, copyOfOldUser);
+                        newUser = (User) PatchOperationUtil.doPatchAdd(operation, getDecoder(), oldUser, copyOfOldUser);
                         copyOfOldUser = (User) CopyUtil.deepCopy(newUser);
                         System.out.println(newUser.toString());
                     } else {
-                        newUser = PatchOperationSupport.doPatchAdd(operation, getDecoder(), newUser, copyOfOldUser);
+                        newUser = (User) PatchOperationUtil.doPatchAdd(operation, getDecoder(), newUser, copyOfOldUser);
                         copyOfOldUser = (User) CopyUtil.deepCopy(newUser);
                         System.out.println(newUser.toString());
                     }
                 } else if (operation.getOperation().equals(SCIMConstants.OperationalConstants.REMOVE)) {
                     if (newUser == null ) {
-                        newUser = PatchOperationSupport.doPatchRemove(operation, getDecoder(), oldUser, copyOfOldUser);
+                        newUser = (User) PatchOperationUtil.doPatchRemove(operation, getDecoder(), oldUser, copyOfOldUser);
                         System.out.println(newUser.toString());
                     } else {
 

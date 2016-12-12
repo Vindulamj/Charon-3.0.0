@@ -194,10 +194,11 @@ public class Test {
                "    }\n" +
                "  ],\n" +
                "  \"EnterpriseUser\":{\n" +
-               "       \"employeeNumber\" :\"111222333444555\",\n" +
-               "       \"manager\": {\n" +
+               "       \"employeeNumber\" :[\"111222333444555\"],\n" +
+               "       \"manager\": [{\n" +
                "            \"value\": \"Maxxa\",\n" +
-               "         },\n" +
+               "            \"$ref\": \"vindula\"\n" +
+               "         }]\n" +
                "   }\n" +
                "}";
 
@@ -209,7 +210,7 @@ public class Test {
 
 
        //-----GET USER  ---------
-       //SCIMResponse res= um.get("b1fac6b4-85ae-4945-bfe1-1360b771b6e4",new SCIMUserManager(),null,null);
+       //SCIMResponse res= um.get("e290966f-c2d6-46b8-8bf6-a26c47d202e0",new SCIMUserManager(),null,null);
 
        //-----DELETE USER  ---------
        //SCIMResponse res= um.delete("cf712155-e974-42ae-9e57-6c42f7bbadad",new SCIMUserManager());
@@ -307,12 +308,16 @@ public class Test {
                "     \"Operations\":[\n" +
                "       {\n" +
                "        \"op\":\"remove\",\n" +
-               "        \"path\":\"emails.value\",\n" +
-               "       }\n" +
+               "        \"path\":\"EnterpriseUser.manager[$ref eq vindula].value\",\n" +
+               "       },\n" +
+               //"       {\n" +
+               //"        \"op\":\"remove\",\n" +
+               //"        \"path\":\"emails[type eq vindula]\",\n" +
+               //"       }\n" +
                "     ]\n" +
                "   }";
 
-       um.updateWithPATCH("904bde09-6c55-4339-b567-33d673c33c09",test1, new SCIMUserManager(), null,null);
+       um.updateWithPATCH("cfe6ee18-8170-44a6-84f8-11f35756e53c",test1, new SCIMUserManager(), null,null);
 
 
     }
