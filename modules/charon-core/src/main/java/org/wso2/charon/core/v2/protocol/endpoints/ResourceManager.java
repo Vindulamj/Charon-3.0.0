@@ -17,6 +17,8 @@
  */
 package org.wso2.charon.core.v2.protocol.endpoints;
 
+import org.wso2.charon.core.v2.exceptions.BadRequestException;
+import org.wso2.charon.core.v2.exceptions.NotFoundException;
 import org.wso2.charon.core.v2.extensions.UserManager;
 import org.wso2.charon.core.v2.protocol.SCIMResponse;
 
@@ -103,7 +105,7 @@ public interface ResourceManager {
      * @return
      */
     public SCIMResponse updateWithPATCH(String existingId, String scimObjectString,
-                                        UserManager userManager, String attributes, String excludeAttributes);
+                                        UserManager userManager, String attributes, String excludeAttributes) throws NotFoundException, BadRequestException;
 
 
 }

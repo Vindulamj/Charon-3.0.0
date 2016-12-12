@@ -492,7 +492,7 @@ public class UserResourceManager extends AbstractResourceManager {
     }
 
     /**
-     * Update the user resource by sequence of operations
+     * Update the user resource by sequence of operations.
      *
      * @param existingId
      * @param scimObjectString
@@ -503,45 +503,64 @@ public class UserResourceManager extends AbstractResourceManager {
      */
 
     public SCIMResponse updateWithPATCH(String existingId, String scimObjectString, UserManager userManager,
-                                        String attributes, String excludeAttributes) {
+                                        String attributes, String excludeAttributes) throws NotFoundException, BadRequestException {
         try {
             //obtain the json decoder.
             JSONDecoder decoder = getDecoder();
             //decode the SCIM User object, encoded in the submitted payload.
             List<PatchOperation> opList = decoder.decodeRequest(scimObjectString);
 
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+            //get the user from the user core
             User oldUser = userManager.getUser(existingId, null);
+            //make a copy of the original user
             User copyOfOldUser = (User) CopyUtil.deepCopy(oldUser);
+            //make another copy of original user. this will be used to restore to the original condition if failure occurs.
             User originalUser = (User) CopyUtil.deepCopy(copyOfOldUser);
 
             User newUser = null;
 
-            for(PatchOperation operation : opList){
+            for(PatchOperation operation : opList) {
 
-                if(operation.getOperation().equals(SCIMConstants.OperationalConstants.ADD)){
-                    if(newUser == null ){
-                        newUser = (User) PatchOperationUtil.doPatchAdd(operation, getDecoder(), oldUser, copyOfOldUser);
+                if (operation.getOperation().equals(SCIMConstants.OperationalConstants.ADD)) {
+                    if (newUser == null) {
+                        newUser = (User) PatchOperationUtil.doPatchAdd(operation, getDecoder(), oldUser, copyOfOldUser, schema);
                         copyOfOldUser = (User) CopyUtil.deepCopy(newUser);
-                        System.out.println(newUser.toString());
+
                     } else {
-                        newUser = (User) PatchOperationUtil.doPatchAdd(operation, getDecoder(), newUser, copyOfOldUser);
+                        newUser = (User) PatchOperationUtil.doPatchAdd(operation, getDecoder(), newUser, copyOfOldUser, schema);
                         copyOfOldUser = (User) CopyUtil.deepCopy(newUser);
-                        System.out.println(newUser.toString());
+
                     }
                 } else if (operation.getOperation().equals(SCIMConstants.OperationalConstants.REMOVE)) {
-                    if (newUser == null ) {
-                        newUser = (User) PatchOperationUtil.doPatchRemove(operation, getDecoder(), oldUser, copyOfOldUser);
-                        System.out.println(newUser.toString());
-                    } else {
+                    if (newUser == null) {
+                        newUser = (User) PatchOperationUtil.doPatchRemove(operation, oldUser, copyOfOldUser, schema);
+                        copyOfOldUser = (User) CopyUtil.deepCopy(newUser);
 
+                    } else {
+                        newUser = (User) PatchOperationUtil.doPatchRemove(operation, newUser, copyOfOldUser, schema);
+                        copyOfOldUser = (User) CopyUtil.deepCopy(newUser);
+                    }
+                } else if (operation.getOperation().equals(SCIMConstants.OperationalConstants.REPLACE)) {
+                    if (newUser == null) {
+                        newUser = (User) PatchOperationUtil.doPatchReplace(operation, oldUser, copyOfOldUser, schema);
+                        copyOfOldUser = (User) CopyUtil.deepCopy(newUser);
+
+                    } else {
+                        newUser = (User) PatchOperationUtil.doPatchReplace(operation, newUser, copyOfOldUser, schema);
+                        copyOfOldUser = (User) CopyUtil.deepCopy(newUser);
                     }
                 }
             }
-            return null;
-
-        } catch (Exception e){
-            System.out.println(e);
-            return null;
+            return  null;
+        } catch (NotFoundException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (BadRequestException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (NotImplementedException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (CharonException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
         }
     }
 
