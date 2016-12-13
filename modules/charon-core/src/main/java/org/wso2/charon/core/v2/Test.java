@@ -194,7 +194,7 @@ public class Test {
                "    }\n" +
                "  ],\n" +
                "  \"EnterpriseUser\":{\n" +
-               "       \"employeeNumber\" :[\"111222333444555\"],\n" +
+               "       \"employeeNumber\" :\"111222333444555\",\n" +
                "       \"manager\": [{\n" +
                "            \"value\": \"Maxxa\",\n" +
                "            \"$ref\": \"vindula\"\n" +
@@ -323,7 +323,7 @@ public class Test {
                "     \"Operations\":[\n" +
                "       {\n" +
                "        \"op\":\"replace\",\n" +
-               "        \"value\":[\n" +
+               "        \"value\":\n" +
                "         {\n" +
                "         \"EnterpriseUser\":{\n" +
                "           \"employeeNumber\": \"234\",\n" +
@@ -339,12 +339,27 @@ public class Test {
                "         ],\n" +
                "           \"nickName\": \"Chandi\",\n" +
                "         }\n" +
-               "        ]\n" +
                "       }\n" +
                "     ]\n" +
                "   }";
 
-       um.updateWithPATCH("cfe6ee18-8170-44a6-84f8-11f35756e53c",test2, new SCIMUserManager(), null,null);
+
+
+       String test3 = "{ \"schemas\":\n" +
+               "      [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n" +
+               "     \"Operations\":[\n" +
+               "       {\n" +
+               "        \"op\":\"replace\",\n" +
+               "        \"path\":\"EnterpriseUser.manager\",\n" +
+               "           \"value\":[{\n" +
+               "               \"value\" :\"Gayan12\",\n" +
+               "               \"$ref\" :\"Gayan12\"\n" +
+               "             }],\n" +
+               "          }\n" +
+               "     ]\n" +
+               "   }";
+
+       um.updateWithPATCH("36c063fa-ec4e-4165-8b92-f00a4b13f9e4",test3, new SCIMUserManager(), null,null);
 
 
     }

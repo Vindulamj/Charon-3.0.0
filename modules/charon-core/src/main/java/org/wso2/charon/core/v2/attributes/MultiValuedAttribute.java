@@ -73,6 +73,17 @@ public class MultiValuedAttribute extends AbstractAttribute {
         attributeValues.clear();;
     }
 
+    /*
+     * clear all primitive values
+     * @throws CharonException
+     */
+
+    public void deletePrimitiveValues() throws CharonException {
+        //here we delete primitive values
+        attributePrimitiveValues.clear();;
+    }
+
+
     /**
      * To construct and set a value of a multi-valued attribute, as a complex value containing
      * set of sub attributes.

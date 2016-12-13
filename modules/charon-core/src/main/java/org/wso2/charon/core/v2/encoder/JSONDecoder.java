@@ -177,7 +177,7 @@ public class JSONDecoder {
      * @param attributeValue  - value for the attribute
      * @return SimpleAttribute
      */
-    private SimpleAttribute buildSimpleAttribute(AttributeSchema attributeSchema,
+    public SimpleAttribute buildSimpleAttribute(AttributeSchema attributeSchema,
                                                  Object attributeValue) throws CharonException, BadRequestException {
         Object attributeValueObject = AttributeUtil.getAttributeValueFromString(
                 attributeValue, attributeSchema.getType());
@@ -193,7 +193,7 @@ public class JSONDecoder {
      * @param attributeValues - values for the attribute
      * @return MultiValuedAttribute
      */
-    private MultiValuedAttribute buildComplexMultiValuedAttribute
+    public MultiValuedAttribute buildComplexMultiValuedAttribute
                                     (AttributeSchema attributeSchema, JSONArray attributeValues)
             throws CharonException, BadRequestException {
         try {
@@ -232,7 +232,7 @@ public class JSONDecoder {
      * @param attributeValues - values for the attribute
      * @return MultiValuedAttribute
      */
-    private MultiValuedAttribute buildPrimitiveMultiValuedAttribute(AttributeSchema attributeSchema,
+    public MultiValuedAttribute buildPrimitiveMultiValuedAttribute(AttributeSchema attributeSchema,
                                                                     JSONArray attributeValues)
             throws CharonException, BadRequestException {
         try {
@@ -274,7 +274,7 @@ public class JSONDecoder {
      * @param jsonObject             - sub attributes values for the complex attribute
      * @return ComplexAttribute
      */
-    private ComplexAttribute buildComplexAttribute(AttributeSchema complexAttributeSchema,
+    public ComplexAttribute buildComplexAttribute(AttributeSchema complexAttributeSchema,
                                                    JSONObject jsonObject)
             throws BadRequestException, CharonException, InternalErrorException, JSONException {
         ComplexAttribute complexAttribute = new ComplexAttribute(complexAttributeSchema.getName());
@@ -528,9 +528,9 @@ public class JSONDecoder {
 
     public User decode(String scimResourceString, SCIMResourceTypeSchema schema) {
         try {
-            JSONArray decodedJsonAry = new JSONArray(new JSONTokener(scimResourceString));
+            JSONObject decodedJsonObj = new JSONObject(new JSONTokener(scimResourceString));
 
-            User scimUser = (User) decodeResource(decodedJsonAry.optString(0), schema, new User());
+            User scimUser = (User) decodeResource(decodedJsonObj.toString(), schema, new User());
 
             return scimUser;
 

@@ -18,13 +18,14 @@
 
 package org.wso2.charon.core.v2.utils;
 
-import org.wso2.charon.core.v2.attributes.Attribute;
-import org.wso2.charon.core.v2.attributes.ComplexAttribute;
-import org.wso2.charon.core.v2.attributes.MultiValuedAttribute;
-import org.wso2.charon.core.v2.attributes.SimpleAttribute;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.wso2.charon.core.v2.attributes.*;
 import org.wso2.charon.core.v2.encoder.JSONDecoder;
 import org.wso2.charon.core.v2.exceptions.BadRequestException;
 import org.wso2.charon.core.v2.exceptions.CharonException;
+import org.wso2.charon.core.v2.exceptions.InternalErrorException;
 import org.wso2.charon.core.v2.exceptions.NotImplementedException;
 import org.wso2.charon.core.v2.objects.AbstractSCIMObject;
 import org.wso2.charon.core.v2.objects.User;
@@ -33,6 +34,7 @@ import org.wso2.charon.core.v2.schema.*;
 import org.wso2.charon.core.v2.utils.codeutils.ExpressionNode;
 import org.wso2.charon.core.v2.utils.codeutils.PatchOperation;
 
+import javax.swing.*;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -727,20 +729,417 @@ public class PatchOperationUtil {
                                                     AbstractSCIMObject oldResource,
                                                     AbstractSCIMObject copyOfOldResource,
                                                     SCIMResourceTypeSchema schema)
-            throws CharonException {
+            throws CharonException, NotImplementedException, BadRequestException, JSONException, InternalErrorException {
+
         if (operation.getPath() != null) {
-            doPatchReplaceOnPath(oldResource, copyOfOldResource, schema, operation);
+            String path = operation.getPath();
+            //split the path to extract the filter if present.
+            String[] parts = path.split("[\\[\\]]");
+
+            if (operation.getPath().contains("[")) {
+                doPatchReplaceOnPathWithFilters(oldResource, copyOfOldResource, schema, decoder, operation, parts);
+
+            } else {
+                doPatchReplaceOnPathWithoutFilters(oldResource, copyOfOldResource, schema, decoder, operation, parts);
+            }
+
         } else {
             doPatchReplaceOnResource(oldResource, copyOfOldResource, schema, decoder, operation);
         }
         return oldResource;
     }
 
-    private static void doPatchReplaceOnPath(AbstractSCIMObject oldResource, AbstractSCIMObject copyOfOldResource,
-                                             SCIMResourceTypeSchema schema, PatchOperation operation) {
+
+    private static AbstractSCIMObject doPatchReplaceOnPathWithoutFilters(AbstractSCIMObject oldResource,
+                                                                         AbstractSCIMObject copyOfOldResource,
+                                                                         SCIMResourceTypeSchema schema,
+                                                                         JSONDecoder decoder, PatchOperation operation,
+                                                                         String[] parts)
+            throws BadRequestException, CharonException, JSONException, InternalErrorException {
+
+        String[] attributeParts = parts[0].split("[\\.]");
+        if (attributeParts.length == 1) {
+
+            Attribute attribute = oldResource.getAttribute(attributeParts[0]);
+
+            if (attribute != null) {
+                if (!attribute.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
+                    if (!attribute.getMultiValued()) {
+                        if (attribute.getMutability().equals(SCIMDefinitions.Mutability.READ_ONLY) ||
+                                attribute.getMutability().equals(SCIMDefinitions.Mutability.IMMUTABLE)) {
+                            throw new BadRequestException("Can not replace a immutable attribute or a read-only attribute",
+                                    ResponseCodeConstants.MUTABILITY);
+                        } else {
+                            ((SimpleAttribute) attribute).setValue(operation.getValues().toString());
+                        }
+                    } else {
+                        if (attribute.getMutability().equals(SCIMDefinitions.Mutability.READ_ONLY) ||
+                                attribute.getMutability().equals(SCIMDefinitions.Mutability.IMMUTABLE)) {
+                            throw new BadRequestException("Can not replace a immutable attribute or a read-only attribute",
+                                    ResponseCodeConstants.MUTABILITY);
+                        } else {
+                            ((MultiValuedAttribute) attribute).deletePrimitiveValues();
+                            JSONArray jsonArray = new JSONArray(operation.getValues());
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                ((MultiValuedAttribute) attribute).setAttributePrimitiveValue(jsonArray.get(i));
+                            }
+                        }
+                    }
+
+                } else {
+                    if (attribute.getMultiValued()) {
+                        if (attribute.getMutability().equals(SCIMDefinitions.Mutability.READ_ONLY) ||
+                                attribute.getMutability().equals(SCIMDefinitions.Mutability.IMMUTABLE)) {
+                            throw new BadRequestException("Can not replace a immutable attribute or a read-only attribute",
+                                    ResponseCodeConstants.MUTABILITY);
+                        } else {
+                            AttributeSchema attributeSchema = SchemaUtil.getAttributeSchema(attribute.getName(), schema);
+                            MultiValuedAttribute newMultiValuedAttribute = decoder.buildComplexMultiValuedAttribute
+                                    (attributeSchema, (JSONArray) operation.getValues());
+                            oldResource.deleteAttribute(attribute.getName());
+                            oldResource.setAttribute(newMultiValuedAttribute);
+                        }
+
+
+                    } else {
+                        if (attribute.getMutability().equals(SCIMDefinitions.Mutability.READ_ONLY) ||
+                                attribute.getMutability().equals(SCIMDefinitions.Mutability.IMMUTABLE)) {
+                            throw new BadRequestException("Can not replace a immutable attribute or a read-only attribute",
+                                    ResponseCodeConstants.MUTABILITY);
+                        } else {
+                            AttributeSchema attributeSchema = SchemaUtil.getAttributeSchema(attribute.getName(), schema);
+                            ComplexAttribute newComplexAttribute = decoder.buildComplexAttribute(attributeSchema,
+                                    (JSONObject) operation.getValues());
+                            oldResource.deleteAttribute(attribute.getName());
+                            oldResource.setAttribute(newComplexAttribute);
+                        }
+                    }
+                }
+
+            } else {
+                //create and add the attribute
+                AttributeSchema attributeSchema = SchemaUtil.getAttributeSchema(attributeParts[0], schema);
+                if (attributeSchema != null) {
+                    if (attributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
+                        if (attributeSchema.getMultiValued()) {
+                            MultiValuedAttribute newMultiValuedAttribute = decoder.buildComplexMultiValuedAttribute
+                                    (attributeSchema, (JSONArray) operation.getValues());
+                            oldResource.setAttribute(newMultiValuedAttribute);
+
+                        } else  {
+                            ComplexAttribute newComplexAttribute = decoder.buildComplexAttribute(attributeSchema,
+                                    (JSONObject) operation.getValues());
+                            oldResource.setAttribute(newComplexAttribute);
+                        }
+
+                    } else {
+                        if (attributeSchema.getMultiValued()) {
+                            MultiValuedAttribute newMultiValuedAttribute = decoder.buildPrimitiveMultiValuedAttribute(
+                                    attributeSchema, (JSONArray) operation.getValues());
+                            oldResource.setAttribute(newMultiValuedAttribute);
+
+                        } else {
+
+                            SimpleAttribute simpleAttribute = decoder.buildSimpleAttribute(
+                                    attributeSchema, operation.getValues());
+                            oldResource.setAttribute(simpleAttribute);
+                        }
+                    }
+                } else{
+                    throw new BadRequestException("No attribute with the name : " + attributeParts[0]);
+                }
+            }
+
+        } else if (attributeParts.length == 2) {
+
+            Attribute attribute = oldResource.getAttribute(attributeParts[0]);
+
+            if (attribute != null) {
+
+                if (attribute.getMultiValued()) {
+
+                    List<Attribute> subValues = ((MultiValuedAttribute) attribute).getAttributeValues();
+                    for (Attribute subValue : subValues) {
+                        Attribute subAttribute = ((ComplexAttribute) subValue).getSubAttribute(attributeParts[1]);
+                        if (subAttribute != null) {
+                            if (subAttribute.getMutability().equals(SCIMDefinitions.Mutability.READ_ONLY) ||
+                                    subAttribute.getMutability().equals(SCIMDefinitions.Mutability.IMMUTABLE)) {
+                                throw new BadRequestException("Can not replace a immutable attribute or a read-only attribute",
+                                        ResponseCodeConstants.MUTABILITY);
+                            } else {
+                                if (subAttribute.getMultiValued()) {
+                                    ((MultiValuedAttribute) subAttribute).deletePrimitiveValues();
+                                    JSONArray jsonArray = new JSONArray(operation.getValues());
+                                    for (int i = 0; i < jsonArray.length(); i++) {
+                                        ((MultiValuedAttribute) subAttribute).setAttributePrimitiveValue(jsonArray.get(i));
+                                    }
+                                } else {
+                                    ((SimpleAttribute) subAttribute).setValue(operation.getValues());
+                                }
+                            }
+                        } else {
+                            AttributeSchema subAttributeSchema = SchemaUtil.getAttributeSchema(
+                                    attributeParts[0] + "." + attributeParts[1], schema);
+                            if (subAttributeSchema.getMultiValued()) {
+                                MultiValuedAttribute newMultiValuedAttribute = decoder.buildPrimitiveMultiValuedAttribute(
+                                        subAttributeSchema, (JSONArray) operation.getValues());
+                                ((ComplexAttribute) (subValue)).setSubAttribute(newMultiValuedAttribute);
+                            } else  {
+                                SimpleAttribute simpleAttribute = decoder.buildSimpleAttribute(
+                                        subAttributeSchema, operation.getValues());
+                                ((ComplexAttribute) (subValue)).setSubAttribute(simpleAttribute);
+                            }
+                        }
+                    }
+                } else {
+                    Attribute subAttribute = ((attribute)).getSubAttribute(attributeParts[1]);
+                    AttributeSchema subAttributeSchema = SchemaUtil.getAttributeSchema(
+                            attributeParts[0] + "." + attributeParts[1], schema);
+                    if (subAttributeSchema != null) {
+                        if (subAttributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
+                            //only extension schema reaches here.
+                            if (subAttribute != null) {
+                                if (!subAttribute.getMultiValued()) {
+                                    if (subAttribute.getMutability().equals(SCIMDefinitions.Mutability.READ_ONLY) ||
+                                            subAttribute.getMutability().equals(SCIMDefinitions.Mutability.IMMUTABLE)) {
+                                        throw new BadRequestException("Can not replace a immutable attribute or a read-only attribute",
+                                                ResponseCodeConstants.MUTABILITY);
+                                    } else {
+                                        ComplexAttribute newComplexAttribute = decoder.buildComplexAttribute(subAttributeSchema,
+                                                (JSONObject) operation.getValues());
+                                        ((ComplexAttribute) (attribute)).removeSubAttribute(attributeParts[1]);
+                                        ((ComplexAttribute) (attribute)).setSubAttribute(newComplexAttribute);
+                                    }
+                                } else {
+                                    if (subAttribute.getMutability().equals(SCIMDefinitions.Mutability.READ_ONLY) ||
+                                            subAttribute.getMutability().equals(SCIMDefinitions.Mutability.IMMUTABLE)) {
+                                        throw new BadRequestException("Can not replace a immutable attribute or a read-only attribute",
+                                                ResponseCodeConstants.MUTABILITY);
+                                    } else {
+                                        MultiValuedAttribute newMultiValuesAttribute = decoder.buildComplexMultiValuedAttribute(subAttributeSchema,
+                                                (JSONArray) operation.getValues());
+                                        ((ComplexAttribute) (attribute)).removeSubAttribute(attributeParts[1]);
+                                        ((ComplexAttribute) (attribute)).setSubAttribute(newMultiValuesAttribute);
+                                    }
+                                }
+
+                            } else {
+
+                                if (subAttributeSchema.getMultiValued()) {
+                                    MultiValuedAttribute newMultiValuesAttribute = decoder.buildComplexMultiValuedAttribute(subAttributeSchema,
+                                            (JSONArray) operation.getValues());
+                                    ((ComplexAttribute) (attribute)).setSubAttribute(newMultiValuesAttribute);
+                                } else {
+                                    ComplexAttribute newComplexAttribute = decoder.buildComplexAttribute(subAttributeSchema,
+                                            (JSONObject) operation.getValues());
+                                    ((ComplexAttribute) (attribute)).setSubAttribute(newComplexAttribute);
+                                }
+                            }
+
+                        } else {
+                            if (subAttribute != null) {
+                                if (subAttribute.getMutability().equals(SCIMDefinitions.Mutability.READ_ONLY) ||
+                                        subAttribute.getMutability().equals(SCIMDefinitions.Mutability.IMMUTABLE)) {
+                                    throw new BadRequestException("Can not replace a immutable attribute or a read-only attribute",
+                                            ResponseCodeConstants.MUTABILITY);
+                                } else {
+                                    AttributeSchema attributeSchema = SchemaUtil.getAttributeSchema(
+                                            attributeParts[0] + "." + attributeParts[1], schema);
+                                    if (subAttribute.getMultiValued()) {
+                                        MultiValuedAttribute newMultiValuedAttribute = decoder.buildPrimitiveMultiValuedAttribute(
+                                                attributeSchema, (JSONArray) operation.getValues());
+                                        ((ComplexAttribute) (attribute)).removeSubAttribute(attributeParts[1]);
+                                        ((ComplexAttribute) (attribute)).setSubAttribute(newMultiValuedAttribute);
+                                    } else {
+                                        SimpleAttribute simpleAttribute = decoder.buildSimpleAttribute(
+                                                attributeSchema, operation.getValues());
+                                        ((ComplexAttribute) (attribute)).removeSubAttribute(attributeParts[1]);
+                                        ((ComplexAttribute) (attribute)).setSubAttribute(simpleAttribute);
+                                    }
+
+                                }
+                            } else {
+                                //add the values
+                                AttributeSchema attributeSchema = SchemaUtil.getAttributeSchema(
+                                        attributeParts[0] + "." + attributeParts[1], schema);
+                                if (subAttribute.getMultiValued()) {
+                                    MultiValuedAttribute newMultiValuedAttribute = decoder.buildPrimitiveMultiValuedAttribute(
+                                            attributeSchema, (JSONArray) operation.getValues());
+                                    ((ComplexAttribute) (attribute)).setSubAttribute(newMultiValuedAttribute);
+                                } else {
+                                    SimpleAttribute simpleAttribute = decoder.buildSimpleAttribute(
+                                            attributeSchema, operation.getValues());
+                                    ((ComplexAttribute) (attribute)).setSubAttribute(simpleAttribute);
+                                }
+                            }
+                        }
+                    } else {
+                        throw new BadRequestException("No such attribute with the name : " + attributeParts[1],
+                                ResponseCodeConstants.NO_TARGET);
+                    }
+                }
+
+            } else {
+
+                AttributeSchema attributeSchema = SchemaUtil.getAttributeSchema(attributeParts[0], schema);
+                if (attributeSchema != null) {
+
+                    if (attributeSchema.getMultiValued()) {
+                        MultiValuedAttribute multiValuedAttribute = new MultiValuedAttribute(attributeSchema.getName());
+                        DefaultAttributeFactory.createAttribute(attributeSchema, multiValuedAttribute);
+
+                        AttributeSchema subAttributeSchema = SchemaUtil.getAttributeSchema(
+                                attributeParts[0] + "." + attributeParts[1], schema);
+
+                        if (subAttributeSchema != null ) {
+                            SimpleAttribute simpleAttribute = new SimpleAttribute(subAttributeSchema.getName(), operation.getValues());
+                            DefaultAttributeFactory.createAttribute(subAttributeSchema, simpleAttribute);
+
+                            String complexAttributeName = attributeSchema.getName() + "_" + operation.getValues() + "_" + SCIMConstants.DEFAULT;
+                            ComplexAttribute complexAttribute = new ComplexAttribute(complexAttributeName);
+                            DefaultAttributeFactory.createAttribute(attributeSchema, complexAttribute);
+
+                            complexAttribute.setSubAttribute(simpleAttribute);
+
+                            multiValuedAttribute.setAttributeValue(complexAttribute);
+
+                            oldResource.setAttribute(multiValuedAttribute);
+                        } else {
+                            throw new BadRequestException("No such attribute with the name : " + attributeParts[1],
+                                    ResponseCodeConstants.NO_TARGET);
+                        }
+
+                    } else  {
+
+                        ComplexAttribute complexAttribute = new ComplexAttribute(attributeSchema.getName());
+                        DefaultAttributeFactory.createAttribute(attributeSchema, complexAttribute);
+
+                        AttributeSchema subAttributeSchema = SchemaUtil.getAttributeSchema(
+                                attributeParts[0] + "." + attributeParts[1], schema);
+                        if (subAttributeSchema != null) {
+                             if (subAttributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
+                                 if (subAttributeSchema.getMultiValued()) {
+                                     MultiValuedAttribute multiValuedAttribute =
+                                             decoder.buildComplexMultiValuedAttribute(subAttributeSchema,
+                                                     (JSONArray) operation.getValues());
+                                     complexAttribute.setSubAttribute(multiValuedAttribute);
+                                 } else {
+
+                                     ComplexAttribute subComplexAttribute =
+                                             decoder.buildComplexAttribute(subAttributeSchema,
+                                                     (JSONObject) operation.getValues());
+                                     complexAttribute.setSubAttribute(subComplexAttribute);
+                                 }
+
+                             } else {
+                                 SimpleAttribute simpleAttribute = new SimpleAttribute(subAttributeSchema.getName(),
+                                         operation.getValues());
+                                 DefaultAttributeFactory.createAttribute(subAttributeSchema, simpleAttribute);
+                                 complexAttribute.setSubAttribute(simpleAttribute);
+
+                             }
+                            oldResource.setAttribute(complexAttribute);
+
+                        } else {
+                            throw new BadRequestException("No such attribute with the name : " + attributeParts[1],
+                                    ResponseCodeConstants.NO_TARGET);
+                        }
+                    }
+                } else {
+                    throw new BadRequestException("No such attribute with the name : " + attributeParts[0],
+                            ResponseCodeConstants.NO_TARGET);
+                }
+            }
+
+        } else if (attributeParts.length == 3) {
+
+
+        }
+        return oldResource;
+
     }
 
 
+
+    private static void doPatchReplaceOnPathWithFilters(AbstractSCIMObject oldResource, AbstractSCIMObject copyOfOldResource,
+                                                        SCIMResourceTypeSchema schema,
+                                                        JSONDecoder decoder, PatchOperation operation, String[] parts)
+            throws NotImplementedException, BadRequestException, CharonException {
+
+
+        User attributeHoldingSCIMUser = decoder.decode(operation.getValues().toString(), schema);
+
+        if (parts.length != 1) {
+            //currently we only support simple filters here.
+            String[] filterParts = parts[1].split(" ");
+
+            ExpressionNode expressionNode = new ExpressionNode();
+            expressionNode.setAttributeValue(filterParts[0]);
+            expressionNode.setOperation(filterParts[1]);
+            expressionNode.setValue(filterParts[2]);
+
+            if (expressionNode.getOperation().equalsIgnoreCase((SCIMConstants.OperationalConstants.EQ).trim())) {
+                if (parts.length == 3) {
+                    parts[0] = parts[0] + parts[2];
+                }
+                String[] attributeParts = parts[0].split("[\\.]");
+
+                if (attributeParts.length == 1) {
+
+                    doPatchReplaceWithFiltersForLevelOne(oldResource, attributeParts,
+                            expressionNode, attributeHoldingSCIMUser);
+
+                } else if (attributeParts.length == 2) {
+
+                    doPatchReplaceWithFiltersForLevelTwo(oldResource, attributeParts,
+                            expressionNode, attributeHoldingSCIMUser);
+
+                } else if (attributeParts.length == 3) {
+
+                    doPatchReplaceWithFiltersForLevelThree(oldResource, attributeParts,
+                            expressionNode, attributeHoldingSCIMUser);
+                }
+
+            } else {
+                throw new NotImplementedException("Only Eq filter is supported");
+            }
+        }
+    }
+
+    private static void doPatchReplaceWithFiltersForLevelThree(AbstractSCIMObject oldResource,
+                                                               String[] attributeParts,
+                                                               ExpressionNode expressionNode,
+                                                               User attributeHoldingSCIMUser)
+            throws BadRequestException, CharonException {
+
+
+    }
+
+    private static void doPatchReplaceWithFiltersForLevelTwo(AbstractSCIMObject oldResource,
+                                                             String[] attributeParts,
+                                                             ExpressionNode expressionNode,
+                                                             User attributeHoldingSCIMUser) {
+    }
+
+    private static void doPatchReplaceWithFiltersForLevelOne(AbstractSCIMObject oldResource,
+                                                             String[] attributeParts,
+                                                             ExpressionNode expressionNode,
+                                                             User attributeHoldingSCIMUser)
+            throws BadRequestException, CharonException {
+
+    }
+
+
+    /*
+     *
+     * @param oldResource
+     * @param copyOfOldResource
+     * @param schema
+     * @param decoder
+     * @param operation
+     * @return
+     * @throws CharonException
+     */
     private static AbstractSCIMObject doPatchReplaceOnResource(AbstractSCIMObject oldResource, AbstractSCIMObject
             copyOfOldResource, SCIMResourceTypeSchema schema, JSONDecoder decoder, PatchOperation operation)
             throws CharonException {

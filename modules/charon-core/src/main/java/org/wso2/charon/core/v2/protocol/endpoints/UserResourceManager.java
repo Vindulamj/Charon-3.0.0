@@ -1,6 +1,7 @@
 package org.wso2.charon.core.v2.protocol.endpoints;
 
 
+import org.json.JSONException;
 import org.wso2.charon.core.v2.config.CharonConfiguration;
 import org.wso2.charon.core.v2.encoder.JSONDecoder;
 import org.wso2.charon.core.v2.encoder.JSONEncoder;
@@ -562,7 +563,12 @@ public class UserResourceManager extends AbstractResourceManager {
             return AbstractResourceManager.encodeSCIMException(e);
         } catch (CharonException e) {
             return AbstractResourceManager.encodeSCIMException(e);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (InternalErrorException e) {
+            e.printStackTrace();
         }
+        return null;
     }
 
     /**
