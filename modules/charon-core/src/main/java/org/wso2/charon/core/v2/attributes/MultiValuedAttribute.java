@@ -120,7 +120,7 @@ public class MultiValuedAttribute extends AbstractAttribute {
      * add an attribute primitive value to the list.
      * @param obj
      */
-    public void setAttributePrimitiveValue(Object obj){
+    public void setAttributePrimitiveValue(Object obj) {
         attributePrimitiveValues.add(obj);
     }
 

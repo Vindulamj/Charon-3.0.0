@@ -18,14 +18,25 @@ package org.wso2.charon.core.v2.schema;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.charon.core.v2.attributes.*;
+import org.wso2.charon.core.v2.attributes.AbstractAttribute;
+import org.wso2.charon.core.v2.attributes.Attribute;
+import org.wso2.charon.core.v2.attributes.ComplexAttribute;
+import org.wso2.charon.core.v2.attributes.DefaultAttributeFactory;
+import org.wso2.charon.core.v2.attributes.MultiValuedAttribute;
+import org.wso2.charon.core.v2.attributes.SimpleAttribute;
 import org.wso2.charon.core.v2.exceptions.BadRequestException;
 import org.wso2.charon.core.v2.exceptions.CharonException;
 import org.wso2.charon.core.v2.objects.AbstractSCIMObject;
 import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.v2.utils.CopyUtil;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This defined the validation algorithms accroding to SCIM spec 2.0.

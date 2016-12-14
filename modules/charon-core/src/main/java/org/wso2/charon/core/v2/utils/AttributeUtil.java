@@ -18,7 +18,11 @@ package org.wso2.charon.core.v2.utils;
 import org.wso2.charon.core.v2.exceptions.BadRequestException;
 import org.wso2.charon.core.v2.exceptions.CharonException;
 import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
-import org.wso2.charon.core.v2.schema.*;
+import org.wso2.charon.core.v2.schema.AttributeSchema;
+import org.wso2.charon.core.v2.schema.SCIMAttributeSchema;
+import org.wso2.charon.core.v2.schema.SCIMConstants;
+import org.wso2.charon.core.v2.schema.SCIMDefinitions;
+import org.wso2.charon.core.v2.schema.SCIMResourceTypeSchema;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

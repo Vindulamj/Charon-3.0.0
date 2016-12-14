@@ -21,7 +21,11 @@ package org.wso2.charon.core.v2.utils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.wso2.charon.core.v2.attributes.*;
+import org.wso2.charon.core.v2.attributes.Attribute;
+import org.wso2.charon.core.v2.attributes.ComplexAttribute;
+import org.wso2.charon.core.v2.attributes.DefaultAttributeFactory;
+import org.wso2.charon.core.v2.attributes.MultiValuedAttribute;
+import org.wso2.charon.core.v2.attributes.SimpleAttribute;
 import org.wso2.charon.core.v2.encoder.JSONDecoder;
 import org.wso2.charon.core.v2.exceptions.BadRequestException;
 import org.wso2.charon.core.v2.exceptions.CharonException;
@@ -30,7 +34,11 @@ import org.wso2.charon.core.v2.exceptions.NotImplementedException;
 import org.wso2.charon.core.v2.objects.AbstractSCIMObject;
 import org.wso2.charon.core.v2.objects.User;
 import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
-import org.wso2.charon.core.v2.schema.*;
+import org.wso2.charon.core.v2.schema.AttributeSchema;
+import org.wso2.charon.core.v2.schema.SCIMConstants;
+import org.wso2.charon.core.v2.schema.SCIMDefinitions;
+import org.wso2.charon.core.v2.schema.SCIMResourceTypeSchema;
+import org.wso2.charon.core.v2.schema.ServerSideValidator;
 import org.wso2.charon.core.v2.utils.codeutils.ExpressionNode;
 import org.wso2.charon.core.v2.utils.codeutils.PatchOperation;
 
@@ -104,7 +112,8 @@ public class PatchOperationUtil {
      * @throws CharonException
      */
     private static AbstractSCIMObject doPatchRemoveWithFilters(String[] parts,
-                                                               AbstractSCIMObject oldResource, ExpressionNode expressionNode)
+                                                               AbstractSCIMObject oldResource,
+                                                               ExpressionNode expressionNode)
             throws BadRequestException, CharonException {
 
         if (parts.length == 3) {
@@ -336,13 +345,6 @@ public class PatchOperationUtil {
 
         if (attribute != null) {
             if (!attribute.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
-                //this is for paths value as 'attributeX[attributeX EQ yyy]'
-                //this is multivalued primitive case
-                if (attribute == null) {
-                    throw new BadRequestException("No such attribute with the name : " +
-                            expressionNode.getAttributeValue() + " " +
-                            "in the current resource", ResponseCodeConstants.INVALID_VALUE);
-                } else {
                     if (attribute.getMultiValued()) {
 
                         List<Object> valuesList  = ((MultiValuedAttribute)
@@ -371,7 +373,6 @@ public class PatchOperationUtil {
                         throw new BadRequestException("Attribute : " + expressionNode.getAttributeValue() + " " +
                                 "is not a multivalued attribute.", ResponseCodeConstants.INVALID_PATH);
                     }
-                }
 
             } else {
                 if (attribute.getMultiValued()) {
@@ -917,7 +918,7 @@ public class PatchOperationUtil {
                         oldResource.setAttribute(simpleAttribute);
                     }
                 }
-            } else{
+            } else {
                 throw new BadRequestException("No attribute with the name : " + attributeParts[0]);
             }
         }
@@ -956,7 +957,8 @@ public class PatchOperationUtil {
                     if (subAttribute != null) {
                         if (subAttribute.getMutability().equals(SCIMDefinitions.Mutability.READ_ONLY) ||
                                 subAttribute.getMutability().equals(SCIMDefinitions.Mutability.IMMUTABLE)) {
-                            throw new BadRequestException("Can not replace a immutable attribute or a read-only attribute",
+                            throw new BadRequestException
+                                    ("Can not replace a immutable attribute or a read-only attribute",
                                     ResponseCodeConstants.MUTABILITY);
                         } else {
                             if (subAttribute.getMultiValued()) {
@@ -994,10 +996,12 @@ public class PatchOperationUtil {
                             if (!subAttribute.getMultiValued()) {
                                 if (subAttribute.getMutability().equals(SCIMDefinitions.Mutability.READ_ONLY) ||
                                         subAttribute.getMutability().equals(SCIMDefinitions.Mutability.IMMUTABLE)) {
-                                    throw new BadRequestException("Can not replace a immutable attribute or a read-only attribute",
+                                    throw new BadRequestException
+                                            ("Can not replace a immutable attribute or a read-only attribute",
                                             ResponseCodeConstants.MUTABILITY);
                                 } else {
-                                    ComplexAttribute newComplexAttribute = decoder.buildComplexAttribute(subAttributeSchema,
+                                    ComplexAttribute newComplexAttribute =
+                                            decoder.buildComplexAttribute(subAttributeSchema,
                                             (JSONObject) operation.getValues());
                                     ((ComplexAttribute) (attribute)).removeSubAttribute(attributeParts[1]);
                                     ((ComplexAttribute) (attribute)).setSubAttribute(newComplexAttribute);
@@ -1005,10 +1009,12 @@ public class PatchOperationUtil {
                             } else {
                                 if (subAttribute.getMutability().equals(SCIMDefinitions.Mutability.READ_ONLY) ||
                                         subAttribute.getMutability().equals(SCIMDefinitions.Mutability.IMMUTABLE)) {
-                                    throw new BadRequestException("Can not replace a immutable attribute or a read-only attribute",
+                                    throw new BadRequestException
+                                            ("Can not replace a immutable attribute or a read-only attribute",
                                             ResponseCodeConstants.MUTABILITY);
                                 } else {
-                                    MultiValuedAttribute newMultiValuesAttribute = decoder.buildComplexMultiValuedAttribute(subAttributeSchema,
+                                    MultiValuedAttribute newMultiValuesAttribute =
+                                            decoder.buildComplexMultiValuedAttribute(subAttributeSchema,
                                             (JSONArray) operation.getValues());
                                     ((ComplexAttribute) (attribute)).removeSubAttribute(attributeParts[1]);
                                     ((ComplexAttribute) (attribute)).setSubAttribute(newMultiValuesAttribute);
@@ -1018,7 +1024,8 @@ public class PatchOperationUtil {
                         } else {
 
                             if (subAttributeSchema.getMultiValued()) {
-                                MultiValuedAttribute newMultiValuesAttribute = decoder.buildComplexMultiValuedAttribute(subAttributeSchema,
+                                MultiValuedAttribute newMultiValuesAttribute =
+                                        decoder.buildComplexMultiValuedAttribute(subAttributeSchema,
                                         (JSONArray) operation.getValues());
                                 ((ComplexAttribute) (attribute)).setSubAttribute(newMultiValuesAttribute);
                             } else {
@@ -1032,13 +1039,15 @@ public class PatchOperationUtil {
                         if (subAttribute != null) {
                             if (subAttribute.getMutability().equals(SCIMDefinitions.Mutability.READ_ONLY) ||
                                     subAttribute.getMutability().equals(SCIMDefinitions.Mutability.IMMUTABLE)) {
-                                throw new BadRequestException("Can not replace a immutable attribute or a read-only attribute",
+                                throw new BadRequestException
+                                        ("Can not replace a immutable attribute or a read-only attribute",
                                         ResponseCodeConstants.MUTABILITY);
                             } else {
                                 AttributeSchema attributeSchema = SchemaUtil.getAttributeSchema(
                                         attributeParts[0] + "." + attributeParts[1], schema);
                                 if (subAttribute.getMultiValued()) {
-                                    MultiValuedAttribute newMultiValuedAttribute = decoder.buildPrimitiveMultiValuedAttribute(
+                                    MultiValuedAttribute newMultiValuedAttribute =
+                                            decoder.buildPrimitiveMultiValuedAttribute(
                                             attributeSchema, (JSONArray) operation.getValues());
                                     ((ComplexAttribute) (attribute)).removeSubAttribute(attributeParts[1]);
                                     ((ComplexAttribute) (attribute)).setSubAttribute(newMultiValuedAttribute);
@@ -1055,7 +1064,8 @@ public class PatchOperationUtil {
                             AttributeSchema attributeSchema = SchemaUtil.getAttributeSchema(
                                     attributeParts[0] + "." + attributeParts[1], schema);
                             if (subAttribute.getMultiValued()) {
-                                MultiValuedAttribute newMultiValuedAttribute = decoder.buildPrimitiveMultiValuedAttribute(
+                                MultiValuedAttribute newMultiValuedAttribute =
+                                        decoder.buildPrimitiveMultiValuedAttribute(
                                         attributeSchema, (JSONArray) operation.getValues());
                                 ((ComplexAttribute) (attribute)).setSubAttribute(newMultiValuedAttribute);
                             } else {
@@ -1083,11 +1093,13 @@ public class PatchOperationUtil {
                     AttributeSchema subAttributeSchema = SchemaUtil.getAttributeSchema(
                             attributeParts[0] + "." + attributeParts[1], schema);
 
-                    if (subAttributeSchema != null ) {
-                        SimpleAttribute simpleAttribute = new SimpleAttribute(subAttributeSchema.getName(), operation.getValues());
+                    if (subAttributeSchema != null) {
+                        SimpleAttribute simpleAttribute =
+                                new SimpleAttribute(subAttributeSchema.getName(), operation.getValues());
                         DefaultAttributeFactory.createAttribute(subAttributeSchema, simpleAttribute);
 
-                        String complexAttributeName = attributeSchema.getName() + "_" + operation.getValues() + "_" + SCIMConstants.DEFAULT;
+                        String complexAttributeName =
+                                attributeSchema.getName() + "_" + operation.getValues() + "_" + SCIMConstants.DEFAULT;
                         ComplexAttribute complexAttribute = new ComplexAttribute(complexAttributeName);
                         DefaultAttributeFactory.createAttribute(attributeSchema, complexAttribute);
 
@@ -1161,7 +1173,9 @@ public class PatchOperationUtil {
                                                                         SCIMResourceTypeSchema schema,
                                                                         JSONDecoder decoder,
                                                                         PatchOperation operation,
-                                                                        String[] attributeParts) throws BadRequestException, CharonException, JSONException {
+                                                                        String[] attributeParts)
+            throws BadRequestException, CharonException, JSONException {
+
         Attribute attribute = oldResource.getAttribute(attributeParts[0]);
         if (attribute != null) {
             Attribute subAttribute  = ((ComplexAttribute) attribute).getSubAttribute(attributeParts[1]);
@@ -1178,8 +1192,10 @@ public class PatchOperationUtil {
 
                                 if (subSubAttributeSchema != null) {
                                     if (subSubAttribute.getMutability().equals(SCIMDefinitions.Mutability.READ_ONLY) ||
-                                            subSubAttribute.getMutability().equals(SCIMDefinitions.Mutability.IMMUTABLE)) {
-                                        throw new BadRequestException("Can not replace a immutable attribute or a read-only attribute",
+                                            subSubAttribute.getMutability().equals
+                                                    (SCIMDefinitions.Mutability.IMMUTABLE)) {
+                                        throw new BadRequestException
+                                                ("Can not replace a immutable attribute or a read-only attribute",
                                                 ResponseCodeConstants.MUTABILITY);
                                     } else {
                                         if (subSubAttribute.getMultiValued()) {
@@ -1190,14 +1206,16 @@ public class PatchOperationUtil {
                                             ((ComplexAttribute) subValue).removeSubAttribute(attributeParts[2]);
                                             ((ComplexAttribute) subValue).setSubAttribute(multiValuedAttribute);
                                         } else {
-                                            SimpleAttribute simpleAttribute = decoder.buildSimpleAttribute(subSubAttributeSchema,
+                                            SimpleAttribute simpleAttribute =
+                                                    decoder.buildSimpleAttribute(subSubAttributeSchema,
                                                     operation.getValues());
                                             ((ComplexAttribute) subValue).removeSubAttribute(attributeParts[2]);
                                             ((ComplexAttribute) subValue).setSubAttribute(simpleAttribute);
                                         }
                                     }
                                 } else {
-                                    throw new BadRequestException("No such attribute with the name : " + attributeParts[2],
+                                    throw new BadRequestException
+                                            ("No such attribute with the name : " + attributeParts[2],
                                             ResponseCodeConstants.NO_TARGET);
                                 }
                             } else {
@@ -1211,12 +1229,14 @@ public class PatchOperationUtil {
                                                         (JSONArray) operation.getValues());
                                         ((ComplexAttribute) subValue).setSubAttribute(multiValuedAttribute);
                                     } else {
-                                        SimpleAttribute simpleAttribute = decoder.buildSimpleAttribute(subSubAttributeSchema,
+                                        SimpleAttribute simpleAttribute =
+                                                decoder.buildSimpleAttribute(subSubAttributeSchema,
                                                 operation.getValues());
                                         ((ComplexAttribute) subValue).setSubAttribute(simpleAttribute);
                                     }
                                 }  else {
-                                    throw new BadRequestException("No such attribute with the name : " + attributeParts[2],
+                                    throw new BadRequestException
+                                            ("No such attribute with the name : " + attributeParts[2],
                                             ResponseCodeConstants.NO_TARGET);
                                 }
                             }
@@ -1252,15 +1272,18 @@ public class PatchOperationUtil {
                 }
 
             } else {
-                AttributeSchema subAttributeSchena = SchemaUtil.getAttributeSchema(attributeParts[0] + "." + attributeParts[1], schema);
+                AttributeSchema subAttributeSchena =
+                        SchemaUtil.getAttributeSchema(attributeParts[0] + "." + attributeParts[1], schema);
 
                 if (subAttributeSchena != null) {
                     if (subAttributeSchena.getMultiValued()) {
 
-                        MultiValuedAttribute multiValuedAttribute = new MultiValuedAttribute(subAttributeSchena.getName());
+                        MultiValuedAttribute multiValuedAttribute =
+                                new MultiValuedAttribute(subAttributeSchena.getName());
                         DefaultAttributeFactory.createAttribute(subAttributeSchena, multiValuedAttribute);
 
-                        String complexAttributeName  = subAttributeSchena.getName() + "_" + operation.getValues() + "_" + SCIMConstants.DEFAULT;
+                        String complexAttributeName  =
+                              subAttributeSchena.getName() + "_" + operation.getValues() + "_" + SCIMConstants.DEFAULT;
                         ComplexAttribute complexAttribute = new ComplexAttribute(complexAttributeName);
                         DefaultAttributeFactory.createAttribute(subAttributeSchena, complexAttribute);
 
@@ -1268,7 +1291,8 @@ public class PatchOperationUtil {
                                 attributeParts[1] + "." + attributeParts[2], schema);
                         if (subSubAttributeSchema !=  null) {
                             if (subSubAttributeSchema.getMultiValued()) {
-                                MultiValuedAttribute multiValuedSubAttribute = new MultiValuedAttribute(subSubAttributeSchema.getName());
+                                MultiValuedAttribute multiValuedSubAttribute =
+                                        new MultiValuedAttribute(subSubAttributeSchema.getName());
                                 DefaultAttributeFactory.createAttribute(subSubAttributeSchema, multiValuedSubAttribute);
                                 JSONArray jsonArray = new JSONArray(operation.getValues());
                                 for (int i = 0; i < jsonArray.length(); i++) {
@@ -1277,7 +1301,8 @@ public class PatchOperationUtil {
                                 complexAttribute.setSubAttribute(multiValuedSubAttribute);
 
                             } else {
-                                SimpleAttribute simpleAttribute = new SimpleAttribute(subSubAttributeSchema.getName(), operation.getValues());
+                                SimpleAttribute simpleAttribute =
+                                        new SimpleAttribute(subSubAttributeSchema.getName(), operation.getValues());
                                 DefaultAttributeFactory.createAttribute(subSubAttributeSchema, simpleAttribute);
                                 complexAttribute.setSubAttribute(simpleAttribute);
                             }
@@ -1298,7 +1323,8 @@ public class PatchOperationUtil {
                         if (subSubAttributeSchema != null) {
 
                             if (subSubAttributeSchema.getMultiValued()) {
-                                MultiValuedAttribute multiValuedAttribute = new MultiValuedAttribute(subSubAttributeSchema.getName());
+                                MultiValuedAttribute multiValuedAttribute =
+                                        new MultiValuedAttribute(subSubAttributeSchema.getName());
                                 DefaultAttributeFactory.createAttribute(subSubAttributeSchema, multiValuedAttribute);
                                 JSONArray jsonArray = new JSONArray(operation.getValues());
                                 for (int i = 0; i < jsonArray.length(); i++) {
@@ -1307,7 +1333,8 @@ public class PatchOperationUtil {
                                 complexAttribute.setSubAttribute(multiValuedAttribute);
 
                             } else {
-                                SimpleAttribute simpleAttribute = new SimpleAttribute(subSubAttributeSchema.getName(), operation.getValues());
+                                SimpleAttribute simpleAttribute =
+                                        new SimpleAttribute(subSubAttributeSchema.getName(), operation.getValues());
                                 DefaultAttributeFactory.createAttribute(subSubAttributeSchema, simpleAttribute);
                                 complexAttribute.setSubAttribute(simpleAttribute);
                             }
@@ -1333,15 +1360,18 @@ public class PatchOperationUtil {
                 ComplexAttribute parentAttribute = new ComplexAttribute(attributeSchema.getName());
                 DefaultAttributeFactory.createAttribute(attributeSchema, parentAttribute);
 
-                AttributeSchema subAttributeSchena = SchemaUtil.getAttributeSchema(attributeParts[0] + "." + attributeParts[1], schema);
+                AttributeSchema subAttributeSchena =
+                        SchemaUtil.getAttributeSchema(attributeParts[0] + "." + attributeParts[1], schema);
 
                 if (subAttributeSchena != null) {
                     if (subAttributeSchena.getMultiValued()) {
 
-                        MultiValuedAttribute multiValuedAttribute = new MultiValuedAttribute(subAttributeSchena.getName());
+                        MultiValuedAttribute multiValuedAttribute =
+                                new MultiValuedAttribute(subAttributeSchena.getName());
                         DefaultAttributeFactory.createAttribute(subAttributeSchena, multiValuedAttribute);
 
-                        String complexAttributeName = subAttributeSchena.getName() + "_" + operation.getValues() + "_" + SCIMConstants.DEFAULT;
+                        String complexAttributeName =
+                             subAttributeSchena.getName() + "_" + operation.getValues() + "_" + SCIMConstants.DEFAULT;
                         ComplexAttribute complexAttribute = new ComplexAttribute(complexAttributeName);
                         DefaultAttributeFactory.createAttribute(subAttributeSchena, complexAttribute);
 
@@ -1349,7 +1379,8 @@ public class PatchOperationUtil {
                                 attributeParts[1] + "." + attributeParts[2], schema);
                         if (subSubAttributeSchema != null) {
                             if (subSubAttributeSchema.getMultiValued()) {
-                                MultiValuedAttribute multiValuedSubAttribute = new MultiValuedAttribute(subSubAttributeSchema.getName());
+                                MultiValuedAttribute multiValuedSubAttribute =
+                                        new MultiValuedAttribute(subSubAttributeSchema.getName());
                                 DefaultAttributeFactory.createAttribute(subSubAttributeSchema, multiValuedSubAttribute);
                                 JSONArray jsonArray = new JSONArray(operation.getValues());
                                 for (int i = 0; i < jsonArray.length(); i++) {
@@ -1358,7 +1389,8 @@ public class PatchOperationUtil {
                                 complexAttribute.setSubAttribute(multiValuedSubAttribute);
 
                             } else {
-                                SimpleAttribute simpleAttribute = new SimpleAttribute(subSubAttributeSchema.getName(), operation.getValues());
+                                SimpleAttribute simpleAttribute =
+                                        new SimpleAttribute(subSubAttributeSchema.getName(), operation.getValues());
                                 DefaultAttributeFactory.createAttribute(subSubAttributeSchema, simpleAttribute);
                                 complexAttribute.setSubAttribute(simpleAttribute);
                             }
@@ -1379,7 +1411,8 @@ public class PatchOperationUtil {
                         if (subSubAttributeSchema != null) {
 
                             if (subSubAttributeSchema.getMultiValued()) {
-                                MultiValuedAttribute multiValuedAttribute = new MultiValuedAttribute(subSubAttributeSchema.getName());
+                                MultiValuedAttribute multiValuedAttribute =
+                                        new MultiValuedAttribute(subSubAttributeSchema.getName());
                                 DefaultAttributeFactory.createAttribute(subSubAttributeSchema, multiValuedAttribute);
                                 JSONArray jsonArray = new JSONArray(operation.getValues());
                                 for (int i = 0; i < jsonArray.length(); i++) {
@@ -1388,7 +1421,8 @@ public class PatchOperationUtil {
                                 complexAttribute.setSubAttribute(multiValuedAttribute);
 
                             } else {
-                                SimpleAttribute simpleAttribute = new SimpleAttribute(subSubAttributeSchema.getName(), operation.getValues());
+                                SimpleAttribute simpleAttribute =
+                                        new SimpleAttribute(subSubAttributeSchema.getName(), operation.getValues());
                                 DefaultAttributeFactory.createAttribute(subSubAttributeSchema, simpleAttribute);
                                 complexAttribute.setSubAttribute(simpleAttribute);
                             }
@@ -1450,7 +1484,7 @@ public class PatchOperationUtil {
                 if (attributeParts.length == 1) {
 
                     doPatchReplaceWithFiltersForLevelOne(oldResource, attributeParts,
-                            expressionNode,operation, schema, decoder);
+                            expressionNode, operation, schema, decoder);
 
                 } else if (attributeParts.length == 2) {
 
@@ -1511,7 +1545,8 @@ public class PatchOperationUtil {
 
                                     Attribute replacingAttribute = subSubAttributes.get(attributeParts[2]);
                                     if (replacingAttribute == null) {
-                                        throw new BadRequestException("No matching filter value found.", ResponseCodeConstants.NO_TARGET);
+                                        throw new BadRequestException
+                                                ("No matching filter value found.", ResponseCodeConstants.NO_TARGET);
                                     }
                                     if (replacingAttribute.getMutability().equals
                                             (SCIMDefinitions.Mutability.READ_ONLY) ||
@@ -1523,8 +1558,10 @@ public class PatchOperationUtil {
                                     } else {
 
                                         if (replacingAttribute.getMultiValued()) {
-                                            ((MultiValuedAttribute) replacingAttribute).getAttributePrimitiveValues().remove(expressionNode.getValue());
-                                            ((MultiValuedAttribute) replacingAttribute).setAttributePrimitiveValue(operation.getValues());
+                                            ((MultiValuedAttribute) replacingAttribute).getAttributePrimitiveValues().
+                                                    remove(expressionNode.getValue());
+                                            ((MultiValuedAttribute) replacingAttribute).
+                                                    setAttributePrimitiveValue(operation.getValues());
                                         } else  {
                                             ((SimpleAttribute) (replacingAttribute)).setValue(operation.getValues());
                                         }
@@ -1534,7 +1571,8 @@ public class PatchOperationUtil {
                             }
                         }
                         if (!isValueFound) {
-                            throw new BadRequestException("No matching filter value found.", ResponseCodeConstants.NO_TARGET);
+                            throw new BadRequestException("No matching filter value found.",
+                                    ResponseCodeConstants.NO_TARGET);
                         }
                     }
                 } else {
@@ -1599,7 +1637,8 @@ public class PatchOperationUtil {
                                 if (((SimpleAttribute) subAttribute).getValue().equals(expressionNode.getValue())) {
                                     Attribute replacingAttribute = subAttributes.get(attributeParts[1]);
                                     if (replacingAttribute == null) {
-                                        throw new BadRequestException("No matching filter value found.", ResponseCodeConstants.NO_TARGET);
+                                        throw new BadRequestException("No matching filter value found.",
+                                                ResponseCodeConstants.NO_TARGET);
                                     }
                                     if (replacingAttribute.getMutability().
                                             equals(SCIMDefinitions.Mutability.READ_ONLY) ||
@@ -1610,8 +1649,10 @@ public class PatchOperationUtil {
                                                         ResponseCodeConstants.MUTABILITY);
                                     } else {
                                         if (replacingAttribute.getMultiValued()) {
-                                            ((MultiValuedAttribute) replacingAttribute).getAttributePrimitiveValues().remove(expressionNode.getValue());
-                                            ((MultiValuedAttribute) replacingAttribute).setAttributePrimitiveValue(operation.getValues());
+                                            ((MultiValuedAttribute) replacingAttribute).getAttributePrimitiveValues().
+                                                    remove(expressionNode.getValue());
+                                            ((MultiValuedAttribute) replacingAttribute).
+                                                    setAttributePrimitiveValue(operation.getValues());
                                         } else  {
                                             ((SimpleAttribute) (replacingAttribute)).setValue(operation.getValues());
                                         }
@@ -1622,7 +1663,8 @@ public class PatchOperationUtil {
                         }
                     }
                     if (!isValueFound) {
-                        throw new BadRequestException("No matching filter value found.", ResponseCodeConstants.NO_TARGET);
+                        throw new BadRequestException("No matching filter value found.",
+                                ResponseCodeConstants.NO_TARGET);
                     }
                 }
             } else if (attribute.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
@@ -1662,10 +1704,12 @@ public class PatchOperationUtil {
                             }
                         }
                     }
-                    AttributeSchema attributeSchema = SchemaUtil.getAttributeSchema(attributeParts[0] + "." + attributeParts[1], schema);
+                    AttributeSchema attributeSchema =
+                            SchemaUtil.getAttributeSchema(attributeParts[0] + "." + attributeParts[1], schema);
                     subValues.add(decoder.buildComplexAttribute(attributeSchema, (JSONObject) operation.getValues()));
                     if (!isValueFound) {
-                        throw new BadRequestException("No matching filter value found.", ResponseCodeConstants.NO_TARGET);
+                        throw new BadRequestException("No matching filter value found.",
+                                ResponseCodeConstants.NO_TARGET);
                     }
                 }
             } else {
@@ -1731,7 +1775,8 @@ public class PatchOperationUtil {
                         }
                     }
                     if (!isValueFound) {
-                        throw new BadRequestException("No matching filter value found.", ResponseCodeConstants.NO_TARGET);
+                        throw new BadRequestException("No matching filter value found.",
+                                ResponseCodeConstants.NO_TARGET);
                     }
                     valuesList.add(operation.getValues());
 
@@ -1774,10 +1819,12 @@ public class PatchOperationUtil {
                             }
                         }
                         if (!isValueFound) {
-                            throw new BadRequestException("No matching filter value found.", ResponseCodeConstants.NO_TARGET);
+                            throw new BadRequestException("No matching filter value found.",
+                                    ResponseCodeConstants.NO_TARGET);
                         }
                         AttributeSchema attributeSchema = SchemaUtil.getAttributeSchema(attributeParts[0], schema);
-                        subValues.add(decoder.buildComplexAttribute(attributeSchema, (JSONObject) operation.getValues()));
+                        subValues.add(decoder.buildComplexAttribute(attributeSchema,
+                                (JSONObject) operation.getValues()));
 
                     }
                 } else {
@@ -1805,7 +1852,8 @@ public class PatchOperationUtil {
                                 }
                             }
                             if (!isValueFound) {
-                                throw new BadRequestException("No matching filter value found.", ResponseCodeConstants.NO_TARGET);
+                                throw new BadRequestException("No matching filter value found.",
+                                        ResponseCodeConstants.NO_TARGET);
                             }
                             valuesList.add(operation.getValues());
 
@@ -1816,7 +1864,8 @@ public class PatchOperationUtil {
                         }
 
                     } else {
-                        throw new BadRequestException("No matching filter value found.", ResponseCodeConstants.NO_TARGET);
+                        throw new BadRequestException("No matching filter value found.",
+                                ResponseCodeConstants.NO_TARGET);
                     }
                 }
             }

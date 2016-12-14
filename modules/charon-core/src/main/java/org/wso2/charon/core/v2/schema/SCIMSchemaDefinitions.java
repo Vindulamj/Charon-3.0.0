@@ -115,7 +115,7 @@ public class SCIMSchemaDefinitions {
 
 
     /**
-     * SCIM User Schema Definition
+     * SCIM User Schema Definition.
      */
     public static class SCIMUserSchemaDefinition {
 
@@ -1125,7 +1125,7 @@ public class SCIMSchemaDefinitions {
      */
     public static class SCIMResourceTypeSchemaDefinition {
 
-        /*********** SCIM defined resourceType  schemas ****************************/
+        /*********** SCIM defined resourceType  schemas. ****************************/
 
         public static final SCIMAttributeSchema SCHEMA_EXTENSION_SCHEMA =
                 SCIMAttributeSchema.createSCIMAttributeSchema(
@@ -1210,8 +1210,8 @@ public class SCIMSchemaDefinitions {
 
     }
 
-    /**
-     * **********SCIM defined User Resource Schema****************************
+    /*
+     * **********SCIM defined User Resource Schema.****************************
      */
 
     public static final SCIMResourceTypeSchema SCIM_USER_SCHEMA =
@@ -1240,8 +1240,8 @@ public class SCIMSchemaDefinitions {
                     SCIMUserSchemaDefinition.ROLES,
                     SCIMUserSchemaDefinition.X509CERTIFICATES);
 
-    /**
-     * **********SCIM defined Group Resource Schema****************************
+    /*
+     * **********SCIM defined Group Resource Schema.****************************
      */
 
     public static final SCIMResourceTypeSchema SCIM_GROUP_SCHEMA =
@@ -1251,8 +1251,8 @@ public class SCIMSchemaDefinitions {
                     SCIMGroupSchemaDefinition.DISPLAY_NAME,
                     SCIMGroupSchemaDefinition.MEMBERS);
 
-    /**
-     * **********SCIM defined Service Provider Config Resource Schema****************************
+    /*
+     * **********SCIM defined Service Provider Config Resource Schema.****************************
      */
 
     public static final SCIMResourceTypeSchema SCIM_SERVICE_PROVIDER_CONFIG_SCHEMA =
@@ -1268,8 +1268,8 @@ public class SCIMSchemaDefinitions {
                     SCIMServiceProviderConfigSchemaDefinition.ETAG,
                     SCIMServiceProviderConfigSchemaDefinition.AUTHENTICATION_SCHEMES);
 
-    /**
-     * **********SCIM defined Resource Type Resource Schema****************************
+    /*
+     * **********SCIM defined Resource Type Resource Schema.****************************
      */
 
     public static final SCIMResourceTypeSchema SCIM_RESOURCE_TYPE_SCHEMA =

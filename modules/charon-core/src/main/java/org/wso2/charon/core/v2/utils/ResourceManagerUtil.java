@@ -22,8 +22,11 @@ import org.wso2.charon.core.v2.schema.SCIMAttributeSchema;
 import org.wso2.charon.core.v2.schema.SCIMDefinitions;
 import org.wso2.charon.core.v2.schema.SCIMResourceTypeSchema;
 
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 /**
  * This class will act as a support class for endpoints.
  */

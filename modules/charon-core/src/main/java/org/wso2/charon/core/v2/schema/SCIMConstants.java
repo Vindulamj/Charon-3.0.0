@@ -16,8 +16,8 @@
 package org.wso2.charon.core.v2.schema;
 
 /**
- * This defines the constants which can be found in SCIM 2.0 core schema
- * can be found at : https://tools.ietf.org/html/rfc7643
+ * This defines the constants which can be found in SCIM 2.0 core schema can be found at.
+ * : https://tools.ietf.org/html/rfc7643
  */
 public class SCIMConstants {
 
@@ -87,7 +87,7 @@ public class SCIMConstants {
         public static final String REF = "$ref";
         public static final String VALUE = "value";
 
-        /*******Attributes descriptions of the attributes found in Common Schema***************/
+        /*******Attributes descriptions of the attributes found in Common Schema.***************/
 
         public static final String ID_DESC = "Unique identifier for the SCIM Resource as defined by the Service " +
                 "Provider.";
@@ -220,7 +220,7 @@ public class SCIMConstants {
         public static final String DIRECT_MEMBERSHIP = "direct";
         public static final String INDIRECT_MEMBERSHIP = "indirect";
 
-        /*******URIs of sub and multivalued attributes**************/
+        /*******URIs of sub and multivalued attributes.**************/
 
         public static final String EMAILS_VALUE_URI = "urn:ietf:params:scim:schemas:core:2.0:User:emails.value";
         public static final String EMAILS_DISPLAY_URI = "urn:ietf:params:scim:schemas:core:2.0:User:emails.display";
@@ -278,7 +278,7 @@ public class SCIMConstants {
         public static final String X509CERTIFICATES_PRIMARY_URI =
                 "urn:ietf:params:scim:schemas:core:2.0:User:x509certificates.primary";
 
-        /*******Attributes descriptions of the attributes found in User Schema***************/
+        /*******Attributes descriptions of the attributes found in User Schema.***************/
 
         public static final String USERNAME_DESC = "A service provider's unique identifier for the user, typically\n" +
                 "used by the user to directly authenticate to the service provider.Each User MUST include a non-empty" +
@@ -456,7 +456,7 @@ public class SCIMConstants {
         public static final String MEMBERS_URI = "urn:ietf:params:scim:schemas:core:2.0:User:members";
         public static final String DISPLAY = "display";
 
-        /*******Attributes descriptions of the attributes found in Group Schema***************/
+        /*******Attributes descriptions of the attributes found in Group Schema.***************/
 
         public static final String DISPLAY_NAME_DESC = "A human-readable name for the Group. REQUIRED.";
         public static final String MEMBERS_DESC = "A list of members of the Group.";
@@ -465,7 +465,7 @@ public class SCIMConstants {
                 "Group.";
         public static final String DISPLAY_DESC = "A human-readable name for the Member";
 
-        /*******URIs of sub and multivalued attributes**************/
+        /*******URIs of sub and multivalued attributes.**************/
         public static final String VALUE_URI = "urn:ietf:params:scim:schemas:core:2.0:Group:members.value";
         public static final String REF_URI = "urn:ietf:params:scim:schemas:core:2.0:Group:members.$ref";
         public static final String DISPLAY_URI = "urn:ietf:params:scim:schemas:core:2.0:Group:members.display";
@@ -537,7 +537,7 @@ public class SCIMConstants {
                 "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig:authenticationSchemes.documentationUri";
 
 
-        /*******Attributes descriptions of the attributes found in Service Provider Config Schema***************/
+        /*******Attributes descriptions of the attributes found in Service Provider Config Schema.***************/
 
         public static final String DOCUMENTATION_URI_DESC = "An HTTP-addressable URL pointing to the service " +
                 "provider's human-consumable help documentation.";

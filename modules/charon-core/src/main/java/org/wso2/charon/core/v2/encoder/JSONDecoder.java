@@ -21,14 +21,25 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.charon.core.v2.attributes.*;
+import org.wso2.charon.core.v2.attributes.Attribute;
+import org.wso2.charon.core.v2.attributes.ComplexAttribute;
+import org.wso2.charon.core.v2.attributes.DefaultAttributeFactory;
+import org.wso2.charon.core.v2.attributes.MultiValuedAttribute;
+import org.wso2.charon.core.v2.attributes.SimpleAttribute;
 import org.wso2.charon.core.v2.exceptions.BadRequestException;
 import org.wso2.charon.core.v2.exceptions.CharonException;
 import org.wso2.charon.core.v2.exceptions.InternalErrorException;
 import org.wso2.charon.core.v2.objects.AbstractSCIMObject;
 import org.wso2.charon.core.v2.objects.SCIMObject;
+import org.wso2.charon.core.v2.objects.User;
 import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
-import org.wso2.charon.core.v2.schema.*;
+import org.wso2.charon.core.v2.schema.AttributeSchema;
+import org.wso2.charon.core.v2.schema.ResourceTypeSchema;
+import org.wso2.charon.core.v2.schema.SCIMAttributeSchema;
+import org.wso2.charon.core.v2.schema.SCIMConstants;
+import org.wso2.charon.core.v2.schema.SCIMDefinitions;
+import org.wso2.charon.core.v2.schema.SCIMResourceSchemaManager;
+import org.wso2.charon.core.v2.schema.SCIMResourceTypeSchema;
 import org.wso2.charon.core.v2.utils.AttributeUtil;
 import org.wso2.charon.core.v2.utils.codeutils.FilterTreeManager;
 import org.wso2.charon.core.v2.utils.codeutils.Node;
@@ -41,7 +52,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.wso2.charon.core.v2.schema.SCIMDefinitions.DataType.*;
+import static org.wso2.charon.core.v2.schema.SCIMDefinitions.DataType.BINARY;
+import static org.wso2.charon.core.v2.schema.SCIMDefinitions.DataType.BOOLEAN;
+import static org.wso2.charon.core.v2.schema.SCIMDefinitions.DataType.COMPLEX;
+import static org.wso2.charon.core.v2.schema.SCIMDefinitions.DataType.DATE_TIME;
+import static org.wso2.charon.core.v2.schema.SCIMDefinitions.DataType.DECIMAL;
+import static org.wso2.charon.core.v2.schema.SCIMDefinitions.DataType.INTEGER;
+import static org.wso2.charon.core.v2.schema.SCIMDefinitions.DataType.REFERENCE;
+import static org.wso2.charon.core.v2.schema.SCIMDefinitions.DataType.STRING;
 
 /**
  * This decodes the json encoded resource string and create a SCIM object model according to the specification
@@ -165,7 +183,7 @@ public class JSONDecoder {
      * @param attributeValue  - value for the attribute
      * @return SimpleAttribute
      */
-    private SimpleAttribute buildSimpleAttribute(AttributeSchema attributeSchema,
+    public SimpleAttribute buildSimpleAttribute(AttributeSchema attributeSchema,
                                                  Object attributeValue) throws CharonException, BadRequestException {
         Object attributeValueObject = AttributeUtil.getAttributeValueFromString(
                 attributeValue, attributeSchema.getType());
@@ -181,7 +199,7 @@ public class JSONDecoder {
      * @param attributeValues - values for the attribute
      * @return MultiValuedAttribute
      */
-    private MultiValuedAttribute buildComplexMultiValuedAttribute
+    public MultiValuedAttribute buildComplexMultiValuedAttribute
     (AttributeSchema attributeSchema, JSONArray attributeValues)
             throws CharonException, BadRequestException {
         try {
@@ -220,7 +238,7 @@ public class JSONDecoder {
      * @param attributeValues - values for the attribute
      * @return MultiValuedAttribute
      */
-    private MultiValuedAttribute buildPrimitiveMultiValuedAttribute(AttributeSchema attributeSchema,
+    public MultiValuedAttribute buildPrimitiveMultiValuedAttribute(AttributeSchema attributeSchema,
                                                                     JSONArray attributeValues)
             throws CharonException, BadRequestException {
         try {
@@ -262,7 +280,7 @@ public class JSONDecoder {
      * @param jsonObject             - sub attributes values for the complex attribute
      * @return ComplexAttribute
      */
-    private ComplexAttribute buildComplexAttribute(AttributeSchema complexAttributeSchema,
+    public ComplexAttribute buildComplexAttribute(AttributeSchema complexAttributeSchema,
                                                    JSONObject jsonObject)
             throws BadRequestException, CharonException, InternalErrorException, JSONException {
         ComplexAttribute complexAttribute = new ComplexAttribute(complexAttributeSchema.getName());
@@ -489,7 +507,14 @@ public class JSONDecoder {
             for (int count = 0; count < operationJsonList.length(); count++) {
                 JSONObject operation = (JSONObject) operationJsonList.get(count);
                 PatchOperation patchOperation = new PatchOperation();
-                patchOperation.setOperation((String) operation.opt(SCIMConstants.OperationalConstants.OP));
+                String op = (String) operation.opt(SCIMConstants.OperationalConstants.OP);
+                if (op.equalsIgnoreCase(SCIMConstants.OperationalConstants.ADD)) {
+                    patchOperation.setOperation(SCIMConstants.OperationalConstants.ADD);
+                } else if (op.equalsIgnoreCase(SCIMConstants.OperationalConstants.REMOVE)) {
+                    patchOperation.setOperation(SCIMConstants.OperationalConstants.REMOVE);
+                } else if (op.equalsIgnoreCase(SCIMConstants.OperationalConstants.REPLACE)) {
+                    patchOperation.setOperation(SCIMConstants.OperationalConstants.REPLACE);
+                }
                 patchOperation.setPath((String) operation.opt(SCIMConstants.OperationalConstants.PATH));
                 patchOperation.setValues(operation.opt(SCIMConstants.OperationalConstants.VALUE));
                 operationList.add(patchOperation);
@@ -498,7 +523,21 @@ public class JSONDecoder {
             logger.error("json error in decoding the request");
             throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
         }
-        return operationList;
+        return  operationList;
+    }
+
+    public AbstractSCIMObject decode(String scimResourceString, SCIMResourceTypeSchema schema) throws CharonException {
+        try {
+            JSONObject decodedJsonObj = new JSONObject(new JSONTokener(scimResourceString));
+
+            AbstractSCIMObject scimObject =
+                    (AbstractSCIMObject) decodeResource(decodedJsonObj.toString(), schema, new User());
+
+            return scimObject;
+
+        } catch (BadRequestException | JSONException | InternalErrorException | CharonException e) {
+            throw new CharonException("Error in decoding the request", e);
+        }
     }
 
     /*

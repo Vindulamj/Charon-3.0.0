@@ -19,13 +19,22 @@ import org.wso2.charon.core.v2.attributes.Attribute;
 import org.wso2.charon.core.v2.config.CharonConfiguration;
 import org.wso2.charon.core.v2.encoder.JSONDecoder;
 import org.wso2.charon.core.v2.encoder.JSONEncoder;
-import org.wso2.charon.core.v2.exceptions.*;
+import org.wso2.charon.core.v2.exceptions.BadRequestException;
+import org.wso2.charon.core.v2.exceptions.CharonException;
+import org.wso2.charon.core.v2.exceptions.ConflictException;
+import org.wso2.charon.core.v2.exceptions.InternalErrorException;
+import org.wso2.charon.core.v2.exceptions.NotFoundException;
+import org.wso2.charon.core.v2.exceptions.NotImplementedException;
 import org.wso2.charon.core.v2.extensions.UserManager;
 import org.wso2.charon.core.v2.objects.Group;
 import org.wso2.charon.core.v2.objects.ListedResource;
 import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.v2.protocol.SCIMResponse;
-import org.wso2.charon.core.v2.schema.*;
+import org.wso2.charon.core.v2.schema.SCIMConstants;
+import org.wso2.charon.core.v2.schema.SCIMResourceSchemaManager;
+import org.wso2.charon.core.v2.schema.SCIMResourceTypeSchema;
+import org.wso2.charon.core.v2.schema.SCIMSchemaDefinitions;
+import org.wso2.charon.core.v2.schema.ServerSideValidator;
 import org.wso2.charon.core.v2.utils.CopyUtil;
 import org.wso2.charon.core.v2.utils.ResourceManagerUtil;
 import org.wso2.charon.core.v2.utils.codeutils.FilterTreeManager;
@@ -36,6 +45,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 /**
  * REST API exposed by Charon-Core to perform operations on GroupResource.
@@ -199,7 +209,7 @@ public class GroupResourceManager extends AbstractResourceManager {
         }
     }
 
-    /**
+    /*
      * Method to list the groups at the /Groups endpoint
      *
      * @param userManager

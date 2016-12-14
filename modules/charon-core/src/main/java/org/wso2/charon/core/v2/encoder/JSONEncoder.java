@@ -35,7 +35,11 @@ import org.wso2.charon.core.v2.schema.SCIMDefinitions;
 import org.wso2.charon.core.v2.schema.SCIMResourceSchemaManager;
 import org.wso2.charon.core.v2.utils.AttributeUtil;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This encodes the in the json format.
