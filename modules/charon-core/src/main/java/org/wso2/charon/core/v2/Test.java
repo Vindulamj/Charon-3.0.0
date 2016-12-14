@@ -308,7 +308,7 @@ public class Test {
                "     \"Operations\":[\n" +
                "       {\n" +
                "        \"op\":\"remove\",\n" +
-               "        \"path\":\"EnterpriseUser.manager[$ref eq vindula].value\",\n" +
+               "        \"path\":\"EnterpriseUser.manager[$ref eq vindula]\",\n" +
                "       },\n" +
                //"       {\n" +
                //"        \"op\":\"remove\",\n" +
@@ -350,11 +350,8 @@ public class Test {
                "     \"Operations\":[\n" +
                "       {\n" +
                "        \"op\":\"replace\",\n" +
-               "        \"path\":\"EnterpriseUser.manager\",\n" +
-               "           \"value\":[{\n" +
-               "               \"value\" :\"Gayan12\",\n" +
-               "               \"$ref\" :\"Gayan12\"\n" +
-               "             }],\n" +
+               "        \"path\":\"EnterpriseUser.manager[value eq Maxxa].$ref\",\n" +
+               "           \"value\":\" OOOO\"\n" +
                "          }\n" +
                "     ]\n" +
                "   }";

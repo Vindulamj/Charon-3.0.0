@@ -537,7 +537,7 @@ public class UserResourceManager extends AbstractResourceManager {
                     if (newUser == null) {
                         newUser = (User) PatchOperationUtil.doPatchRemove(operation, oldUser, copyOfOldUser, schema);
                         copyOfOldUser = (User) CopyUtil.deepCopy(newUser);
-
+                        System.out.println(newUser.toString());
                     } else {
                         newUser = (User) PatchOperationUtil.doPatchRemove(operation, newUser, copyOfOldUser, schema);
                         copyOfOldUser = (User) CopyUtil.deepCopy(newUser);
@@ -564,11 +564,10 @@ public class UserResourceManager extends AbstractResourceManager {
         } catch (CharonException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         } catch (JSONException e) {
-            e.printStackTrace();
+            return null;
         } catch (InternalErrorException e) {
-            e.printStackTrace();
+            return AbstractResourceManager.encodeSCIMException(e);
         }
-        return null;
     }
 
     /**
