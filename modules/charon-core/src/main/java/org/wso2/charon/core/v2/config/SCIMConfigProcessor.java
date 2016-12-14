@@ -64,10 +64,10 @@ public class SCIMConfigProcessor {
             throw new CharonException(SCIMConfigConstants.PROVISIONING_CONFIG_NAME + "not found.");
         } catch (XMLStreamException e) {
             throw new CharonException("Error in building the configuration file: " +
-                                      SCIMConfigConstants.PROVISIONING_CONFIG_NAME);
+                    SCIMConfigConstants.PROVISIONING_CONFIG_NAME);
         } catch (IOException e) {
             throw new CharonException("Error in building the configuration file: " +
-                                      SCIMConfigConstants.PROVISIONING_CONFIG_NAME);
+                    SCIMConfigConstants.PROVISIONING_CONFIG_NAME);
         }
     }
 
@@ -81,7 +81,7 @@ public class SCIMConfigProcessor {
             return buildConfigFromRootElement(rootElement);
         } catch (XMLStreamException e) {
             throw new CharonException("Error in building the configuration file: " +
-                                      SCIMConfigConstants.PROVISIONING_CONFIG_NAME);
+                    SCIMConfigConstants.PROVISIONING_CONFIG_NAME);
 
         } catch (IOException e) {
             throw new CharonException("Error in closing the input stream.");

@@ -608,9 +608,9 @@ public class PatchOperationUtil {
                                                 AbstractSCIMObject oldResource, AbstractSCIMObject copyOfOldResource,
                                                 SCIMResourceTypeSchema schema) throws CharonException {
         try {
-            User attributeHoldingSCIMUser = decoder.decode(operation.getValues().toString(), schema);
+            AbstractSCIMObject attributeHoldingSCIMObject = decoder.decode(operation.getValues().toString(), schema);
             if (oldResource != null) {
-                for (String attributeName : attributeHoldingSCIMUser.getAttributeList().keySet()) {
+                for (String attributeName : attributeHoldingSCIMObject.getAttributeList().keySet()) {
                     Attribute oldAttribute = oldResource.getAttribute(attributeName);
                     if (oldAttribute != null) {
                         // if the attribute is there, append it.
@@ -618,7 +618,7 @@ public class PatchOperationUtil {
                                 oldAttribute.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
                             //this is multivalued complex case.
                             MultiValuedAttribute attributeValue = (MultiValuedAttribute)
-                                    attributeHoldingSCIMUser.getAttribute(attributeName);
+                                    attributeHoldingSCIMObject.getAttribute(attributeName);
 
                             for (Attribute attribute : attributeValue.getAttributeValues()) {
                                 ((MultiValuedAttribute) oldAttribute).setAttributeValue(attribute);
@@ -628,7 +628,7 @@ public class PatchOperationUtil {
 
                             //this is multivalued primitive case.
                             MultiValuedAttribute attributeValue = (MultiValuedAttribute)
-                                    attributeHoldingSCIMUser.getAttribute(attributeName);
+                                    attributeHoldingSCIMObject.getAttribute(attributeName);
 
                             for (Object obj : attributeValue.getAttributePrimitiveValues()) {
                                 ((MultiValuedAttribute) oldAttribute).setAttributePrimitiveValue(obj);
@@ -637,7 +637,7 @@ public class PatchOperationUtil {
                         } else if (oldAttribute.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
                             //this is the complex attribute case.
                             Map<String, Attribute> subAttributeList =
-                                    ((ComplexAttribute) attributeHoldingSCIMUser.
+                                    ((ComplexAttribute) attributeHoldingSCIMObject.
                                             getAttribute(attributeName)).getSubAttributesList();
 
                             for (String subAttributeName : subAttributeList.keySet()) {
@@ -648,7 +648,7 @@ public class PatchOperationUtil {
                                         if (subAttribute.getMultiValued()) {
                                             //extension schema is the only one who reaches here.
                                             MultiValuedAttribute attributeSubValue = (MultiValuedAttribute)
-                                                    ((ComplexAttribute) attributeHoldingSCIMUser.
+                                                    ((ComplexAttribute) attributeHoldingSCIMObject.
                                                             getAttribute(attributeName)).
                                                             getSubAttribute(subAttributeName);
 
@@ -658,7 +658,7 @@ public class PatchOperationUtil {
                                         } else {
                                             //extension schema is the only one who reaches here.
                                             Map<String, Attribute> subSubAttributeList = ((ComplexAttribute)
-                                                    (attributeHoldingSCIMUser.getAttribute(attributeName).
+                                                    (attributeHoldingSCIMObject.getAttribute(attributeName).
                                                             getSubAttribute(subAttributeName))).getSubAttributesList();
 
                                             for (String subSubAttributeName : subSubAttributeList.keySet()) {
@@ -706,12 +706,12 @@ public class PatchOperationUtil {
                         } else {
                             // this is the simple attribute case.replace the value
                             ((SimpleAttribute) oldAttribute).setValue
-                                    (((SimpleAttribute) attributeHoldingSCIMUser.getAttribute
+                                    (((SimpleAttribute) attributeHoldingSCIMObject.getAttribute
                                             (oldAttribute.getName())).getValue());
                         }
                     } else {
                         //if the attribute is not already set, set it.
-                        oldResource.setAttribute(attributeHoldingSCIMUser.getAttribute(attributeName));
+                        oldResource.setAttribute(attributeHoldingSCIMObject.getAttribute(attributeName));
                     }
                 }
                 AbstractSCIMObject validatedResource = ServerSideValidator.validateUpdatedSCIMObject
@@ -744,7 +744,7 @@ public class PatchOperationUtil {
                                                     AbstractSCIMObject oldResource,
                                                     AbstractSCIMObject copyOfOldResource,
                                                     SCIMResourceTypeSchema schema)
-            throws CharonException, NotImplementedException, BadRequestException, JSONException, InternalErrorException {
+            throws CharonException, NotImplementedException, BadRequestException, InternalErrorException {
 
         if (operation.getPath() != null) {
             String path = operation.getPath();
@@ -752,16 +752,27 @@ public class PatchOperationUtil {
             String[] parts = path.split("[\\[\\]]");
 
             if (operation.getPath().contains("[")) {
-                doPatchReplaceOnPathWithFilters(oldResource, schema, decoder, operation, parts);
+                try {
+                    doPatchReplaceOnPathWithFilters(oldResource, schema, decoder, operation, parts);
+                } catch (JSONException e) {
+                    throw new CharonException("Error while performing the operation", e);
+                }
 
             } else {
-                doPatchReplaceOnPathWithoutFilters(oldResource, schema, decoder, operation, parts);
+                try {
+                    doPatchReplaceOnPathWithoutFilters(oldResource, schema, decoder, operation, parts);
+                } catch (JSONException e) {
+                    throw new CharonException("Error while performing the operation", e);
+                }
             }
 
         } else {
             doPatchReplaceOnResource(oldResource, copyOfOldResource, schema, decoder, operation);
         }
-        return oldResource;
+        //validate the updated object
+        AbstractSCIMObject validatedResource =  ServerSideValidator.validateUpdatedSCIMObject
+                (copyOfOldResource, oldResource, schema);
+        return validatedResource;
     }
 
     /*
@@ -1421,9 +1432,6 @@ public class PatchOperationUtil {
             throws NotImplementedException, BadRequestException,
             CharonException, JSONException, InternalErrorException {
 
-
-        User attributeHoldingSCIMUser = decoder.decode(operation.getValues().toString(), schema);
-
         if (parts.length != 1) {
             //currently we only support simple filters here.
             String[] filterParts = parts[1].split(" ");
@@ -1833,18 +1841,18 @@ public class PatchOperationUtil {
             throws CharonException {
 
         try {
-            User attributeHoldingSCIMUser = decoder.decode(operation.getValues().toString(), schema);
+            AbstractSCIMObject attributeHoldingSCIMObject = decoder.decode(operation.getValues().toString(), schema);
 
             if (oldResource != null) {
 
-                for (String attributeName : attributeHoldingSCIMUser.getAttributeList().keySet()) {
+                for (String attributeName : attributeHoldingSCIMObject.getAttributeList().keySet()) {
                     Attribute oldAttribute = oldResource.getAttribute(attributeName);
                     if (oldAttribute != null) {
                         // if the attribute is there, append it.
                         if (oldAttribute.getMultiValued()) {
                             //this is multivalued complex case.
                             MultiValuedAttribute attributeValue = (MultiValuedAttribute)
-                                    attributeHoldingSCIMUser.getAttribute(attributeName);
+                                    attributeHoldingSCIMObject.getAttribute(attributeName);
                             if (oldAttribute.getMutability().equals(SCIMDefinitions.Mutability.IMMUTABLE) ||
                                     oldAttribute.getMutability().equals(SCIMDefinitions.Mutability.READ_ONLY)) {
 
@@ -1860,7 +1868,7 @@ public class PatchOperationUtil {
                         } else if (oldAttribute.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
                             //this is the complex attribute case.
                             Map<String, Attribute> subAttributeList =
-                                    ((ComplexAttribute) attributeHoldingSCIMUser.
+                                    ((ComplexAttribute) attributeHoldingSCIMObject.
                                             getAttribute(attributeName)).getSubAttributesList();
 
                             for (String subAttributeName : subAttributeList.keySet()) {
@@ -1871,7 +1879,7 @@ public class PatchOperationUtil {
                                         if (subAttribute.getMultiValued()) {
                                             //extension schema is the only one who reaches here.
                                             MultiValuedAttribute attributeSubValue = (MultiValuedAttribute)
-                                                    ((ComplexAttribute) attributeHoldingSCIMUser.
+                                                    ((ComplexAttribute) attributeHoldingSCIMObject.
                                                             getAttribute(attributeName)).
                                                             getSubAttribute(subAttributeName);
 
@@ -1894,7 +1902,7 @@ public class PatchOperationUtil {
                                         } else {
                                             //extension schema is the only one who reaches here.
                                             Map<String, Attribute> subSubAttributeList = ((ComplexAttribute)
-                                                    (attributeHoldingSCIMUser.getAttribute(attributeName).
+                                                    (attributeHoldingSCIMObject.getAttribute(attributeName).
                                                             getSubAttribute(subAttributeName))).getSubAttributesList();
 
                                             for (String subSubAttributeName : subSubAttributeList.keySet()) {
@@ -1967,13 +1975,13 @@ public class PatchOperationUtil {
                             } else {
                                 // this is the simple attribute case.replace the value
                                 ((SimpleAttribute) oldAttribute).setValue
-                                        (((SimpleAttribute) attributeHoldingSCIMUser.getAttribute
+                                        (((SimpleAttribute) attributeHoldingSCIMObject.getAttribute
                                                 (oldAttribute.getName())).getValue());
                             }
                         }
                     } else {
                         //add the attribute
-                        oldResource.setAttribute(attributeHoldingSCIMUser.getAttributeList().get(attributeName));
+                        oldResource.setAttribute(attributeHoldingSCIMObject.getAttributeList().get(attributeName));
                     }
                 }
                 AbstractSCIMObject validatedResource = ServerSideValidator.validateUpdatedSCIMObject

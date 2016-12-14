@@ -18,7 +18,6 @@
 package org.wso2.charon.core.v2;
 
 import org.wso2.charon.core.v2.protocol.SCIMResponse;
-import org.wso2.charon.core.v2.protocol.endpoints.AbstractResourceManager;
 import org.wso2.charon.core.v2.protocol.endpoints.GroupResourceManager;
 import org.wso2.charon.core.v2.schema.SCIMConstants;
 

@@ -20,13 +20,11 @@ package org.wso2.charon.core.v2;
 import org.wso2.charon.core.v2.config.CharonConfiguration;
 import org.wso2.charon.core.v2.config.SCIMUserSchemaExtensionBuilder;
 import org.wso2.charon.core.v2.exceptions.CharonException;
+import org.wso2.charon.core.v2.exceptions.InternalErrorException;
 import org.wso2.charon.core.v2.protocol.SCIMResponse;
-import org.wso2.charon.core.v2.protocol.endpoints.AbstractResourceManager;
 import org.wso2.charon.core.v2.protocol.endpoints.ServiceProviderConfigResourceManager;
 import org.wso2.charon.core.v2.protocol.endpoints.UserResourceManager;
 import org.wso2.charon.core.v2.schema.SCIMConstants;
-import org.wso2.charon.core.v2.exceptions.InternalErrorException;
-import org.wso2.charon.core.v2.utils.codeutils.SearchRequest;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -269,11 +267,7 @@ public class Test {
        //-----LIST USER  ---------
        //SCIMResponse res= um.listUsersWithPOST(x ,new SCIMUserManager());
 
-       //System.out.println(res.getResponseStatus());
-       System.out.println("");
-       //System.out.println(res.getHeaderParamMap());
-       System.out.println("");
-       //System.out.println(res.getResponseMessage());
+
 
 
        String test = "{ \"schemas\":\n" +
@@ -352,11 +346,28 @@ public class Test {
                "        \"op\":\"replace\",\n" +
                "        \"path\":\"EnterpriseUser.manager[value eq Maxxa].$ref\",\n" +
                "           \"value\":\" OOOO\"\n" +
-               "          }\n" +
+               "        },\n" +
+               "       {\n" +
+               "       \"op\":\"add\",\n" +
+               "       \"value\":{\n" +
+               "         \"emails\":[\n" +
+               "           {\n" +
+               "             \"value\":\"natta@jensen.org\",\n" +
+               "             \"type\":\"home\"\n" +
+               "           }\n" +
+               "         ],\n" +
+               "       }\n"+
+               "        }\n" +
                "     ]\n" +
                "   }";
 
-       um.updateWithPATCH("36c063fa-ec4e-4165-8b92-f00a4b13f9e4",test3, new SCIMUserManager(), null,null);
+       SCIMResponse res=um.updateWithPATCH("36c063fa-ec4e-4165-8b92-f00a4b13f9e4",test3, new SCIMUserManager(), null,null);
+
+       System.out.println(res.getResponseStatus());
+       System.out.println("");
+       System.out.println(res.getHeaderParamMap());
+       System.out.println("");
+       System.out.println(res.getResponseMessage());
 
 
     }

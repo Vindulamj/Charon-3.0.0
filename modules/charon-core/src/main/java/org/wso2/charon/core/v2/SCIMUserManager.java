@@ -19,17 +19,16 @@
 package org.wso2.charon.core.v2;
 
 
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.charon.core.v2.attributes.Attribute;
 import org.wso2.charon.core.v2.attributes.SimpleAttribute;
 import org.wso2.charon.core.v2.exceptions.*;
 import org.wso2.charon.core.v2.extensions.UserManager;
 import org.wso2.charon.core.v2.objects.Group;
 import org.wso2.charon.core.v2.objects.User;
-import org.wso2.charon.core.v2.utils.codeutils.Node;
-import org.wso2.charon.core.v2.attributes.Attribute;
 import org.wso2.charon.core.v2.utils.codeutils.ExpressionNode;
+import org.wso2.charon.core.v2.utils.codeutils.Node;
 import org.wso2.charon.core.v2.utils.codeutils.SearchRequest;
 
 import java.io.*;
