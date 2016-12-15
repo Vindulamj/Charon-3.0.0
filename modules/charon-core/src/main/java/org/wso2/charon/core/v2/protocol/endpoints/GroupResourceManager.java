@@ -28,6 +28,7 @@ import org.wso2.charon.core.v2.exceptions.NotImplementedException;
 import org.wso2.charon.core.v2.extensions.UserManager;
 import org.wso2.charon.core.v2.objects.Group;
 import org.wso2.charon.core.v2.objects.ListedResource;
+import org.wso2.charon.core.v2.objects.User;
 import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.v2.protocol.SCIMResponse;
 import org.wso2.charon.core.v2.schema.SCIMConstants;
@@ -36,9 +37,11 @@ import org.wso2.charon.core.v2.schema.SCIMResourceTypeSchema;
 import org.wso2.charon.core.v2.schema.SCIMSchemaDefinitions;
 import org.wso2.charon.core.v2.schema.ServerSideValidator;
 import org.wso2.charon.core.v2.utils.CopyUtil;
+import org.wso2.charon.core.v2.utils.PatchOperationUtil;
 import org.wso2.charon.core.v2.utils.ResourceManagerUtil;
 import org.wso2.charon.core.v2.utils.codeutils.FilterTreeManager;
 import org.wso2.charon.core.v2.utils.codeutils.Node;
+import org.wso2.charon.core.v2.utils.codeutils.PatchOperation;
 import org.wso2.charon.core.v2.utils.codeutils.SearchRequest;
 
 import java.io.IOException;
@@ -516,11 +519,133 @@ public class GroupResourceManager extends AbstractResourceManager {
         }
     }
 
-    @Override
-    public SCIMResponse updateWithPATCH(
-            String existingId, String scimObjectString, UserManager userManager,
-            String attributes, String excludeAttributes) {
-        return null;
+
+    /*
+     * method which corresponds to HTTP PATCH - patch the group
+     * @param existingId
+     * @param scimObjectString
+     * @param userManager
+     * @param attributes
+     * @param excludeAttributes
+     * @return
+     */
+    public SCIMResponse updateWithPATCH(String existingId, String scimObjectString, UserManager userManager,
+                                        String attributes, String excludeAttributes) {
+        try {
+            //obtain the json decoder.
+            JSONDecoder decoder = getDecoder();
+            //obtain the json encoder.
+            JSONEncoder encoder = getEncoder();
+            //decode the SCIM User object, encoded in the submitted payload.
+            List<PatchOperation> opList = decoder.decodeRequest(scimObjectString);
+
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
+            //get the group from the user core
+            Group oldGroup = userManager.getGroup(existingId, null);
+            //make a copy of the original group
+            Group copyOfOldGroup = (Group) CopyUtil.deepCopy(oldGroup);
+            //make another copy of original group.
+            //this will be used to restore to the original condition if failure occurs.
+            Group originalGroup = (Group) CopyUtil.deepCopy(copyOfOldGroup);
+
+            Group newGroup = null;
+
+            for (PatchOperation operation : opList) {
+
+                if (operation.getOperation().equals(SCIMConstants.OperationalConstants.ADD)) {
+                    if (newGroup == null) {
+                        newGroup = (Group) PatchOperationUtil.doPatchAdd
+                                (operation, getDecoder(), oldGroup, copyOfOldGroup, schema);
+                        copyOfOldGroup = (Group) CopyUtil.deepCopy(newGroup);
+
+                    } else {
+                        newGroup = (Group) PatchOperationUtil.doPatchAdd
+                                (operation, getDecoder(), newGroup, copyOfOldGroup, schema);
+                        copyOfOldGroup = (Group) CopyUtil.deepCopy(newGroup);
+
+                    }
+                } else if (operation.getOperation().equals(SCIMConstants.OperationalConstants.REMOVE)) {
+                    if (newGroup == null) {
+                        newGroup = (Group) PatchOperationUtil.doPatchRemove
+                                (operation, oldGroup, copyOfOldGroup, schema);
+                        copyOfOldGroup = (Group) CopyUtil.deepCopy(newGroup);
+
+                    } else {
+                        newGroup = (Group) PatchOperationUtil.doPatchRemove
+                                (operation, newGroup, copyOfOldGroup, schema);
+                        copyOfOldGroup = (Group) CopyUtil.deepCopy(newGroup);
+                    }
+                } else if (operation.getOperation().equals(SCIMConstants.OperationalConstants.REPLACE)) {
+                    if (newGroup == null) {
+                        newGroup = (Group) PatchOperationUtil.doPatchReplace
+                                (operation, getDecoder(), oldGroup, copyOfOldGroup, schema);
+                        copyOfOldGroup = (Group) CopyUtil.deepCopy(newGroup);
+
+                    } else {
+                        newGroup = (Group) PatchOperationUtil.doPatchReplace
+                                (operation, getDecoder(), newGroup, copyOfOldGroup, schema);
+                        copyOfOldGroup = (Group) CopyUtil.deepCopy(newGroup);
+                    }
+                } else  {
+                    throw new BadRequestException("Unknown operation.", ResponseCodeConstants.INVALID_SYNTAX);
+                }
+            }
+
+            //get the URIs of required attributes which must be given a value
+            Map<String, Boolean> requiredAttributes =
+                    ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
+                            CopyUtil.deepCopy(schema), attributes, excludeAttributes);
+
+            if (userManager != null) {
+                if (oldGroup != null) {
+                    Group validatedGroup = (Group) ServerSideValidator.validateUpdatedSCIMObject
+                            (originalGroup, newGroup, schema);
+                    newGroup = userManager.updateGroup(originalGroup, validatedGroup, requiredAttributes);
+
+                } else {
+                    String error = "No group exists with the given id: " + existingId;
+                    throw new NotFoundException(error);
+                }
+
+            } else {
+                String error = "Provided user manager handler is null.";
+                throw new InternalErrorException(error);
+            }
+            //encode the newly created SCIM group object and add id attribute to Location header.
+            String encodedGroup;
+            Map<String, String> httpHeaders = new HashMap<String, String>();
+            if (newGroup != null) {
+                //create a deep copy of the group object since we are going to change it.
+               Group copiedGroup = (Group) CopyUtil.deepCopy(newGroup);
+                //validate before return.
+                ServerSideValidator.validateReturnedAttributes(copiedGroup, attributes, excludeAttributes);
+                encodedGroup = getEncoder().encodeSCIMObject(copiedGroup);
+                //add location header
+                httpHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(
+                        SCIMConstants.USER_ENDPOINT) + "/" + newGroup.getId());
+                httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
+
+            } else {
+                String error = "Updated group resource is null.";
+                throw new CharonException(error);
+            }
+            //put the URI of the User object in the response header parameter.
+            return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedGroup, httpHeaders);
+
+        } catch (NotFoundException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (BadRequestException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (NotImplementedException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (CharonException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (InternalErrorException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (Exception e) {
+            CharonException e1 = new CharonException("Error in performing the patch operation on group resource.", e);
+            return AbstractResourceManager.encodeSCIMException(e1);
+        }
     }
 
     /*

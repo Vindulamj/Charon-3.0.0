@@ -242,12 +242,12 @@ public class SCIMUserManager implements UserManager {
         //TODO: Get the E-Tag(version) and add as a attribute of the cretated user
         try {
             FileOutputStream fileOut =
-                    new FileOutputStream("/home/vindula/Desktop/Charon/GroupStorage/" + group.getId() + ".ser");
+                    new FileOutputStream("/home/vindula/Desktop/" + group.getId() + ".ser");
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
             out.writeObject(group);
             out.close();
             fileOut.close();
-            System.out.printf("Serialized data is saved in /home/vindula/Desktop/Charon/GroupStorage/" + group.getId() + ".ser\n\n");
+            System.out.printf("Serialized data is saved in /home/vindula/Desktop/" + group.getId() + ".ser\n\n");
         } catch (IOException i) {
             i.printStackTrace();
         }
@@ -258,7 +258,7 @@ public class SCIMUserManager implements UserManager {
     public Group getGroup(String id, Map<String, Boolean> requiredAttributes) {
         Group e = null;
         try {
-            FileInputStream fileIn = new FileInputStream("/home/vindula/Desktop/Charon/GroupStorage/" + id + ".ser");
+            FileInputStream fileIn = new FileInputStream("/home/vindula/Desktop/" + id + ".ser");
             ObjectInputStream in = new ObjectInputStream(fileIn);
             e = (Group) in.readObject();
             in.close();

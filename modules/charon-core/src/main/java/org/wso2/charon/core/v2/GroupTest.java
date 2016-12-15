@@ -80,7 +80,27 @@ public class GroupTest {
         //SCIMResponse res= um.listBySort(null,"AsCEnding",new SCIMUserManager(),attributes,null);
 
         //-----UPDATE GROUP WITH PUT ---------
-        SCIMResponse res = um.updateWithPUT("e01b5773-c8f3-446d-8958-31c603b65660", array, new SCIMUserManager(), null, null);
+        //SCIMResponse res = um.updateWithPUT("e01b5773-c8f3-446d-8958-31c603b65660", array, new SCIMUserManager(), null, null);
+
+
+
+        String test3 = "{ \"schemas\":\n" +
+                "      [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n" +
+                "     \"Operations\":[\n" +
+
+
+                "       {\n" +
+                "        \"op\":\"replace\",\n" +
+                "        \"path\":\"members[value eq e01b5773-c8f3-446d-8958-31c603b65660].display\",\n" +
+                "        \"value\":\"asd\"\n" +
+                "       },\n" +
+
+
+
+                "     ]\n" +
+                "   }";
+
+        SCIMResponse res = um.updateWithPATCH("0547965b-6fd3-4748-9954-c3ba73dde553",test3, new SCIMUserManager(), null,null);
 
         System.out.println(res.getResponseStatus());
         System.out.println("");

@@ -65,7 +65,7 @@ public class PatchOperationUtil {
      * @throws CharonException
      */
     public static AbstractSCIMObject doPatchRemove(PatchOperation operation, AbstractSCIMObject oldResource,
-                                                   User copyOfOldResource, SCIMResourceTypeSchema schema)
+                                                   AbstractSCIMObject copyOfOldResource, SCIMResourceTypeSchema schema)
             throws BadRequestException, NotImplementedException, CharonException {
 
         if (operation.getPath() == null) {

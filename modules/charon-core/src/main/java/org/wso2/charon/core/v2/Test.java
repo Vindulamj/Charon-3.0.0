@@ -342,10 +342,11 @@ public class Test {
                "      [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n" +
                "     \"Operations\":[\n" +
 
+
                "       {\n" +
                "        \"op\":\"replace\",\n" +
-               "        \"path\":\"EnterpriseUser.manager[value eq sad].value\",\n" +
-               "        \"value\":\"sss\",\n" +
+               "        \"path\":\"emails[value eq vindula@gmail.com].value\",\n" +
+               "        \"value\":\"vindula@wso2.com\",\n" +
                "       },\n" +
 
 

@@ -30,6 +30,7 @@ import org.wso2.charon.core.v2.exceptions.BadRequestException;
 import org.wso2.charon.core.v2.exceptions.CharonException;
 import org.wso2.charon.core.v2.exceptions.InternalErrorException;
 import org.wso2.charon.core.v2.objects.AbstractSCIMObject;
+import org.wso2.charon.core.v2.objects.Group;
 import org.wso2.charon.core.v2.objects.SCIMObject;
 import org.wso2.charon.core.v2.objects.User;
 import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
@@ -530,10 +531,12 @@ public class JSONDecoder {
             throws CharonException, BadRequestException {
         try {
             JSONObject decodedJsonObj = new JSONObject(new JSONTokener(scimResourceString));
-
-            AbstractSCIMObject scimObject =
-                    (AbstractSCIMObject) decodeResource(decodedJsonObj.toString(), schema, new User());
-
+            AbstractSCIMObject scimObject = null;
+            if (schema.getSchemasList().contains(SCIMConstants.GROUP_CORE_SCHEMA_URI)) {
+                scimObject = (AbstractSCIMObject) decodeResource(decodedJsonObj.toString(), schema, new Group());
+            } else  {
+                scimObject = (AbstractSCIMObject) decodeResource(decodedJsonObj.toString(), schema, new User());
+            }
             return scimObject;
 
         } catch (JSONException | InternalErrorException | CharonException e) {
