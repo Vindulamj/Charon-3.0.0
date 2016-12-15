@@ -1664,7 +1664,7 @@ public class PatchOperationUtil {
                 } else if (attributeParts.length == 3) {
 
                     doPatchReplaceWithFiltersForLevelThree(oldResource, attributeParts,
-                            expressionNode, operation);
+                            expressionNode, operation, schema, decoder);
                 }
 
             } else {
@@ -1686,7 +1686,9 @@ public class PatchOperationUtil {
     private static AbstractSCIMObject doPatchReplaceWithFiltersForLevelThree(AbstractSCIMObject oldResource,
                                                                              String[] attributeParts,
                                                                              ExpressionNode expressionNode,
-                                                                             PatchOperation operation)
+                                                                             PatchOperation operation,
+                                                                             SCIMResourceTypeSchema schema,
+                                                                             JSONDecoder decoder)
             throws BadRequestException, CharonException {
 
         Attribute attribute = oldResource.getAttribute(attributeParts[0]);
@@ -1715,8 +1717,31 @@ public class PatchOperationUtil {
 
                                     Attribute replacingAttribute = subSubAttributes.get(attributeParts[2]);
                                     if (replacingAttribute == null) {
-                                        throw new BadRequestException
-                                                ("No matching Attribute found to replace.", ResponseCodeConstants.NO_TARGET);
+                                       AttributeSchema replacingAttributeSchema = SchemaUtil.getAttributeSchema
+                                               (attributeParts[0] + "." + attributeParts[1] + "." +
+                                                       attributeParts[2], schema);
+
+                                        if (replacingAttributeSchema != null) {
+
+                                            if (replacingAttributeSchema.getMultiValued()) {
+                                                ((ComplexAttribute) subValue).setSubAttribute(
+                                                        decoder.buildPrimitiveMultiValuedAttribute
+                                                        (replacingAttributeSchema, (JSONArray) operation.getValues()));
+                                                break;
+
+                                            } else {
+                                                ((ComplexAttribute) subValue).setSubAttribute(
+                                                        decoder.buildSimpleAttribute
+                                                                (replacingAttributeSchema, operation.getValues()));
+                                                break;
+
+                                            }
+
+                                        } else {
+                                            throw new BadRequestException("No such attribute with the name : " +
+                                                    attributeParts[0] + "." + attributeParts[1] + "." +
+                                                    attributeParts[2]);
+                                        }
                                     }
                                     if (replacingAttribute.getMutability().equals
                                             (SCIMDefinitions.Mutability.READ_ONLY) ||
@@ -1751,11 +1776,112 @@ public class PatchOperationUtil {
                 }
 
             } else {
-                throw new BadRequestException("No matching Attribute found to replace.", ResponseCodeConstants.NO_TARGET);
+                AttributeSchema subAttributeSchema = SchemaUtil.getAttributeSchema(attributeParts[0]
+                        + "." + attributeParts[1], schema);
+                if (subAttributeSchema != null) {
+
+                    MultiValuedAttribute multiValuedAttribute = new MultiValuedAttribute(subAttributeSchema.getName());
+                    DefaultAttributeFactory.createAttribute(subAttributeSchema, multiValuedAttribute);
+
+                    String complexName = subAttributeSchema.getName() + "_" +
+                            SCIMConstants.DEFAULT + "_" + SCIMConstants.DEFAULT;
+
+                    ComplexAttribute complexAttribute = new ComplexAttribute(complexName);
+                    DefaultAttributeFactory.createAttribute(subAttributeSchema, complexAttribute);
+
+                    AttributeSchema subSubAttributeSchema = SchemaUtil.getAttributeSchema(attributeParts[0] + "."
+                            + attributeParts[1] + "." + attributeParts[2], schema);
+
+                    if (subSubAttributeSchema != null) {
+                        if (subSubAttributeSchema.getMultiValued()) {
+
+                            MultiValuedAttribute multiValuedSubAttribute =
+                                    new MultiValuedAttribute(subSubAttributeSchema.getName());
+                            DefaultAttributeFactory.createAttribute(subSubAttributeSchema, multiValuedSubAttribute);
+                            multiValuedSubAttribute.setAttributePrimitiveValue(operation.getValues());
+                            complexAttribute.setSubAttribute(multiValuedSubAttribute);
+                            multiValuedAttribute.setAttributeValue(complexAttribute);
+                            ((ComplexAttribute) (attribute)).setSubAttribute(multiValuedAttribute);
+                        } else {
+
+                            SimpleAttribute simpleAttribute =
+                                    new SimpleAttribute(subSubAttributeSchema.getName(), operation.getValues());
+                            DefaultAttributeFactory.createAttribute(subSubAttributeSchema, simpleAttribute);
+                            complexAttribute.setSubAttribute(simpleAttribute);
+                            multiValuedAttribute.setAttributeValue(complexAttribute);
+                            ((ComplexAttribute) (attribute)).setSubAttribute(multiValuedAttribute);
+                        }
+
+                    } else {
+                        throw new BadRequestException("Attribute : " + attributeParts[0] + "." + attributeParts[1]
+                                + "." + attributeParts[2] + "does not exists.", ResponseCodeConstants.INVALID_PATH);
+                    }
+                } else {
+                    throw new BadRequestException("Attribute : " + attributeParts[0] + "." + attributeParts[1]
+                            + "does not exists.", ResponseCodeConstants.INVALID_PATH);
+                }
             }
 
         } else {
-            throw new BadRequestException("No matching filter value found.", ResponseCodeConstants.NO_TARGET);
+            AttributeSchema attributeSchema = SchemaUtil.getAttributeSchema(attributeParts[0], schema);
+
+            if (attributeSchema != null) {
+
+                if (attributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
+
+                    ComplexAttribute extensionAttribute = new ComplexAttribute(attributeSchema.getName());
+                    DefaultAttributeFactory.createAttribute(attributeSchema, extensionAttribute);
+
+                    AttributeSchema subAttributeSchema = SchemaUtil.getAttributeSchema(attributeParts[0]
+                            + "." + attributeParts[1], schema);
+                    if (subAttributeSchema != null) {
+
+                        MultiValuedAttribute multiValuedAttribute =
+                                new MultiValuedAttribute(subAttributeSchema.getName());
+                        DefaultAttributeFactory.createAttribute(subAttributeSchema, multiValuedAttribute);
+
+                        String complexName = subAttributeSchema.getName() + "_" +
+                                SCIMConstants.DEFAULT + "_" + SCIMConstants.DEFAULT;
+
+                        ComplexAttribute complexAttribute = new ComplexAttribute(complexName);
+                        DefaultAttributeFactory.createAttribute(subAttributeSchema, complexAttribute);
+
+                        AttributeSchema subSubAttributeSchema = SchemaUtil.getAttributeSchema(attributeParts[0] + "."
+                                + attributeParts[1] + "." + attributeParts[2], schema);
+
+                        if (subSubAttributeSchema != null) {
+                            if (subSubAttributeSchema.getMultiValued()) {
+
+                                MultiValuedAttribute multiValuedSubAttribute =
+                                        new MultiValuedAttribute(subSubAttributeSchema.getName());
+                                DefaultAttributeFactory.createAttribute(subSubAttributeSchema, multiValuedSubAttribute);
+                                multiValuedAttribute.setAttributePrimitiveValue(operation.getValues());
+                                complexAttribute.setSubAttribute(multiValuedSubAttribute);
+                                ((ComplexAttribute) (attribute)).setSubAttribute(complexAttribute);
+                            } else {
+
+                                SimpleAttribute simpleAttribute =
+                                        new SimpleAttribute(subSubAttributeSchema.getName(), operation.getValues());
+                                DefaultAttributeFactory.createAttribute(subSubAttributeSchema, simpleAttribute);
+                                complexAttribute.setSubAttribute(simpleAttribute);
+                                ((ComplexAttribute) (attribute)).setSubAttribute(complexAttribute);
+                            }
+
+                        } else {
+                            throw new BadRequestException("Attribute : " + attributeParts[0] + "." + attributeParts[1]
+                                    + "." + attributeParts[2] + "does not exists.", ResponseCodeConstants.INVALID_PATH);
+                        }
+                    } else {
+                        throw new BadRequestException("Attribute : " + attributeParts[0] + "." + attributeParts[1]
+                                + "does not exists.", ResponseCodeConstants.INVALID_PATH);
+                    }
+
+                }
+
+            } else {
+                throw new BadRequestException("Attribute : " + attributeParts[0]  + "does not exists.",
+                        ResponseCodeConstants.INVALID_PATH);
+            }
         }
         return oldResource;
 
@@ -1807,15 +1933,34 @@ public class PatchOperationUtil {
                                 if (((SimpleAttribute) subAttribute).getValue().equals(expressionNode.getValue())) {
                                     Attribute replacingAttribute = subAttributes.get(attributeParts[1]);
                                     if (replacingAttribute == null) {
-                                        throw new BadRequestException("No matching filter value found.",
-                                                ResponseCodeConstants.NO_TARGET);
+                                        //add the attribute
+                                        AttributeSchema replacingAttributeSchema =
+                                                SchemaUtil.getAttributeSchema
+                                                        (attributeParts[0] + "." + attributeParts[1], schema);
+                                        if (replacingAttributeSchema.getMultiValued()) {
+                                            MultiValuedAttribute multiValuedAttribute =
+                                                    new MultiValuedAttribute(replacingAttribute.getName());
+                                            DefaultAttributeFactory.createAttribute
+                                                    (replacingAttributeSchema, multiValuedAttribute);
+                                            multiValuedAttribute.setAttributePrimitiveValue(operation.getValues());
+                                            ((ComplexAttribute) subValue).setSubAttribute(multiValuedAttribute);
+                                            break;
+                                        } else {
+                                            SimpleAttribute simpleAttribute =
+                                                    new SimpleAttribute(replacingAttribute.getName(),
+                                                            operation.getValues());
+                                            DefaultAttributeFactory.createAttribute
+                                                    (replacingAttributeSchema, simpleAttribute);
+                                            ((ComplexAttribute) subValue).setSubAttribute(simpleAttribute);
+                                            break;
+                                        }
                                     }
                                     if (replacingAttribute.getMutability().
                                             equals(SCIMDefinitions.Mutability.READ_ONLY) ||
                                             replacingAttribute.getMutability().
                                                     equals(SCIMDefinitions.Mutability.IMMUTABLE)) {
                                         throw new BadRequestException
-                                                ("Can not remove a required attribute or a read-only attribute",
+                                                ("Can not remove a immutable attribute or a read-only attribute",
                                                         ResponseCodeConstants.MUTABILITY);
                                     } else {
                                         if (replacingAttribute.getMultiValued()) {
@@ -1839,47 +1984,70 @@ public class PatchOperationUtil {
                 }
             } else if (attribute.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
                 //this is only valid for extension
-                Attribute subAttribute  = attribute.getSubAttribute(attributeParts[1]);
+                Attribute subAttribute = attribute.getSubAttribute(attributeParts[1]);
                 if (subAttribute == null) {
-                    throw new BadRequestException("No such sub attribute with the name : "
-                            + attributeParts[1] + " " + "within the attribute " + attributeParts[0],
-                            ResponseCodeConstants.INVALID_PATH);
-                }
+                    //add the attribute
+                    AttributeSchema subAttributeSchema = SchemaUtil.getAttributeSchema(attributeParts[0] + "."
+                            + attributeParts[1], schema);
+                    if (subAttributeSchema != null) {
 
-                List<Attribute> subValues = ((MultiValuedAttribute) (subAttribute)).getAttributeValues();
-                if (subValues != null) {
-                    for (Iterator<Attribute> subValueIterator = subValues.iterator(); subValueIterator.hasNext();) {
-                        Attribute subValue = subValueIterator.next();
+                        if (subAttributeSchema.getMultiValued()) {
+                            MultiValuedAttribute multiValuedAttribute = new MultiValuedAttribute
+                                    (subAttributeSchema.getName());
+                            DefaultAttributeFactory.createAttribute(subAttributeSchema, multiValuedAttribute);
 
-                        Map<String, Attribute> subValuesSubAttribute =
-                                ((ComplexAttribute) subValue).getSubAttributesList();
-                        for (Iterator<Attribute> iterator =
-                             subValuesSubAttribute.values().iterator(); iterator.hasNext();) {
+                            multiValuedAttribute.setAttributeValue(
+                                    decoder.buildComplexAttribute(subAttributeSchema,
+                                            (JSONObject) operation.getValues()));
+                            ((ComplexAttribute) (attribute)).setSubAttribute(multiValuedAttribute);
 
-                            Attribute subSubAttribute = iterator.next();
-                            if (subSubAttribute.getName().equals(expressionNode.getAttributeValue())) {
-                                if (((SimpleAttribute) (subSubAttribute)).getValue().equals
-                                        (expressionNode.getValue())) {
-                                    if (subValue.getMutability().equals(SCIMDefinitions.Mutability.READ_ONLY) ||
-                                            subValue.getMutability().equals(SCIMDefinitions.Mutability.IMMUTABLE)) {
+                        } else {
+                            throw new BadRequestException("Attribute : " + attributeParts[1]  +
+                                    "is not a multi valued attribute.", ResponseCodeConstants.INVALID_PATH);
+                        }
+                    } else {
+                        throw new BadRequestException("Attribute : " + attributeParts[0] + "." + attributeParts[1]  +
+                                "does not exists.", ResponseCodeConstants.INVALID_PATH);
+                    }
 
-                                        throw new BadRequestException
-                                                ("Can not remove a immutable attribute or a read-only attribute",
-                                                        ResponseCodeConstants.MUTABILITY);
-                                    } else {
-                                        subValueIterator.remove();
-                                        isValueFound = true;
+                } else {
+                    List<Attribute> subValues = ((MultiValuedAttribute) (subAttribute)).getAttributeValues();
+                    if (subValues != null) {
+                        for (Iterator<Attribute> subValueIterator = subValues.iterator();
+                             subValueIterator.hasNext(); ) {
+                            Attribute subValue = subValueIterator.next();
+
+                            Map<String, Attribute> subValuesSubAttribute =
+                                    ((ComplexAttribute) subValue).getSubAttributesList();
+                            for (Iterator<Attribute> iterator =
+                                 subValuesSubAttribute.values().iterator(); iterator.hasNext(); ) {
+
+                                Attribute subSubAttribute = iterator.next();
+                                if (subSubAttribute.getName().equals(expressionNode.getAttributeValue())) {
+                                    if (((SimpleAttribute) (subSubAttribute)).getValue().equals
+                                            (expressionNode.getValue())) {
+                                        if (subValue.getMutability().equals(SCIMDefinitions.Mutability.READ_ONLY) ||
+                                                subValue.getMutability().equals(SCIMDefinitions.Mutability.IMMUTABLE)) {
+
+                                            throw new BadRequestException
+                                                    ("Can not remove a immutable attribute or a read-only attribute",
+                                                            ResponseCodeConstants.MUTABILITY);
+                                        } else {
+                                            subValueIterator.remove();
+                                            isValueFound = true;
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
-                    AttributeSchema attributeSchema =
-                            SchemaUtil.getAttributeSchema(attributeParts[0] + "." + attributeParts[1], schema);
-                    subValues.add(decoder.buildComplexAttribute(attributeSchema, (JSONObject) operation.getValues()));
-                    if (!isValueFound) {
-                        throw new BadRequestException("No matching filter value found.",
-                                ResponseCodeConstants.NO_TARGET);
+                        AttributeSchema attributeSchema =
+                                SchemaUtil.getAttributeSchema(attributeParts[0] + "." + attributeParts[1], schema);
+                        subValues.add(decoder.buildComplexAttribute(attributeSchema,
+                                (JSONObject) operation.getValues()));
+                        if (!isValueFound) {
+                            throw new BadRequestException("No matching filter value found.",
+                                    ResponseCodeConstants.NO_TARGET);
+                        }
                     }
                 }
             } else {
@@ -1887,7 +2055,80 @@ public class PatchOperationUtil {
                         "is not a multivalued attribute.", ResponseCodeConstants.INVALID_PATH);
             }
         } else {
-            throw new BadRequestException("No matching filter value found.", ResponseCodeConstants.NO_TARGET);
+            //add the attribute
+            AttributeSchema attributeSchema = SchemaUtil.getAttributeSchema(attributeParts[0], schema);
+            if (attributeSchema != null) {
+                if (attributeSchema.getMultiValued()) {
+                    MultiValuedAttribute multiValuedAttribute = new MultiValuedAttribute(attributeSchema.getName());
+                    DefaultAttributeFactory.createAttribute(attributeSchema, multiValuedAttribute);
+
+                    String complexName = attributeSchema.getName() + "_" +
+                            SCIMConstants.DEFAULT + "_" + SCIMConstants.DEFAULT;
+                    ComplexAttribute complexAttribute = new ComplexAttribute(complexName);
+                    DefaultAttributeFactory.createAttribute(attributeSchema, complexAttribute);
+
+                    AttributeSchema subAttributeSchema = SchemaUtil.getAttributeSchema(attributeParts[0] + "."
+                                                                    + attributeParts[1], schema);
+                    if (subAttributeSchema != null) {
+                        if (subAttributeSchema.getMultiValued()) {
+
+                            MultiValuedAttribute multiValuedSubAttribute =
+                                    new MultiValuedAttribute(subAttributeSchema.getName());
+                            DefaultAttributeFactory.createAttribute(subAttributeSchema, multiValuedSubAttribute);
+                            multiValuedAttribute.setAttributePrimitiveValue(operation.getValues());
+                            complexAttribute.setSubAttribute(multiValuedSubAttribute);
+                            multiValuedAttribute.setAttributeValue(complexAttribute);
+                            oldResource.setAttribute(multiValuedAttribute);
+                        } else {
+
+                            SimpleAttribute simpleAttribute =
+                                    new SimpleAttribute(subAttributeSchema.getName(), operation.getValues());
+                            DefaultAttributeFactory.createAttribute(subAttributeSchema, simpleAttribute);
+                            complexAttribute.setSubAttribute(simpleAttribute);
+                            multiValuedAttribute.setAttributeValue(complexAttribute);
+                            oldResource.setAttribute(multiValuedAttribute);
+                        }
+
+                    } else {
+                        throw new BadRequestException("Attribute : " + attributeParts[0] + "." + attributeParts[1]  +
+                                "does not exists.", ResponseCodeConstants.INVALID_PATH);
+                    }
+
+                } else {
+
+                    ComplexAttribute extensionComplexAttribute = new ComplexAttribute(attributeSchema.getName());
+                    DefaultAttributeFactory.createAttribute(attributeSchema, extensionComplexAttribute);
+
+
+                    AttributeSchema subAttributeSchema = SchemaUtil.getAttributeSchema(attributeParts[0] + "."
+                            + attributeParts[1], schema);
+                    if (subAttributeSchema != null) {
+
+                        if (subAttributeSchema.getMultiValued()) {
+                            MultiValuedAttribute multiValuedAttribute = new MultiValuedAttribute
+                                    (subAttributeSchema.getName());
+                            DefaultAttributeFactory.createAttribute(subAttributeSchema, multiValuedAttribute);
+
+                            multiValuedAttribute.setAttributeValue(
+                                    decoder.buildComplexAttribute(subAttributeSchema,
+                                            (JSONObject) operation.getValues()));
+                            oldResource.setAttribute(multiValuedAttribute);
+
+                        } else {
+                            throw new BadRequestException("Attribute : " + attributeParts[1]  +
+                                    "is not a multi valued attribute.", ResponseCodeConstants.INVALID_PATH);
+                        }
+                    } else {
+                        throw new BadRequestException("Attribute : " + attributeParts[0] + "." + attributeParts[1]  +
+                                "does not exists.", ResponseCodeConstants.INVALID_PATH);
+                    }
+
+                }
+            } else {
+                throw new BadRequestException("No such attribute with the name : " + attributeParts[0],
+                        ResponseCodeConstants.INVALID_PATH);
+            }
+
         }
         return oldResource;
 
@@ -1963,13 +2204,13 @@ public class PatchOperationUtil {
                     List<Attribute> subValues = ((MultiValuedAttribute) (attribute)).getAttributeValues();
                     if (subValues != null) {
                         for (Iterator<Attribute> subValueIterator = subValues.iterator();
-                             subValueIterator.hasNext();) {
+                             subValueIterator.hasNext(); ) {
                             Attribute subValue = subValueIterator.next();
 
                             Map<String, Attribute> subValuesSubAttribute =
                                     ((ComplexAttribute) subValue).getSubAttributesList();
                             for (Iterator<Attribute> iterator =
-                                 subValuesSubAttribute.values().iterator(); iterator.hasNext();) {
+                                 subValuesSubAttribute.values().iterator(); iterator.hasNext(); ) {
 
                                 Attribute subAttribute = iterator.next();
                                 if (subAttribute.getName().equals(expressionNode.getAttributeValue())) {
@@ -2003,10 +2244,10 @@ public class PatchOperationUtil {
                     if (subAttribute != null) {
 
                         if (subAttribute.getMultiValued()) {
-                            List<Object> valuesList  = ((MultiValuedAttribute)
+                            List<Object> valuesList = ((MultiValuedAttribute)
                                     (subAttribute)).getAttributePrimitiveValues();
                             for (Iterator<Object> iterator =
-                                 valuesList.iterator(); iterator.hasNext();) {
+                                 valuesList.iterator(); iterator.hasNext(); ) {
                                 Object item = iterator.next();
                                 //we only support "EQ" filter
                                 if (item.equals(expressionNode.getValue())) {
@@ -2034,13 +2275,74 @@ public class PatchOperationUtil {
                         }
 
                     } else {
-                        throw new BadRequestException("No matching filter value found.",
-                                ResponseCodeConstants.NO_TARGET);
+                        AttributeSchema subAttributeSchema = SchemaUtil.getAttributeSchema(attributeParts[0]
+                                + "." + expressionNode.getAttributeValue(), schema);
+                        if (subAttributeSchema.getMultiValued()) {
+                            ((ComplexAttribute) (attribute)).setSubAttribute
+                                    (decoder.buildPrimitiveMultiValuedAttribute(subAttributeSchema,
+                                            (JSONArray) operation.getValues()));
+
+                        } else {
+                            if (subAttributeSchema.getMultiValued()) {
+                                ((ComplexAttribute) (attribute)).setSubAttribute
+                                        (decoder.buildSimpleAttribute(subAttributeSchema, operation.getValues()));
+                            }
+                        }
                     }
                 }
             }
         } else {
-            throw new BadRequestException("No matching filter value found.", ResponseCodeConstants.NO_TARGET);
+            //add the attribute
+           AttributeSchema attributeSchema = SchemaUtil.getAttributeSchema(attributeParts[0], schema);
+            if (attributeSchema != null) {
+                if (attributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
+                    if (attributeSchema.getMultiValued()) {
+                        MultiValuedAttribute multiValuedAttribute = new MultiValuedAttribute(attributeSchema.getName());
+                        DefaultAttributeFactory.createAttribute(attributeSchema, multiValuedAttribute);
+
+                        String complexName  = attributeSchema.getName() + "_" + SCIMConstants.DEFAULT + "_" +
+                                SCIMConstants.DEFAULT;
+                        ComplexAttribute complexAttribute = new ComplexAttribute(complexName);
+                        DefaultAttributeFactory.createAttribute(attributeSchema, complexAttribute);
+
+                        AttributeSchema subValuesSubAttributeSchema = SchemaUtil.getAttributeSchema(attributeParts[0]
+                                + "." + expressionNode.getAttributeValue(), schema);
+                        if (subValuesSubAttributeSchema != null) {
+                            SimpleAttribute simpleAttribute =
+                                    new SimpleAttribute(subValuesSubAttributeSchema.getName(), operation.getValues());
+                            DefaultAttributeFactory.createAttribute(subValuesSubAttributeSchema, simpleAttribute);
+                            complexAttribute.setSubAttribute(simpleAttribute);
+                            multiValuedAttribute.setAttributeValue(complexAttribute);
+                            oldResource.setAttribute(multiValuedAttribute);
+                        } else {
+                            throw new BadRequestException("No such attribute with name : " + attributeParts[0]
+                                    + "." + expressionNode.getAttributeValue(), ResponseCodeConstants.INVALID_PATH);
+                        }
+
+
+                    } else {
+                        throw new BadRequestException("Attribute : " + attributeParts[0] + " " +
+                                "is not a multivalued attribute.",
+                                ResponseCodeConstants.INVALID_PATH);
+                    }
+                } else {
+                    if (attributeSchema.getMultiValued()) {
+                        //primitive case
+                        MultiValuedAttribute multiValuedAttribute = new MultiValuedAttribute(attributeSchema.getName());
+                        DefaultAttributeFactory.createAttribute(attributeSchema, multiValuedAttribute);
+                        multiValuedAttribute.setAttributePrimitiveValue(operation.getValues());
+                        oldResource.setAttribute(multiValuedAttribute);
+                    } else {
+                        throw new BadRequestException("Attribute : " + attributeParts[0] + " " +
+                                "is not a multivalued attribute.",
+                                ResponseCodeConstants.INVALID_PATH);
+                    }
+                }
+            } else {
+                throw new BadRequestException("No such attribute with the name : " + attributeParts[0],
+                        ResponseCodeConstants.INVALID_PATH);
+            }
+
         }
         return oldResource;
     }

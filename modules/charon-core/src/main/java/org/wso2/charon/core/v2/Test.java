@@ -343,22 +343,18 @@ public class Test {
                "     \"Operations\":[\n" +
 
                "       {\n" +
-               "       \"op\":\"replace\",\n" +
-               "       \"path\":\"EnterpriseUser.costCenter\",\n" +
-               "       \"value\":\"Maharagama\"\n" +
-               "     },\n" +
+               "        \"op\":\"replace\",\n" +
+               "        \"path\":\"EnterpriseUser.manager[value eq sad].value\",\n" +
+               "        \"value\":\"sss\",\n" +
+               "       },\n" +
 
-               "       {\n" +
-               "       \"op\":\"replace\",\n" +
-               "       \"path\":\"EnterpriseUser.manager[value eq Fuck].$ref\",\n" +
-               "       \"value\":\"TT\"\n" +
-               "     },\n" +
+
 
                "     ]\n" +
                "   }";
 
-       //SCIMResponse res= um.get("fe02a275-371b-4564-b0f3-3ffb8dbaea2c",new SCIMUserManager(),null,null);
-       SCIMResponse res=um.updateWithPATCH("fe02a275-371b-4564-b0f3-3ffb8dbaea2c",test3, new SCIMUserManager(), null,null);
+       //SCIMResponse res= um.get("03c6b5d7-3e97-4178-95ca-cb9e8e31b086",new SCIMUserManager(),null,null);
+       SCIMResponse res=um.updateWithPATCH("03c6b5d7-3e97-4178-95ca-cb9e8e31b086",test3, new SCIMUserManager(), null,null);
 
        System.out.println(res.getResponseStatus());
        System.out.println("");
