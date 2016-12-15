@@ -226,7 +226,7 @@ public class JSONDecoder {
                     multiValuedAttribute);
         } catch (JSONException e) {
             String error = "Error in accessing JSON value of multivalued attribute";
-            throw new CharonException(error);
+            throw new CharonException(error, e);
         }
     }
 
@@ -269,7 +269,7 @@ public class JSONDecoder {
                     multiValuedAttribute);
         } catch (JSONException e) {
             String error = "Error in accessing JSON value of multivalued attribute";
-            throw new CharonException(error);
+            throw new CharonException(error, e);
         }
     }
 
@@ -526,7 +526,8 @@ public class JSONDecoder {
         return  operationList;
     }
 
-    public AbstractSCIMObject decode(String scimResourceString, SCIMResourceTypeSchema schema) throws CharonException {
+    public AbstractSCIMObject decode(String scimResourceString, SCIMResourceTypeSchema schema)
+            throws CharonException, BadRequestException {
         try {
             JSONObject decodedJsonObj = new JSONObject(new JSONTokener(scimResourceString));
 
@@ -535,8 +536,10 @@ public class JSONDecoder {
 
             return scimObject;
 
-        } catch (BadRequestException | JSONException | InternalErrorException | CharonException e) {
+        } catch (JSONException | InternalErrorException | CharonException e) {
             throw new CharonException("Error in decoding the request", e);
+        } catch (BadRequestException e) {
+            throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
         }
     }
 

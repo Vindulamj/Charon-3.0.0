@@ -65,6 +65,7 @@
                             org.apache.axiom.om.*; version="${axiom.osgi.version.range}",
                             javax.xml.namespace.*,
                             javax.xml.stream.*,
+                            org.slf4j.*,
                         </Import-Package>
                     </instructions>
                 </configuration>

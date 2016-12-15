@@ -21,6 +21,7 @@ package org.wso2.charon.core.v2.utils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.wso2.charon.core.v2.attributes.Attribute;
 import org.wso2.charon.core.v2.attributes.ComplexAttribute;
 import org.wso2.charon.core.v2.attributes.DefaultAttributeFactory;
@@ -416,7 +417,8 @@ public class PatchOperationUtil {
                     Attribute subAttribute = attribute.getSubAttribute(expressionNode.getAttributeValue());
                     if (subAttribute != null) {
 
-                        if (subAttribute.getMultiValued()) {
+                        if (subAttribute.getMultiValued() && !subAttribute.getType().equals
+                                (SCIMDefinitions.DataType.COMPLEX)) {
                             List<Object> valuesList  = ((MultiValuedAttribute)
                                     (subAttribute)).getAttributePrimitiveValues();
                             for (Iterator<Object> iterator =
@@ -442,7 +444,7 @@ public class PatchOperationUtil {
                         } else {
                             throw new BadRequestException("Sub attribute : " +
                                     expressionNode.getAttributeValue() + " " +
-                                    "is not a multivalued attribute.", ResponseCodeConstants.INVALID_PATH);
+                                    "is not a primitive multivalued attribute.", ResponseCodeConstants.INVALID_PATH);
                         }
 
                     } else {
@@ -607,7 +609,8 @@ public class PatchOperationUtil {
      */
     public static AbstractSCIMObject doPatchAdd(PatchOperation operation, JSONDecoder decoder,
                                                 AbstractSCIMObject oldResource, AbstractSCIMObject copyOfOldResource,
-                                                SCIMResourceTypeSchema schema) throws CharonException {
+                                                SCIMResourceTypeSchema schema)
+            throws CharonException, BadRequestException {
         try {
             AbstractSCIMObject attributeHoldingSCIMObject = decoder.decode(operation.getValues().toString(), schema);
             if (oldResource != null) {
@@ -722,8 +725,8 @@ public class PatchOperationUtil {
             } else  {
                 throw new CharonException("Error in getting the old resource.");
             }
-        } catch (BadRequestException | CharonException e) {
-            throw new CharonException("Error in performing the add operation", e);
+        } catch (BadRequestException e) {
+            throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
         }
     }
 
@@ -756,15 +759,11 @@ public class PatchOperationUtil {
                 try {
                     doPatchReplaceOnPathWithFilters(oldResource, schema, decoder, operation, parts);
                 } catch (JSONException e) {
-                    throw new CharonException("Error while performing the operation", e);
+                    throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
                 }
 
             } else {
-                try {
                     doPatchReplaceOnPathWithoutFilters(oldResource, schema, decoder, operation, parts);
-                } catch (JSONException e) {
-                    throw new CharonException("Error while performing the operation", e);
-                }
             }
 
         } else {
@@ -793,7 +792,7 @@ public class PatchOperationUtil {
                                                                          SCIMResourceTypeSchema schema,
                                                                          JSONDecoder decoder, PatchOperation operation,
                                                                          String[] parts)
-            throws BadRequestException, CharonException, JSONException, InternalErrorException {
+            throws BadRequestException, CharonException, InternalErrorException {
 
         String[] attributeParts = parts[0].split("[\\.]");
 
@@ -831,7 +830,7 @@ public class PatchOperationUtil {
                                                                       JSONDecoder decoder,
                                                                       PatchOperation operation,
                                                                       String[] attributeParts)
-            throws BadRequestException, CharonException, JSONException, InternalErrorException {
+            throws BadRequestException, CharonException, InternalErrorException {
 
         Attribute attribute = oldResource.getAttribute(attributeParts[0]);
 
@@ -852,9 +851,18 @@ public class PatchOperationUtil {
                                 ResponseCodeConstants.MUTABILITY);
                     } else {
                         ((MultiValuedAttribute) attribute).deletePrimitiveValues();
-                        JSONArray jsonArray = new JSONArray(operation.getValues());
+                        JSONArray jsonArray = null;
+                        try {
+                            jsonArray = new JSONArray(operation.getValues());
+                        } catch (JSONException e) {
+                            throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                        }
                         for (int i = 0; i < jsonArray.length(); i++) {
-                            ((MultiValuedAttribute) attribute).setAttributePrimitiveValue(jsonArray.get(i));
+                            try {
+                                ((MultiValuedAttribute) attribute).setAttributePrimitiveValue(jsonArray.get(i));
+                            } catch (JSONException e) {
+                                throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                            }
                         }
                     }
                 }
@@ -866,9 +874,16 @@ public class PatchOperationUtil {
                         throw new BadRequestException("Can not replace a immutable attribute or a read-only attribute",
                                 ResponseCodeConstants.MUTABILITY);
                     } else {
+                        JSONArray jsonArray = null;
+                        try {
+                            jsonArray = new JSONArray
+                                    (new JSONTokener(operation.getValues().toString()));
+                        } catch (JSONException e) {
+                            throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                        }
                         AttributeSchema attributeSchema = SchemaUtil.getAttributeSchema(attribute.getName(), schema);
                         MultiValuedAttribute newMultiValuedAttribute = decoder.buildComplexMultiValuedAttribute
-                                (attributeSchema, (JSONArray) operation.getValues());
+                                (attributeSchema, jsonArray);
                         oldResource.deleteAttribute(attribute.getName());
                         oldResource.setAttribute(newMultiValuedAttribute);
                     }
@@ -880,9 +895,20 @@ public class PatchOperationUtil {
                         throw new BadRequestException("Can not replace a immutable attribute or a read-only attribute",
                                 ResponseCodeConstants.MUTABILITY);
                     } else {
+                        JSONObject jsonObject = null;
+                        try {
+                            jsonObject = new JSONObject(new JSONTokener(operation.getValues().toString()));
+                        } catch (JSONException e) {
+                            throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                        }
                         AttributeSchema attributeSchema = SchemaUtil.getAttributeSchema(attribute.getName(), schema);
-                        ComplexAttribute newComplexAttribute = decoder.buildComplexAttribute(attributeSchema,
-                                (JSONObject) operation.getValues());
+                        ComplexAttribute newComplexAttribute = null;
+                        try {
+                            newComplexAttribute = decoder.buildComplexAttribute(attributeSchema,
+                                    jsonObject);
+                        } catch (JSONException e) {
+                            throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                        }
                         oldResource.deleteAttribute(attribute.getName());
                         oldResource.setAttribute(newComplexAttribute);
                     }
@@ -895,20 +921,45 @@ public class PatchOperationUtil {
             if (attributeSchema != null) {
                 if (attributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
                     if (attributeSchema.getMultiValued()) {
+                        JSONArray jsonArray = null;
+                        try {
+                            jsonArray = new JSONArray
+                                    (new JSONTokener(operation.getValues().toString()));
+                        } catch (JSONException e) {
+                            throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                        }
                         MultiValuedAttribute newMultiValuedAttribute = decoder.buildComplexMultiValuedAttribute
-                                (attributeSchema, (JSONArray) operation.getValues());
+                                (attributeSchema, jsonArray);
                         oldResource.setAttribute(newMultiValuedAttribute);
 
                     } else  {
-                        ComplexAttribute newComplexAttribute = decoder.buildComplexAttribute(attributeSchema,
-                                (JSONObject) operation.getValues());
+                        JSONObject jsonObject = null;
+                        try {
+                            jsonObject = new JSONObject(new JSONTokener(operation.getValues().toString()));
+                        } catch (JSONException e) {
+                            throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                        }
+                        ComplexAttribute newComplexAttribute = null;
+                        try {
+                            newComplexAttribute = decoder.buildComplexAttribute
+                                    (attributeSchema, jsonObject);
+                        } catch (JSONException e) {
+                            throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                        }
                         oldResource.setAttribute(newComplexAttribute);
                     }
 
                 } else {
                     if (attributeSchema.getMultiValued()) {
+                        JSONArray jsonArray = null;
+                        try {
+                            jsonArray = new JSONArray
+                                    (new JSONTokener(operation.getValues().toString()));
+                        } catch (JSONException e) {
+                            throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                        }
                         MultiValuedAttribute newMultiValuedAttribute = decoder.buildPrimitiveMultiValuedAttribute(
-                                attributeSchema, (JSONArray) operation.getValues());
+                                attributeSchema, jsonArray);
                         oldResource.setAttribute(newMultiValuedAttribute);
 
                     } else {
@@ -943,7 +994,7 @@ public class PatchOperationUtil {
                                                                       JSONDecoder decoder,
                                                                       PatchOperation operation,
                                                                       String[] attributeParts)
-            throws BadRequestException, CharonException, JSONException, InternalErrorException {
+            throws BadRequestException, CharonException, InternalErrorException {
 
         Attribute attribute = oldResource.getAttribute(attributeParts[0]);
 
@@ -963,9 +1014,19 @@ public class PatchOperationUtil {
                         } else {
                             if (subAttribute.getMultiValued()) {
                                 ((MultiValuedAttribute) subAttribute).deletePrimitiveValues();
-                                JSONArray jsonArray = new JSONArray(operation.getValues());
+                                JSONArray jsonArray = null;
+                                try {
+                                    jsonArray = new JSONArray(operation.getValues());
+                                } catch (JSONException e) {
+                                    throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                                }
                                 for (int i = 0; i < jsonArray.length(); i++) {
-                                    ((MultiValuedAttribute) subAttribute).setAttributePrimitiveValue(jsonArray.get(i));
+                                    try {
+                                        ((MultiValuedAttribute) subAttribute).
+                                                setAttributePrimitiveValue(jsonArray.get(i));
+                                    } catch (JSONException e) {
+                                        throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                                    }
                                 }
                             } else {
                                 ((SimpleAttribute) subAttribute).setValue(operation.getValues());
@@ -975,8 +1036,15 @@ public class PatchOperationUtil {
                         AttributeSchema subAttributeSchema = SchemaUtil.getAttributeSchema(
                                 attributeParts[0] + "." + attributeParts[1], schema);
                         if (subAttributeSchema.getMultiValued()) {
+                            JSONArray jsonArray = null;
+                            try {
+                                jsonArray = new JSONArray
+                                        (new JSONTokener(operation.getValues().toString()));
+                            } catch (JSONException e) {
+                                throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                            }
                             MultiValuedAttribute newMultiValuedAttribute = decoder.buildPrimitiveMultiValuedAttribute(
-                                    subAttributeSchema, (JSONArray) operation.getValues());
+                                    subAttributeSchema, jsonArray);
                             ((ComplexAttribute) (subValue)).setSubAttribute(newMultiValuedAttribute);
                         } else  {
                             SimpleAttribute simpleAttribute = decoder.buildSimpleAttribute(
@@ -1001,8 +1069,13 @@ public class PatchOperationUtil {
                                             ResponseCodeConstants.MUTABILITY);
                                 } else {
                                     ComplexAttribute newComplexAttribute =
-                                            decoder.buildComplexAttribute(subAttributeSchema,
-                                            (JSONObject) operation.getValues());
+                                            null;
+                                    try {
+                                        newComplexAttribute = decoder.buildComplexAttribute(subAttributeSchema,
+                                        (JSONObject) operation.getValues());
+                                    } catch (JSONException e) {
+                                        throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                                    }
                                     ((ComplexAttribute) (attribute)).removeSubAttribute(attributeParts[1]);
                                     ((ComplexAttribute) (attribute)).setSubAttribute(newComplexAttribute);
                                 }
@@ -1013,9 +1086,15 @@ public class PatchOperationUtil {
                                             ("Can not replace a immutable attribute or a read-only attribute",
                                             ResponseCodeConstants.MUTABILITY);
                                 } else {
+                                    JSONArray jsonArray = null;
+                                    try {
+                                        jsonArray = new JSONArray
+                                                (new JSONTokener(operation.getValues().toString()));
+                                    } catch (JSONException e) {
+                                        throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                                    }
                                     MultiValuedAttribute newMultiValuesAttribute =
-                                            decoder.buildComplexMultiValuedAttribute(subAttributeSchema,
-                                            (JSONArray) operation.getValues());
+                                            decoder.buildComplexMultiValuedAttribute(subAttributeSchema, jsonArray);
                                     ((ComplexAttribute) (attribute)).removeSubAttribute(attributeParts[1]);
                                     ((ComplexAttribute) (attribute)).setSubAttribute(newMultiValuesAttribute);
                                 }
@@ -1024,13 +1103,24 @@ public class PatchOperationUtil {
                         } else {
 
                             if (subAttributeSchema.getMultiValued()) {
+                                JSONArray jsonArray = null;
+                                try {
+                                    jsonArray = new JSONArray
+                                            (new JSONTokener(operation.getValues().toString()));
+                                } catch (JSONException e) {
+                                    throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                                }
                                 MultiValuedAttribute newMultiValuesAttribute =
-                                        decoder.buildComplexMultiValuedAttribute(subAttributeSchema,
-                                        (JSONArray) operation.getValues());
+                                        decoder.buildComplexMultiValuedAttribute(subAttributeSchema, jsonArray);
                                 ((ComplexAttribute) (attribute)).setSubAttribute(newMultiValuesAttribute);
                             } else {
-                                ComplexAttribute newComplexAttribute = decoder.buildComplexAttribute(subAttributeSchema,
-                                        (JSONObject) operation.getValues());
+                                ComplexAttribute newComplexAttribute = null;
+                                try {
+                                    newComplexAttribute = decoder.buildComplexAttribute(subAttributeSchema,
+                                            (JSONObject) operation.getValues());
+                                } catch (JSONException e) {
+                                    throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                                }
                                 ((ComplexAttribute) (attribute)).setSubAttribute(newComplexAttribute);
                             }
                         }
@@ -1046,9 +1136,16 @@ public class PatchOperationUtil {
                                 AttributeSchema attributeSchema = SchemaUtil.getAttributeSchema(
                                         attributeParts[0] + "." + attributeParts[1], schema);
                                 if (subAttribute.getMultiValued()) {
+                                    JSONArray jsonArray = null;
+                                    try {
+                                        jsonArray = new JSONArray
+                                                (new JSONTokener(operation.getValues().toString()));
+                                    } catch (JSONException e) {
+                                        throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                                    }
                                     MultiValuedAttribute newMultiValuedAttribute =
                                             decoder.buildPrimitiveMultiValuedAttribute(
-                                            attributeSchema, (JSONArray) operation.getValues());
+                                            attributeSchema, jsonArray);
                                     ((ComplexAttribute) (attribute)).removeSubAttribute(attributeParts[1]);
                                     ((ComplexAttribute) (attribute)).setSubAttribute(newMultiValuedAttribute);
                                 } else {
@@ -1063,10 +1160,17 @@ public class PatchOperationUtil {
                             //add the values
                             AttributeSchema attributeSchema = SchemaUtil.getAttributeSchema(
                                     attributeParts[0] + "." + attributeParts[1], schema);
-                            if (subAttribute.getMultiValued()) {
+                            if (attributeSchema.getMultiValued()) {
+                                JSONArray jsonArray = null;
+                                try {
+                                    jsonArray = new JSONArray
+                                            (new JSONTokener(operation.getValues().toString()));
+                                } catch (JSONException e) {
+                                    throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                                }
                                 MultiValuedAttribute newMultiValuedAttribute =
                                         decoder.buildPrimitiveMultiValuedAttribute(
-                                        attributeSchema, (JSONArray) operation.getValues());
+                                        attributeSchema, jsonArray);
                                 ((ComplexAttribute) (attribute)).setSubAttribute(newMultiValuedAttribute);
                             } else {
                                 SimpleAttribute simpleAttribute = decoder.buildSimpleAttribute(
@@ -1123,15 +1227,25 @@ public class PatchOperationUtil {
                     if (subAttributeSchema != null) {
                         if (subAttributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
                             if (subAttributeSchema.getMultiValued()) {
+                                JSONArray jsonArray = null;
+                                try {
+                                    jsonArray = new JSONArray
+                                            (new JSONTokener(operation.getValues().toString()));
+                                } catch (JSONException e) {
+                                    throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                                }
                                 MultiValuedAttribute multiValuedAttribute =
-                                        decoder.buildComplexMultiValuedAttribute(subAttributeSchema,
-                                                (JSONArray) operation.getValues());
+                                        decoder.buildComplexMultiValuedAttribute(subAttributeSchema, jsonArray);
                                 complexAttribute.setSubAttribute(multiValuedAttribute);
                             } else {
-
                                 ComplexAttribute subComplexAttribute =
-                                        decoder.buildComplexAttribute(subAttributeSchema,
-                                                (JSONObject) operation.getValues());
+                                        null;
+                                try {
+                                    subComplexAttribute = decoder.buildComplexAttribute(subAttributeSchema,
+                                            (JSONObject) operation.getValues());
+                                } catch (JSONException e) {
+                                    throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                                }
                                 complexAttribute.setSubAttribute(subComplexAttribute);
                             }
 
@@ -1174,7 +1288,7 @@ public class PatchOperationUtil {
                                                                         JSONDecoder decoder,
                                                                         PatchOperation operation,
                                                                         String[] attributeParts)
-            throws BadRequestException, CharonException, JSONException {
+            throws BadRequestException, CharonException {
 
         Attribute attribute = oldResource.getAttribute(attributeParts[0]);
         if (attribute != null) {
@@ -1199,10 +1313,16 @@ public class PatchOperationUtil {
                                                 ResponseCodeConstants.MUTABILITY);
                                     } else {
                                         if (subSubAttribute.getMultiValued()) {
-
+                                            JSONArray jsonArray = null;
+                                            try {
+                                                jsonArray = new JSONArray
+                                                        (new JSONTokener(operation.getValues().toString()));
+                                            } catch (JSONException e) {
+                                                throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                                            }
                                             MultiValuedAttribute multiValuedAttribute =
                                                     decoder.buildPrimitiveMultiValuedAttribute(subSubAttributeSchema,
-                                                            (JSONArray) operation.getValues());
+                                                           jsonArray);
                                             ((ComplexAttribute) subValue).removeSubAttribute(attributeParts[2]);
                                             ((ComplexAttribute) subValue).setSubAttribute(multiValuedAttribute);
                                         } else {
@@ -1224,9 +1344,16 @@ public class PatchOperationUtil {
 
                                 if (subSubAttributeSchema != null) {
                                     if (subSubAttributeSchema.getMultiValued()) {
+                                        JSONArray jsonArray = null;
+                                        try {
+                                            jsonArray = new JSONArray
+                                                    (new JSONTokener(operation.getValues().toString()));
+                                        } catch (JSONException e) {
+                                            throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                                        }
                                         MultiValuedAttribute multiValuedAttribute =
                                                 decoder.buildPrimitiveMultiValuedAttribute(subSubAttributeSchema,
-                                                        (JSONArray) operation.getValues());
+                                                        jsonArray);
                                         ((ComplexAttribute) subValue).setSubAttribute(multiValuedAttribute);
                                     } else {
                                         SimpleAttribute simpleAttribute =
@@ -1255,9 +1382,16 @@ public class PatchOperationUtil {
 
                         if (subSubAttributeSchema != null) {
                             if (subSubAttributeSchema.getMultiValued()) {
+                                JSONArray jsonArray = null;
+                                try {
+                                    jsonArray = new JSONArray
+                                            (new JSONTokener(operation.getValues().toString()));
+                                } catch (JSONException e) {
+                                    throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                                }
                                 MultiValuedAttribute multiValuedAttribute =
                                         decoder.buildPrimitiveMultiValuedAttribute(subSubAttributeSchema,
-                                                (JSONArray) operation.getValues());
+                                                jsonArray);
                                 ((ComplexAttribute) subAttribute).setSubAttribute(multiValuedAttribute);
                             } else {
                                 SimpleAttribute simpleAttribute = decoder.buildSimpleAttribute(subSubAttributeSchema,
@@ -1294,9 +1428,18 @@ public class PatchOperationUtil {
                                 MultiValuedAttribute multiValuedSubAttribute =
                                         new MultiValuedAttribute(subSubAttributeSchema.getName());
                                 DefaultAttributeFactory.createAttribute(subSubAttributeSchema, multiValuedSubAttribute);
-                                JSONArray jsonArray = new JSONArray(operation.getValues());
+                                JSONArray jsonArray = null;
+                                try {
+                                    jsonArray = new JSONArray(operation.getValues());
+                                } catch (JSONException e) {
+                                    throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                                }
                                 for (int i = 0; i < jsonArray.length(); i++) {
-                                    multiValuedSubAttribute.setAttributePrimitiveValue(jsonArray.get(i));
+                                    try {
+                                        multiValuedSubAttribute.setAttributePrimitiveValue(jsonArray.get(i));
+                                    } catch (JSONException e) {
+                                        throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                                    }
                                 }
                                 complexAttribute.setSubAttribute(multiValuedSubAttribute);
 
@@ -1326,9 +1469,18 @@ public class PatchOperationUtil {
                                 MultiValuedAttribute multiValuedAttribute =
                                         new MultiValuedAttribute(subSubAttributeSchema.getName());
                                 DefaultAttributeFactory.createAttribute(subSubAttributeSchema, multiValuedAttribute);
-                                JSONArray jsonArray = new JSONArray(operation.getValues());
+                                JSONArray jsonArray = null;
+                                try {
+                                    jsonArray = new JSONArray(operation.getValues());
+                                } catch (JSONException e) {
+                                    throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                                }
                                 for (int i = 0; i < jsonArray.length(); i++) {
-                                    multiValuedAttribute.setAttributePrimitiveValue(jsonArray.get(i));
+                                    try {
+                                        multiValuedAttribute.setAttributePrimitiveValue(jsonArray.get(i));
+                                    } catch (JSONException e) {
+                                        throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                                    }
                                 }
                                 complexAttribute.setSubAttribute(multiValuedAttribute);
 
@@ -1382,9 +1534,18 @@ public class PatchOperationUtil {
                                 MultiValuedAttribute multiValuedSubAttribute =
                                         new MultiValuedAttribute(subSubAttributeSchema.getName());
                                 DefaultAttributeFactory.createAttribute(subSubAttributeSchema, multiValuedSubAttribute);
-                                JSONArray jsonArray = new JSONArray(operation.getValues());
+                                JSONArray jsonArray = null;
+                                try {
+                                    jsonArray = new JSONArray(operation.getValues());
+                                } catch (JSONException e) {
+                                    throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                                }
                                 for (int i = 0; i < jsonArray.length(); i++) {
-                                    multiValuedSubAttribute.setAttributePrimitiveValue(jsonArray.get(i));
+                                    try {
+                                        multiValuedSubAttribute.setAttributePrimitiveValue(jsonArray.get(i));
+                                    } catch (JSONException e) {
+                                        throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                                    }
                                 }
                                 complexAttribute.setSubAttribute(multiValuedSubAttribute);
 
@@ -1414,9 +1575,18 @@ public class PatchOperationUtil {
                                 MultiValuedAttribute multiValuedAttribute =
                                         new MultiValuedAttribute(subSubAttributeSchema.getName());
                                 DefaultAttributeFactory.createAttribute(subSubAttributeSchema, multiValuedAttribute);
-                                JSONArray jsonArray = new JSONArray(operation.getValues());
+                                JSONArray jsonArray = null;
+                                try {
+                                    jsonArray = new JSONArray(operation.getValues());
+                                } catch (JSONException e) {
+                                    throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                                }
                                 for (int i = 0; i < jsonArray.length(); i++) {
-                                    multiValuedAttribute.setAttributePrimitiveValue(jsonArray.get(i));
+                                    try {
+                                        multiValuedAttribute.setAttributePrimitiveValue(jsonArray.get(i));
+                                    } catch (JSONException e) {
+                                        throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                                    }
                                 }
                                 complexAttribute.setSubAttribute(multiValuedAttribute);
 
@@ -1546,7 +1716,7 @@ public class PatchOperationUtil {
                                     Attribute replacingAttribute = subSubAttributes.get(attributeParts[2]);
                                     if (replacingAttribute == null) {
                                         throw new BadRequestException
-                                                ("No matching filter value found.", ResponseCodeConstants.NO_TARGET);
+                                                ("No matching Attribute found to replace.", ResponseCodeConstants.NO_TARGET);
                                     }
                                     if (replacingAttribute.getMutability().equals
                                             (SCIMDefinitions.Mutability.READ_ONLY) ||
@@ -1581,7 +1751,7 @@ public class PatchOperationUtil {
                 }
 
             } else {
-                throw new BadRequestException("No matching filter value found.", ResponseCodeConstants.NO_TARGET);
+                throw new BadRequestException("No matching Attribute found to replace.", ResponseCodeConstants.NO_TARGET);
             }
 
         } else {

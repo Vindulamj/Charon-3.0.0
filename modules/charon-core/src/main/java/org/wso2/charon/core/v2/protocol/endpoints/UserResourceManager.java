@@ -17,6 +17,7 @@
 package org.wso2.charon.core.v2.protocol.endpoints;
 
 
+import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.charon.core.v2.attributes.Attribute;
@@ -654,6 +655,9 @@ public class UserResourceManager extends AbstractResourceManager {
             return AbstractResourceManager.encodeSCIMException(e);
         } catch (InternalErrorException e) {
             return AbstractResourceManager.encodeSCIMException(e);
+        } catch (Exception e) {
+            CharonException e1 = new CharonException("Error in performing the patch operation on user resource.", e);
+            return AbstractResourceManager.encodeSCIMException(e1);
         }
     }
 

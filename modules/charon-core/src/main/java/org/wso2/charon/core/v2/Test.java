@@ -74,9 +74,8 @@ public class Test {
        UserResourceManager um =new UserResourceManager();
 
        //-----Extension User schema support------
-       SCIMUserSchemaExtensionBuilder extensionBuilder= new SCIMUserSchemaExtensionBuilder();
        try {
-           extensionBuilder.buildUserSchemaExtension("/home/vindula/Desktop/C4/Charon-3.0/scim-schema-extension.config");
+           SCIMUserSchemaExtensionBuilder.getInstance().buildUserSchemaExtension("/home/vindula/Desktop/C4/Charon-3.0/scim-schema-extension.config");
        } catch (CharonException e) {
            e.printStackTrace();
        } catch (InternalErrorException e) {
@@ -208,7 +207,7 @@ public class Test {
 
 
        //-----GET USER  ---------
-       //SCIMResponse res= um.get("e290966f-c2d6-46b8-8bf6-a26c47d202e0",new SCIMUserManager(),null,null);
+       //SCIMResponse res= um.get("bc84d488-e462-41fe-b132-2dbe653d4458",new SCIMUserManager(),null,null);
 
        //-----DELETE USER  ---------
        //SCIMResponse res= um.delete("cf712155-e974-42ae-9e57-6c42f7bbadad",new SCIMUserManager());
@@ -342,26 +341,24 @@ public class Test {
        String test3 = "{ \"schemas\":\n" +
                "      [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n" +
                "     \"Operations\":[\n" +
+
                "       {\n" +
-               "        \"op\":\"replace\",\n" +
-               "        \"path\":\"EnterpriseUser.manager[value eq Maxxa].$ref\",\n" +
-               "           \"value\":\" OOOO\"\n" +
-               "        },\n" +
+               "       \"op\":\"replace\",\n" +
+               "       \"path\":\"EnterpriseUser.costCenter\",\n" +
+               "       \"value\":\"Maharagama\"\n" +
+               "     },\n" +
+
                "       {\n" +
-               "       \"op\":\"add\",\n" +
-               "       \"value\":{\n" +
-               "         \"emails\":[\n" +
-               "           {\n" +
-               "             \"value\":\"natta@jensen.org\",\n" +
-               "             \"type\":\"home\"\n" +
-               "           }\n" +
-               "         ],\n" +
-               "       }\n"+
-               "        }\n" +
+               "       \"op\":\"replace\",\n" +
+               "       \"path\":\"EnterpriseUser.manager[value eq Fuck].$ref\",\n" +
+               "       \"value\":\"TT\"\n" +
+               "     },\n" +
+
                "     ]\n" +
                "   }";
 
-       SCIMResponse res=um.updateWithPATCH("36c063fa-ec4e-4165-8b92-f00a4b13f9e4",test3, new SCIMUserManager(), null,null);
+       //SCIMResponse res= um.get("fe02a275-371b-4564-b0f3-3ffb8dbaea2c",new SCIMUserManager(),null,null);
+       SCIMResponse res=um.updateWithPATCH("fe02a275-371b-4564-b0f3-3ffb8dbaea2c",test3, new SCIMUserManager(), null,null);
 
        System.out.println(res.getResponseStatus());
        System.out.println("");

@@ -9,7 +9,7 @@
           <property key="Bundle-DocURL" value="http://www.wso2.org/" />
           <property key="Bundle-Name" value="org.wso2.charon.core.v2" />
           <property key="Export-Package" value="org.wso2.charon.core.*;version=3.0.0" />
-          <property key="Import-Package" value="org.json.*,org.apache.commons.logging.*; version=&quot;[1.2,2.0)&quot;,org.apache.axiom.om.*; version=&quot;[1.2.11, 2.0.0)&quot;,javax.xml.namespace.*,javax.xml.stream.*," />
+          <property key="Import-Package" value="org.json.*,org.apache.commons.logging.*; version=&quot;[1.2,2.0)&quot;,org.apache.axiom.om.*; version=&quot;[1.2.11, 2.0.0)&quot;,javax.xml.namespace.*,javax.xml.stream.*,org.slf4j.*," />
           <property key="SCM-Revision" value="${buildNumber}" />
         </additionalProperties>
         <additionalJARContents />
