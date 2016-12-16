@@ -353,10 +353,10 @@ public class ResourceManagerUtil {
                     if (subAttributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
                         List<SCIMAttributeSchema> subSubAttributeSchemas = subAttributeSchema.getSubAttributeSchemas();
                         for (SCIMAttributeSchema subSubAttributeSchema : subSubAttributeSchemas) {
-                            uriList.put(subSubAttributeSchema.getURI(), subSubAttributeSchema.getMultiValued());
+                            uriList.put(subSubAttributeSchema.getURI(), subAttributeSchema.getMultiValued());
                         }
                     } else {
-                        uriList.put(subAttributeSchema.getURI(), subAttributeSchema.getMultiValued());
+                        uriList.put(subAttributeSchema.getURI(), schema.getMultiValued());
                     }
                 }
             } else {
@@ -383,5 +383,9 @@ public class ResourceManagerUtil {
             }
             count++;
         }
+    }
+
+    public static Map<String, Boolean> getAllAttributeURIs(SCIMResourceTypeSchema schema) throws CharonException {
+        return getOnlyRequiredAttributesURIs(schema, null, null);
     }
 }

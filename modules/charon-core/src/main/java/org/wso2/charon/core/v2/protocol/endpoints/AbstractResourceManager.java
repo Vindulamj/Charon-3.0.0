@@ -22,6 +22,8 @@ import org.wso2.charon.core.v2.exceptions.CharonException;
 import org.wso2.charon.core.v2.exceptions.NotFoundException;
 import org.wso2.charon.core.v2.protocol.SCIMResponse;
 import org.wso2.charon.core.v2.schema.SCIMConstants;
+import org.wso2.charon.core.v2.schema.SCIMResourceTypeSchema;
+import org.wso2.charon.core.v2.utils.ResourceManagerUtil;
 
 import java.util.HashMap;
 import java.util.Map;

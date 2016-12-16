@@ -484,7 +484,7 @@ public class UserResourceManager extends AbstractResourceManager {
             User updatedUser = null;
             if (userManager != null) {
                 //retrieve the old object
-                User oldUser = userManager.getUser(existingId, null);
+                User oldUser = userManager.getUser(existingId, ResourceManagerUtil.getAllAttributeURIs(schema));
                 if (oldUser != null) {
                     User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(oldUser, user, schema);
                     updatedUser = userManager.updateUser(validatedUser, requiredAttributes);
@@ -556,7 +556,7 @@ public class UserResourceManager extends AbstractResourceManager {
 
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
             //get the user from the user core
-            User oldUser = userManager.getUser(existingId, null);
+            User oldUser = userManager.getUser(existingId, ResourceManagerUtil.getAllAttributeURIs(schema));
             if (oldUser == null) {
                 throw new NotFoundException("No user with the id : " + existingId + " in the user store.");
             }

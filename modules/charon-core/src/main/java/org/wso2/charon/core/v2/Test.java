@@ -35,6 +35,9 @@ import java.util.HashMap;
 public class Test {
 
    public static void main(String [] args){
+       String  ww= "qq:eee:q:User:Emails.value";
+       String[] parts = ww.split("[.]");
+       System.out.println(parts[0]);
        //config charon
        CharonConfiguration.getInstance().setDocumentationURL("http://example.com/help/scim.html");
        CharonConfiguration.getInstance().setBulkSupport(false, 100, 1048576);
@@ -203,7 +206,7 @@ public class Test {
        String excludeAttributes="externalId,emails.value,EnterpriseUser.manager";
 
        //----CREATE USER --------
-       //SCIMResponse res=um.create(array,new SCIMUserManager(),null, null);
+       SCIMResponse res=um.create(array,new SCIMUserManager(),attributes, null);
 
 
        //-----GET USER  ---------
@@ -355,7 +358,7 @@ public class Test {
                "   }";
 
        //SCIMResponse res= um.get("03c6b5d7-3e97-4178-95ca-cb9e8e31b086",new SCIMUserManager(),null,null);
-       SCIMResponse res=um.updateWithPATCH("03c6b5d7-3e97-4178-95ca-cb9e8e31b086",test3, new SCIMUserManager(), null,null);
+       //SCIMResponse res=um.updateWithPATCH("03c6b5d7-3e97-4178-95ca-cb9e8e31b086",test3, new SCIMUserManager(), null,null);
 
        System.out.println(res.getResponseStatus());
        System.out.println("");

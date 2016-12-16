@@ -28,7 +28,6 @@ import org.wso2.charon.core.v2.exceptions.NotImplementedException;
 import org.wso2.charon.core.v2.extensions.UserManager;
 import org.wso2.charon.core.v2.objects.Group;
 import org.wso2.charon.core.v2.objects.ListedResource;
-import org.wso2.charon.core.v2.objects.User;
 import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.v2.protocol.SCIMResponse;
 import org.wso2.charon.core.v2.schema.SCIMConstants;
@@ -470,7 +469,7 @@ public class GroupResourceManager extends AbstractResourceManager {
             Group updatedGroup = null;
             if (userManager != null) {
                 //retrieve the old object
-                Group oldGroup = userManager.getGroup(existingId, null);
+                Group oldGroup = userManager.getGroup(existingId, ResourceManagerUtil.getAllAttributeURIs(schema));
                 if (oldGroup != null) {
                     Group newGroup = (Group) ServerSideValidator.validateUpdatedSCIMObject(oldGroup, group, schema);
                     updatedGroup = userManager.updateGroup(oldGroup, newGroup, requiredAttributes);
@@ -541,7 +540,7 @@ public class GroupResourceManager extends AbstractResourceManager {
 
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
             //get the group from the user core
-            Group oldGroup = userManager.getGroup(existingId, null);
+            Group oldGroup = userManager.getGroup(existingId, ResourceManagerUtil.getAllAttributeURIs(schema));
             if (oldGroup == null) {
                 throw new NotFoundException("No group with the id : " + existingId +" in the user store.");
             }

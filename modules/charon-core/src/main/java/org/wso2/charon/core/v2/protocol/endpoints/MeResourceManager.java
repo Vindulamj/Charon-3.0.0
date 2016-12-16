@@ -232,7 +232,7 @@ public class MeResourceManager extends AbstractResourceManager {
             User updatedUser = null;
             if (userManager != null) {
                 //retrieve the old object
-                User oldUser = userManager.getMe(userName, null);
+                User oldUser = userManager.getMe(userName, ResourceManagerUtil.getAllAttributeURIs(schema));
                 if (oldUser != null) {
                     User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(oldUser, user, schema);
                     updatedUser = userManager.updateMe(validatedUser, requiredAttributes);
@@ -304,7 +304,7 @@ public class MeResourceManager extends AbstractResourceManager {
 
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
             //get the user from the user core
-            User oldUser = userManager.getMe(existingId, null);
+            User oldUser = userManager.getMe(existingId, ResourceManagerUtil.getAllAttributeURIs(schema));
             if (oldUser == null) {
                 throw new NotFoundException("No associated user exits in the user store.");
             }
