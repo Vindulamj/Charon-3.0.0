@@ -45,24 +45,8 @@ public class SCIMConfigConstants {
     public static final String MAX_PAYLOAD_SIZE = "maxPayLaodSize";
     public static final String MAX_RESULTS = "maxResults";
     public static final String AUTHENTICATION_SCHEMES = "authenticationSchemes";
-
-    public static final String PROPERTY_NAME_PROVISIONING_HANDLER = "provisioning-handlers";
-    public static final String PROVISIONING_CONFIG_NAME = "provisioning-config.xml";
     public static final String SCIM_SCHEMA_EXTENSION_CONFIG = "scim-schema-extension.config";
-    public static final String ELEMENT_NAME_SCIM_PROVIDERS = "scim-providers";
-    public static final String ELEMENT_NAME_SCIM_CONSUMERS = "scim-consumers";
-    public static final String ELEMENT_NAME_SCIM_PROVIDER = "scim-provider";
-    public static final String ELEMENT_NAME_SCIM_CONSUMER = "scim-consumer";
-    public static final String ELEMENT_NAME_USERNAME = "userName";
-    public static final String ELEMENT_NAME_PASSWORD = "password";
-    public static final String ELEMENT_NAME_INCLUDE = "includeAll";
-    public static final String ELEMENT_NAME_EXCLUDE = "exclude";
-    public static final String ELEMENT_NAME_PROPERTY = "Property";
 
-    public static final String ATTRIBUTE_NAME_ID = "id";
-    public static final String ATTRIBUTE_NAME_USERNAME = "username";
-    public static final String ATTRIBUTE_NAME_PASSWORD = "password";
-    public static final String ATTRIBUTE_NAME_NAME = "name";
 
 }
 
