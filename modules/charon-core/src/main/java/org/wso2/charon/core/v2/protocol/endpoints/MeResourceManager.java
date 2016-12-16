@@ -33,9 +33,12 @@ import org.wso2.charon.core.v2.schema.SCIMResourceSchemaManager;
 import org.wso2.charon.core.v2.schema.SCIMResourceTypeSchema;
 import org.wso2.charon.core.v2.schema.ServerSideValidator;
 import org.wso2.charon.core.v2.utils.CopyUtil;
+import org.wso2.charon.core.v2.utils.PatchOperationUtil;
 import org.wso2.charon.core.v2.utils.ResourceManagerUtil;
+import org.wso2.charon.core.v2.utils.codeutils.PatchOperation;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -278,10 +281,132 @@ public class MeResourceManager extends AbstractResourceManager {
         }
     }
 
-    @Override
-    public SCIMResponse updateWithPATCH(String existingId, String scimObjectString, UserManager userManager, String
-            attributes, String excludeAttributes) {
-        return null;
+    /**
+     * Update the user resource by sequence of operations.
+     *
+     * @param existingId
+     * @param scimObjectString
+     * @param userManager
+     * @param attributes
+     * @param excludeAttributes
+     * @return
+     */
+
+    public SCIMResponse updateWithPATCH(String existingId, String scimObjectString, UserManager userManager,
+                                        String attributes, String excludeAttributes) {
+        try {
+            //obtain the json decoder.
+            JSONDecoder decoder = getDecoder();
+            //obtain the json encoder.
+            JSONEncoder encoder = getEncoder();
+            //decode the SCIM User object, encoded in the submitted payload.
+            List<PatchOperation> opList = decoder.decodeRequest(scimObjectString);
+
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+            //get the user from the user core
+            User oldUser = userManager.getMe(existingId, null);
+            //make a copy of the original user
+            User copyOfOldUser = (User) CopyUtil.deepCopy(oldUser);
+            //make another copy of original user.
+            //this will be used to restore to the original condition if failure occurs.
+            User originalUser = (User) CopyUtil.deepCopy(copyOfOldUser);
+
+            User newUser = null;
+
+            for (PatchOperation operation : opList) {
+
+                if (operation.getOperation().equals(SCIMConstants.OperationalConstants.ADD)) {
+                    if (newUser == null) {
+                        newUser = (User) PatchOperationUtil.doPatchAdd
+                                (operation, getDecoder(), oldUser, copyOfOldUser, schema);
+                        copyOfOldUser = (User) CopyUtil.deepCopy(newUser);
+
+                    } else {
+                        newUser = (User) PatchOperationUtil.doPatchAdd
+                                (operation, getDecoder(), newUser, copyOfOldUser, schema);
+                        copyOfOldUser = (User) CopyUtil.deepCopy(newUser);
+
+                    }
+                } else if (operation.getOperation().equals(SCIMConstants.OperationalConstants.REMOVE)) {
+                    if (newUser == null) {
+                        newUser = (User) PatchOperationUtil.doPatchRemove(operation, oldUser, copyOfOldUser, schema);
+                        copyOfOldUser = (User) CopyUtil.deepCopy(newUser);
+
+                    } else {
+                        newUser = (User) PatchOperationUtil.doPatchRemove(operation, newUser, copyOfOldUser, schema);
+                        copyOfOldUser = (User) CopyUtil.deepCopy(newUser);
+                    }
+                } else if (operation.getOperation().equals(SCIMConstants.OperationalConstants.REPLACE)) {
+                    if (newUser == null) {
+                        newUser = (User) PatchOperationUtil.doPatchReplace
+                                (operation, getDecoder(), oldUser, copyOfOldUser, schema);
+                        copyOfOldUser = (User) CopyUtil.deepCopy(newUser);
+
+                    } else {
+                        newUser = (User) PatchOperationUtil.doPatchReplace
+                                (operation, getDecoder(), newUser, copyOfOldUser, schema);
+                        copyOfOldUser = (User) CopyUtil.deepCopy(newUser);
+                    }
+                } else  {
+                    throw new BadRequestException("Unknown operation.", ResponseCodeConstants.INVALID_SYNTAX);
+                }
+            }
+
+            //get the URIs of required attributes which must be given a value
+            Map<String, Boolean> requiredAttributes =
+                    ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
+                            CopyUtil.deepCopy(schema), attributes, excludeAttributes);
+
+            if (userManager != null) {
+                if (oldUser != null) {
+                    User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject
+                            (originalUser, newUser, schema);
+                    newUser = userManager.updateMe(validatedUser, requiredAttributes);
+
+                } else {
+                    String error = "No user exists with the given id: " + existingId;
+                    throw new NotFoundException(error);
+                }
+
+            } else {
+                String error = "Provided user manager handler is null.";
+                throw new InternalErrorException(error);
+            }
+            //encode the newly created SCIM user object and add id attribute to Location header.
+            String encodedUser;
+            Map<String, String> httpHeaders = new HashMap<String, String>();
+            if (newUser != null) {
+                //create a deep copy of the user object since we are going to change it.
+                User copiedUser = (User) CopyUtil.deepCopy(newUser);
+                //need to remove password before returning
+                ServerSideValidator.validateReturnedAttributes(copiedUser, attributes, excludeAttributes);
+                encodedUser = getEncoder().encodeSCIMObject(copiedUser);
+                //add location header
+                httpHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(
+                        SCIMConstants.USER_ENDPOINT) + "/" + newUser.getId());
+                httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
+
+            } else {
+                String error = "Updated User resource is null.";
+                throw new CharonException(error);
+            }
+            //put the URI of the User object in the response header parameter.
+            return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedUser, httpHeaders);
+
+        } catch (NotFoundException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (BadRequestException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (NotImplementedException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (CharonException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (InternalErrorException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (Exception e) {
+            CharonException e1 = new CharonException("Error in performing the patch operation on user resource.", e);
+            return AbstractResourceManager.encodeSCIMException(e1);
+        }
     }
 
 
