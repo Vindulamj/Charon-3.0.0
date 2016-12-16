@@ -542,6 +542,9 @@ public class GroupResourceManager extends AbstractResourceManager {
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
             //get the group from the user core
             Group oldGroup = userManager.getGroup(existingId, null);
+            if (oldGroup == null) {
+                throw new NotFoundException("No group with the id : " + existingId +" in the user store.");
+            }
             //make a copy of the original group
             Group copyOfOldGroup = (Group) CopyUtil.deepCopy(oldGroup);
             //make another copy of original group.

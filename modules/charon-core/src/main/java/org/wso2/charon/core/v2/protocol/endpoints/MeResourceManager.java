@@ -305,6 +305,9 @@ public class MeResourceManager extends AbstractResourceManager {
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
             //get the user from the user core
             User oldUser = userManager.getMe(existingId, null);
+            if (oldUser == null) {
+                throw new NotFoundException("No associated user exits in the user store.");
+            }
             //make a copy of the original user
             User copyOfOldUser = (User) CopyUtil.deepCopy(oldUser);
             //make another copy of original user.

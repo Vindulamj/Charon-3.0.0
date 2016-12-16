@@ -557,6 +557,9 @@ public class UserResourceManager extends AbstractResourceManager {
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
             //get the user from the user core
             User oldUser = userManager.getUser(existingId, null);
+            if (oldUser == null) {
+                throw new NotFoundException("No user with the id : " + existingId + " in the user store.");
+            }
             //make a copy of the original user
             User copyOfOldUser = (User) CopyUtil.deepCopy(oldUser);
             //make another copy of original user.
@@ -599,7 +602,7 @@ public class UserResourceManager extends AbstractResourceManager {
                                 (operation, getDecoder(), newUser, copyOfOldUser, schema);
                         copyOfOldUser = (User) CopyUtil.deepCopy(newUser);
                     }
-                } else  {
+                } else {
                     throw new BadRequestException("Unknown operation.", ResponseCodeConstants.INVALID_SYNTAX);
                 }
             }
@@ -607,7 +610,7 @@ public class UserResourceManager extends AbstractResourceManager {
             //get the URIs of required attributes which must be given a value
             Map<String, Boolean> requiredAttributes =
                     ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
-                    CopyUtil.deepCopy(schema), attributes, excludeAttributes);
+                            CopyUtil.deepCopy(schema), attributes, excludeAttributes);
 
             if (userManager != null) {
                 if (oldUser != null) {
@@ -644,7 +647,6 @@ public class UserResourceManager extends AbstractResourceManager {
             }
             //put the URI of the User object in the response header parameter.
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedUser, httpHeaders);
-
         } catch (NotFoundException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         } catch (BadRequestException e) {
