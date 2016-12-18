@@ -63,9 +63,11 @@ public class AbstractCharonException extends Exception {
         super(message, cause);
         this.status = ResponseCodeConstants.CODE_INTERNAL_ERROR;
         this.detail = message;
+        this.schemas = ResponseCodeConstants.ERROR_RESPONSE_SCHEMA_URI;
     }
 
     public AbstractCharonException(String message) {
+        this.schemas = ResponseCodeConstants.ERROR_RESPONSE_SCHEMA_URI;
         this.status = ResponseCodeConstants.CODE_INTERNAL_ERROR;
         this.detail = message;
     }

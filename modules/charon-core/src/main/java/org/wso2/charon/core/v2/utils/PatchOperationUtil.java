@@ -684,8 +684,13 @@ public class PatchOperationUtil {
                                                                         (subSubAttributeName)).getValue());
                                                     }
                                                 } else {
-                                                    ((ComplexAttribute) (subAttribute)).setSubAttribute(
-                                                            subSubAttributeList.get(subSubAttributeName));
+                                                    if (subSubAttributeList.get(subSubAttributeName) != null) {
+                                                        ((ComplexAttribute) (subAttribute)).setSubAttribute(
+                                                                subSubAttributeList.get(subSubAttributeName));
+                                                    } else {
+                                                        throw new BadRequestException("Not a valid attribute.",
+                                                                ResponseCodeConstants.INVALID_SYNTAX);
+                                                    }
                                                 }
                                             }
                                         }
@@ -703,8 +708,14 @@ public class PatchOperationUtil {
                                         }
                                     }
                                 } else {
-                                    ((ComplexAttribute) oldAttribute).setSubAttribute
-                                            (subAttributeList.get(subAttributeName));
+                                    if (subAttributeList.get(subAttributeName) != null) {
+                                        ((ComplexAttribute) oldAttribute).setSubAttribute
+                                                (subAttributeList.get(subAttributeName));
+                                    } else {
+                                        throw new BadRequestException("Not a valid attribute.",
+                                                ResponseCodeConstants.INVALID_SYNTAX);
+                                    }
+
                                 }
                             }
                         } else {
@@ -715,7 +726,12 @@ public class PatchOperationUtil {
                         }
                     } else {
                         //if the attribute is not already set, set it.
-                        oldResource.setAttribute(attributeHoldingSCIMObject.getAttribute(attributeName));
+                        if (attributeHoldingSCIMObject.getAttribute(attributeName) != null) {
+                            oldResource.setAttribute(attributeHoldingSCIMObject.getAttribute(attributeName));
+                        } else {
+                            throw new BadRequestException("Not a valid attribute.",
+                                    ResponseCodeConstants.INVALID_SYNTAX);
+                        }
                     }
                 }
                 AbstractSCIMObject validatedResource = ServerSideValidator.validateUpdatedSCIMObject
