@@ -664,7 +664,7 @@ public class JSONDecoder {
                     if (!member.optString(SCIMConstants.OperationalConstants.BULK_ID).equals("") &&
                             !member.optString(SCIMConstants.OperationalConstants.BULK_ID).equals(null)) {
 
-                        setReQuestData(requestType, requestMethod, requestVersion,
+                        setRequestData(requestType, requestMethod, requestVersion,
                                 member, usersEndpointOperationList, groupsEndpointOperationList);
                     } else {
                         String error = "JSON string could not be decoded properly.Required " +
@@ -673,7 +673,7 @@ public class JSONDecoder {
                         throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
                     }
                 } else  {
-                    setReQuestData(requestType, requestMethod, requestVersion,
+                    setRequestData(requestType, requestMethod, requestVersion,
                             member, usersEndpointOperationList, groupsEndpointOperationList);
                 }
             }
@@ -693,12 +693,12 @@ public class JSONDecoder {
     }
 
 
-    private void setReQuestData(String requestType, String requestMethod,
+    private void setRequestData(String requestType, String requestMethod,
                                 String requestVersion, JSONObject member,
                                 List<BulkRequestContent> usersEndpointOperationList,
                                 List<BulkRequestContent> groupsEndpointOperationList){
         //create user request list
-        if (requestType.equals(SCIMConstants.USER_ENDPOINT)) {
+        if (requestType.contains(SCIMConstants.USER_ENDPOINT)) {
             BulkRequestContent newRequestData =
                     getBulkRequestContent(member, requestMethod, requestType, requestVersion);
 
@@ -706,7 +706,7 @@ public class JSONDecoder {
         }
 
         //create group request list
-        if (requestType.equals(SCIMConstants.GROUP_ENDPOINT)) {
+        if (requestType.contains(SCIMConstants.GROUP_ENDPOINT)) {
             BulkRequestContent newRequestData =
                     getBulkRequestContent(member, requestMethod, requestType, requestVersion);
 
