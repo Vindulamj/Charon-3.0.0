@@ -13,6 +13,11 @@ Currently following features are supported.
 - [x] Sorting
 - [x] Filtering including complex filters
 - [x] Querying with POST 
+- [x] Update with PATCH 
+    - Add
+    - Remove
+    - Replace
+
 
 #### /Groups Endpoint
 - [x] Create
@@ -25,6 +30,10 @@ Currently following features are supported.
 - [x] Sorting
 - [x] Update with PUT
 - [x] Querying with POST 
+- [x] Update with PATCH 
+    - Add
+    - Remove
+    - Replace
 
 #### /Me Endpoint
 - [x] Create
@@ -32,6 +41,10 @@ Currently following features are supported.
 - [x] Delete
 - [x] attributes and exclude attribute support for all operations
 - [x] Update with PUT
+- [x] Update with PATCH 
+    - Add
+    - Remove
+    - Replace
 
 #### EnterpriseUser
 - [x] Create
@@ -44,6 +57,10 @@ Currently following features are supported.
 - [x] Sorting
 - [x] Filtering including complex filters
 - [x] Querying with POST 
+- [x] Update with PATCH 
+    - Add
+    - Remove
+    - Replace
 
 #### /ServiceProviderConfig Endpoint
 - [x] Get
@@ -86,10 +103,3 @@ filter=userType ne "Employee" and not (emails co "example.com" or
 
 filter=userType eq "Employee" and (emails.type eq "work")
 
-#####Following features are been developed.
-
-#### /Users Endpoint
-- Update with PATCH
-
-#### /Me Endpoint
-- Update with PATCH
