@@ -29,6 +29,7 @@ public class SCIMConstants {
             "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig";
     public static final String RESOURCE_TYPE_SCHEMA_URI = "urn:ietf:params:scim:schemas:core:2.0:ResourceType";
     public static final String SEARCH_SCHEMA_URI = "urn:ietf:params:scim:api:messages:2.0:SearchRequest";
+    public static final String BULK_RESPONSE_URI = "urn:ietf:params:scim:api:messages:2.0:BulkResponse";
 
 
     /*Data formats*/
@@ -653,5 +654,22 @@ public class SCIMConstants {
         public static final String SORT_BY = "sortBy";
         public static final String SORT_ORDER = "sortOrder";
         public static final String FILTER = "filter";
+
+        //bulk constants
+        public static final String METHOD = "method";
+        public static final String VERSION = "version";
+        public static final String BULK_ID = "bulkId";
+        public static final String FAIL_ON_ERRORS = "failOnErrors";
+        public static final String DATA = "data";
+        public static final String STATUS = "status";
+        public static final String CODE = "code";
+        public static final String RESPONSE = "response";
+
+        public static final String POST = "POST";
+        public static final String DELETE = "DELETE";
+        public static final String PUT = "PUT";
+        public static final String PATCH = "PATCH";
+
+
     }
 }

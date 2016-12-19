@@ -22,6 +22,7 @@ import org.wso2.charon.core.v2.config.SCIMUserSchemaExtensionBuilder;
 import org.wso2.charon.core.v2.exceptions.CharonException;
 import org.wso2.charon.core.v2.exceptions.InternalErrorException;
 import org.wso2.charon.core.v2.protocol.SCIMResponse;
+import org.wso2.charon.core.v2.protocol.endpoints.BulkResourceManager;
 import org.wso2.charon.core.v2.protocol.endpoints.ServiceProviderConfigResourceManager;
 import org.wso2.charon.core.v2.protocol.endpoints.UserResourceManager;
 import org.wso2.charon.core.v2.schema.SCIMConstants;
@@ -77,13 +78,13 @@ public class Test {
        UserResourceManager um =new UserResourceManager();
 
        //-----Extension User schema support------
-       try {
+       /*try {
            SCIMUserSchemaExtensionBuilder.getInstance().buildUserSchemaExtension("/home/vindula/Desktop/C4/Charon-3.0/scim-schema-extension.config");
        } catch (CharonException e) {
            e.printStackTrace();
        } catch (InternalErrorException e) {
            e.printStackTrace();
-       }
+       }*/
 
 
        String array ="{\n" +
@@ -206,7 +207,7 @@ public class Test {
        String excludeAttributes="externalId,emails.value,EnterpriseUser.manager";
 
        //----CREATE USER --------
-       SCIMResponse res=um.create(array,new SCIMUserManager(),attributes, null);
+       //SCIMResponse res=um.create(array,new SCIMUserManager(),attributes, null);
 
 
        //-----GET USER  ---------
@@ -359,6 +360,41 @@ public class Test {
 
        //SCIMResponse res= um.get("03c6b5d7-3e97-4178-95ca-cb9e8e31b086",new SCIMUserManager(),null,null);
        //SCIMResponse res=um.updateWithPATCH("03c6b5d7-3e97-4178-95ca-cb9e8e31b086",test3, new SCIMUserManager(), null,null);
+
+
+       String bulk = "{\n" +
+               "     \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:BulkRequest\"],\n" +
+               "     \"Operations\": [\n" +
+               "       {\n" +
+               "         \"method\": \"POST\",\n" +
+               "         \"path\": \"/Users\",\n" +
+               "         \"bulkId\": \"qwerty\",\n" +
+               "         \"data\": {\n" +
+               "           \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:User\"],\n" +
+               "           \"userName\": \"Alice\"\n" +
+               "         }\n" +
+               "       },\n" +
+               "       {\n" +
+               "         \"method\": \"POST\",\n" +
+               "         \"path\": \"/Groups\",\n" +
+               "         \"bulkId\": \"ytrewq\",\n" +
+               "         \"data\": {\n" +
+               "           \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:Group\"],\n" +
+               "           \"displayName\": \"Tour Guides\",\n" +
+               "           \"members\": [\n" +
+               "             {\n" +
+               "               \"type\": \"User\",\n" +
+               "               \"value\": \"bulkId:qwerty\"\n" +
+               "             }\n" +
+               "           ]\n" +
+               "         }\n" +
+               "       }\n" +
+               "     ]\n" +
+               "   }";
+
+       BulkResourceManager bulkResourceManager = new BulkResourceManager();
+
+       SCIMResponse res = bulkResourceManager.processBulkData(bulk, new SCIMUserManager());
 
        System.out.println(res.getResponseStatus());
        System.out.println("");

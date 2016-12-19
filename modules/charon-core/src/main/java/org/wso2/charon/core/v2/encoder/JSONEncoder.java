@@ -28,7 +28,10 @@ import org.wso2.charon.core.v2.config.SCIMConfigConstants;
 import org.wso2.charon.core.v2.exceptions.AbstractCharonException;
 import org.wso2.charon.core.v2.exceptions.BadRequestException;
 import org.wso2.charon.core.v2.exceptions.CharonException;
+import org.wso2.charon.core.v2.exceptions.InternalErrorException;
 import org.wso2.charon.core.v2.objects.SCIMObject;
+import org.wso2.charon.core.v2.objects.bulk.BulkResponseContent;
+import org.wso2.charon.core.v2.objects.bulk.BulkResponseData;
 import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.v2.schema.SCIMConstants;
 import org.wso2.charon.core.v2.schema.SCIMDefinitions;
@@ -425,6 +428,74 @@ public class JSONEncoder {
         return groupResourceTypeObject.toString();
     }
 
+    /**
+     * Encode given bulkResponseData object and return the encoded string
+     *
+     * @param bulkResponseData
+     * @return
+     */
+    public String encodeBulkResponseData(BulkResponseData bulkResponseData) throws InternalErrorException {
+        String encodedString = "";
+        List<BulkResponseContent> userResponseDataList = bulkResponseData.getUserOperationResponse();
+        List<BulkResponseContent> groupResponseDataList = bulkResponseData.getGroupOperationResponse();
+        JSONObject rootObject = new JSONObject();
+
+        //encode schemas
+        try {
+            //set the [schemas]
+            this.encodeArrayOfValues(SCIMConstants.CommonSchemaConstants.SCHEMAS,
+                    bulkResponseData.getSchemas().toArray(), rootObject);
+
+            //[Operations] - multi value attribute
+            ArrayList<JSONObject> operationResponseList = new ArrayList<>();
+
+            for (BulkResponseContent userOperationResponse : userResponseDataList) {
+                encodeResponseContent(userOperationResponse, operationResponseList);
+            }
+
+            for (BulkResponseContent groupOperationResponse : groupResponseDataList) {
+                encodeResponseContent(groupOperationResponse, operationResponseList);
+            }
+            //set operations
+            this.encodeArrayOfValues(SCIMConstants.OperationalConstants.OPERATIONS,
+                    operationResponseList.toArray(), rootObject);
+
+            encodedString = rootObject.toString();
+
+        } catch (JSONException e) {
+            throw new InternalErrorException("Error in encoding the response");
+        }
+
+        return encodedString;
+    }
+
+
+    private void encodeResponseContent(BulkResponseContent responseContent,
+                                       ArrayList<JSONObject> operationResponseList)
+            throws JSONException {
+
+        JSONObject operationObject = new JSONObject();
+
+        JSONObject status = new JSONObject();
+        int statusCode = responseContent.getScimResponse().getResponseStatus();
+        status.put(SCIMConstants.OperationalConstants.CODE, statusCode);
+
+
+        operationObject.put(SCIMConstants.CommonSchemaConstants.LOCATION, responseContent.getLocation());
+        operationObject.put(SCIMConstants.OperationalConstants.METHOD, responseContent.getMethod());
+        operationObject.put(SCIMConstants.OperationalConstants.BULK_ID, responseContent.getBulkID());
+        operationObject.put(SCIMConstants.OperationalConstants.STATUS, status);
+
+        //When indicating a response with an HTTP status other than a 200-series response,
+        // the response body MUST be included.
+        if (statusCode != 200 && statusCode != 201 && statusCode != 204) {
+            operationObject.put(SCIMConstants.OperationalConstants.RESPONSE,
+                    responseContent.getScimResponse().getResponseMessage());
+        }
+
+        operationResponseList.add(operationObject);
+
+    }
 }
 
 

@@ -11,7 +11,7 @@
     <artifactId>org.wso2.charon.core.v2</artifactId>
     <packaging>bundle</packaging>
     <name>WSO2 Charon - Core - V2</name>
-    <description>WSO2 Charon - SCIM Implementation</description>
+    <location>WSO2 Charon - SCIM Implementation</location>
     <url>http://wso2.com</url>
 
     <dependencies>

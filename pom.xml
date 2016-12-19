@@ -11,7 +11,7 @@
     <packaging>pom</packaging>
     <version>3.0.0</version>
     <name>WSO2 Charon - Parent</name>
-    <description>WSO2 Charon - SCIM Implementation</description>
+    <location>WSO2 Charon - SCIM Implementation</location>
     <url>http://wso2.com</url>
 
     <scm>

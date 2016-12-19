@@ -29,7 +29,7 @@
     <authenticationSchemes>
         <schema id="1">
             <Property name="name">OAuth Bearer Token</Property>
-            <Property name="description">Authentication scheme using the OAuth Bearer Token Standard</Property>
+            <Property name="location">Authentication scheme using the OAuth Bearer Token Standard</Property>
             <Property name="specUri">http://www.rfc-editor.org/info/rfc6750</Property>
             <Property name="documentationUri">http://example.com/help/oauth.html</Property>
             <Property name="type">oauthbearertoken</Property>
@@ -37,7 +37,7 @@
         </schema>
         <schema id="2">
             <Property name="name">HTTP Basic</Property>
-            <Property name="description">Authentication scheme using the HTTP Basic Standard</Property>
+            <Property name="location">Authentication scheme using the HTTP Basic Standard</Property>
             <Property name="specUri">http://www.rfc-editor.org/info/rfc2617</Property>
             <Property name="documentationUri">http://example.com/help/httpBasic.html</Property>
             <Property name="type">httpbasic</Property>

@@ -15,8 +15,23 @@
  */
 package org.wso2.charon.core.v2.protocol.endpoints;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.wso2.charon.core.v2.encoder.JSONDecoder;
+import org.wso2.charon.core.v2.encoder.JSONEncoder;
+import org.wso2.charon.core.v2.exceptions.BadRequestException;
+import org.wso2.charon.core.v2.exceptions.CharonException;
+import org.wso2.charon.core.v2.exceptions.InternalErrorException;
 import org.wso2.charon.core.v2.extensions.UserManager;
+import org.wso2.charon.core.v2.objects.bulk.BulkRequestData;
+import org.wso2.charon.core.v2.objects.bulk.BulkResponseData;
+import org.wso2.charon.core.v2.protocol.BulkRequestProcessor;
+import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.v2.protocol.SCIMResponse;
+import org.wso2.charon.core.v2.schema.SCIMConstants;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * REST API exposed by Charon-Core to perform bulk operations.
@@ -24,6 +39,54 @@ import org.wso2.charon.core.v2.protocol.SCIMResponse;
  * based on the HTTP requests received by SCIM Client.
  */
 public class BulkResourceManager extends AbstractResourceManager {
+
+    private Log logger = LogFactory.getLog(BulkResourceManager.class);
+    private JSONEncoder encoder;
+    private JSONDecoder decoder;
+    private BulkRequestProcessor bulkRequestProcessor;
+
+    public BulkResourceManager() {
+        bulkRequestProcessor = new BulkRequestProcessor();
+    }
+
+
+    public SCIMResponse processBulkData(String data, UserManager userManager) {
+        BulkResponseData bulkResponseData;
+
+        try {
+            //Get encoder and decoder from AbstractResourceEndpoint
+            encoder = getEncoder();
+            decoder = getDecoder();
+
+            BulkRequestData bulkRequestDataObject;
+            //decode the request
+            bulkRequestDataObject = decoder.decodeBulkData(data);
+
+            bulkRequestProcessor.setFailOnError(bulkRequestDataObject.getFailOnErrors());
+            bulkRequestProcessor.setUserManager(userManager);
+
+            //Get bulk response data
+            bulkResponseData = bulkRequestProcessor.processBulkRequests(bulkRequestDataObject);
+            //encode the BulkResponseData object
+            String finalEncodedResponse = encoder.encodeBulkResponseData(bulkResponseData);
+
+            //careate SCIM response message
+            Map<String, String> responseHeaders = new HashMap<String, String>();
+            //add location header
+            responseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
+
+            //create the final response
+            return new SCIMResponse(ResponseCodeConstants.CODE_OK, finalEncodedResponse, responseHeaders);
+
+        } catch (CharonException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (BadRequestException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (InternalErrorException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        }
+    }
+
 
     @Override
     public SCIMResponse get(String id, UserManager userManager, String attributes, String excludeAttributes) {

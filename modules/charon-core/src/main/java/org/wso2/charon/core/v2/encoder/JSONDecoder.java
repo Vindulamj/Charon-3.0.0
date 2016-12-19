@@ -33,6 +33,8 @@ import org.wso2.charon.core.v2.objects.AbstractSCIMObject;
 import org.wso2.charon.core.v2.objects.Group;
 import org.wso2.charon.core.v2.objects.SCIMObject;
 import org.wso2.charon.core.v2.objects.User;
+import org.wso2.charon.core.v2.objects.bulk.BulkRequestContent;
+import org.wso2.charon.core.v2.objects.bulk.BulkRequestData;
 import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.v2.schema.AttributeSchema;
 import org.wso2.charon.core.v2.schema.ResourceTypeSchema;
@@ -608,6 +610,123 @@ public class JSONDecoder {
             logger.error("Error while decoding the resource string");
             throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
         }
+    }
+
+    /**
+     * Decode BulkRequestData Json Sting.
+     *
+     * @param bulkResourceString
+     * @return BulkRequestData Object
+     */
+    public BulkRequestData decodeBulkData(String bulkResourceString) throws BadRequestException {
+
+        BulkRequestData bulkRequestDataObject = new BulkRequestData();
+        List<BulkRequestContent> usersEndpointOperationList = new ArrayList<BulkRequestContent>();
+        List<BulkRequestContent> groupsEndpointOperationList = new ArrayList<BulkRequestContent>();
+        int failOnErrorsAttribute = 0;
+        List<String> schemas = new ArrayList<String>();
+
+        JSONObject decodedObject = null;
+        try {
+            decodedObject = new JSONObject(new JSONTokener(bulkResourceString));
+
+            //prepare the schema list
+            JSONArray membersAttributeSchemas = (JSONArray) decodedObject.opt(
+                    SCIMConstants.CommonSchemaConstants.SCHEMAS);
+            for (int i = 0; i < membersAttributeSchemas.length(); i++) {
+                schemas.add(membersAttributeSchemas.get(i).toString());
+            }
+            bulkRequestDataObject.setSchemas(schemas);
+
+            //get [operations] from the Json String and prepare the request List
+            JSONArray membersAttributeOperations = (JSONArray) decodedObject.opt(
+                    SCIMConstants.OperationalConstants.OPERATIONS);
+
+            for (int i = 0; i < membersAttributeOperations.length(); i++) {
+                JSONObject member = (JSONObject) membersAttributeOperations.get(i);
+                //Request path - /Users or /Groups
+                String requestType = member.optString(SCIMConstants.OperationalConstants.PATH);
+                if (requestType.equals(null)) {
+                    throw new BadRequestException("Missing required attribute : path",
+                            ResponseCodeConstants.INVALID_SYNTAX);
+                }
+                //Request method  - POST,PUT..etc
+                String requestMethod = member.optString(SCIMConstants.OperationalConstants.METHOD);
+                if (requestMethod.equals(null)) {
+                    throw new BadRequestException("Missing required attribute : method",
+                            ResponseCodeConstants.INVALID_SYNTAX);
+                }
+                //Request version
+                String requestVersion = member.optString(SCIMConstants.OperationalConstants.VERSION);
+
+                if (requestMethod.equals(SCIMConstants.OperationalConstants.POST)) {
+
+                    if (!member.optString(SCIMConstants.OperationalConstants.BULK_ID).equals("") &&
+                            !member.optString(SCIMConstants.OperationalConstants.BULK_ID).equals(null)) {
+
+                        setReQuestData(requestType, requestMethod, requestVersion,
+                                member, usersEndpointOperationList, groupsEndpointOperationList);
+                    } else {
+                        String error = "JSON string could not be decoded properly.Required " +
+                                "attribute BULK_ID is missing in the request";
+                        logger.error(error);
+                        throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
+                    }
+                } else  {
+                    setReQuestData(requestType, requestMethod, requestVersion,
+                            member, usersEndpointOperationList, groupsEndpointOperationList);
+                }
+            }
+            //extract [failOnErrors] attribute from Json string
+            failOnErrorsAttribute = decodedObject.optInt(SCIMConstants.OperationalConstants.FAIL_ON_ERRORS);
+
+            bulkRequestDataObject.setFailOnErrors(failOnErrorsAttribute);
+            bulkRequestDataObject.setUserOperationRequests(usersEndpointOperationList);
+            bulkRequestDataObject.setGroupOperationRequests(groupsEndpointOperationList);
+
+        } catch (JSONException e1) {
+            String error = "JSON string could not be decoded properly.";
+            logger.error(error);
+            throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+        }
+        return bulkRequestDataObject;
+    }
+
+
+    private void setReQuestData(String requestType, String requestMethod,
+                                String requestVersion, JSONObject member,
+                                List<BulkRequestContent> usersEndpointOperationList,
+                                List<BulkRequestContent> groupsEndpointOperationList){
+        //create user request list
+        if (requestType.equals(SCIMConstants.USER_ENDPOINT)) {
+            BulkRequestContent newRequestData =
+                    getBulkRequestContent(member, requestMethod, requestType, requestVersion);
+
+            usersEndpointOperationList.add(newRequestData);
+        }
+
+        //create group request list
+        if (requestType.equals(SCIMConstants.GROUP_ENDPOINT)) {
+            BulkRequestContent newRequestData =
+                    getBulkRequestContent(member, requestMethod, requestType, requestVersion);
+
+            groupsEndpointOperationList.add(newRequestData);
+
+        }
+    }
+
+    private BulkRequestContent getBulkRequestContent(JSONObject member, String requestMethod,
+                                                     String requestType, String requestVersion) {
+        BulkRequestContent newRequestData = new BulkRequestContent();
+
+        newRequestData.setData(member.optString(SCIMConstants.OperationalConstants.DATA));
+        newRequestData.setBulkID(member.optString(SCIMConstants.OperationalConstants.BULK_ID));
+        newRequestData.setMethod(requestMethod);
+        newRequestData.setPath(requestType);
+        newRequestData.setVersion(requestMethod);
+        newRequestData.setVersion(requestVersion);
+
+        return newRequestData;
     }
 
 }
