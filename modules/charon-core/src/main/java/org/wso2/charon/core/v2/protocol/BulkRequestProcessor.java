@@ -159,7 +159,7 @@ public class BulkRequestProcessor {
            String resourceId = extractIDFromPath(bulkRequestContent.getPath());
            response = resourceManager.delete(resourceId, userManager);
            bulkResponseContent = createBulkResponseContent
-                   (response, SCIMConstants.OperationalConstants.PATCH, bulkRequestContent);
+                   (response, SCIMConstants.OperationalConstants.DELETE, bulkRequestContent);
            errorsCheck(response);
        }
        return bulkResponseContent;
@@ -167,8 +167,8 @@ public class BulkRequestProcessor {
 
     private String extractIDFromPath(String path) throws BadRequestException {
         String [] parts = path.split("[/]");
-        if (parts[1] != null) {
-            return parts[1];
+        if (parts[2] != null) {
+            return parts[2];
         } else {
             throw new BadRequestException
                     ("No resource Id is provided in path", ResponseCodeConstants.INVALID_VALUE);
