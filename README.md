@@ -69,6 +69,11 @@ Currently following features are supported.
 - [x] Get
 
 #### /Bulk Endpoint
+- [x] Create
+- [x] Get
+- [x] Delete
+- [x] Update with PUT
+- [x] Update with PATCH 
 
 #####Following types of filters are supported.
 
