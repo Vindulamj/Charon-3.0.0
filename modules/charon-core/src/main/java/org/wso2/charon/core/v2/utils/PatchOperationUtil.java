@@ -1613,6 +1613,7 @@ public class PatchOperationUtil {
                                 complexAttribute.setSubAttribute(simpleAttribute);
                             }
                             parentAttribute.setSubAttribute(complexAttribute);
+                            oldResource.setAttribute(parentAttribute);
 
                         } else {
                             throw new BadRequestException("No such attribute with the name : " + attributeParts[2],
