@@ -94,12 +94,27 @@ public class BulkRequestProcessor {
         SCIMResponse response = null;
 
         for (BulkRequestContent bulkRequestContent : bulkRequestData.getUserOperationRequests()) {
-            bulkResponseData.addUserOperation
-                    (getBulkResponseContent(bulkRequestContent, userResourceManager));
+            if (failOnError == 0) {
+                bulkResponseData.addUserOperation
+                            (getBulkResponseContent(bulkRequestContent, userResourceManager));
+            } else {
+                if (errors < failOnError) {
+                    bulkResponseData.addUserOperation
+                            (getBulkResponseContent(bulkRequestContent, userResourceManager));
+                }
+            }
+
         }
         for (BulkRequestContent bulkRequestContent : bulkRequestData.getGroupOperationRequests()) {
-            bulkResponseData.addGroupOperation
-                    (getBulkResponseContent(bulkRequestContent, groupResourceManager));
+            if (failOnError == 0) {
+                bulkResponseData.addGroupOperation
+                            (getBulkResponseContent(bulkRequestContent, groupResourceManager));
+            } else  {
+                if (errors < failOnError) {
+                    bulkResponseData.addGroupOperation
+                            (getBulkResponseContent(bulkRequestContent, groupResourceManager));
+                }
+            }
 
         }
         bulkResponseData.setSchema(SCIMConstants.BULK_RESPONSE_URI);
@@ -120,6 +135,7 @@ public class BulkRequestProcessor {
                    (bulkRequestContent.getData(), userManager, null, null);
            bulkResponseContent = createBulkResponseContent
                    (response, SCIMConstants.OperationalConstants.POST, bulkRequestContent);
+           errorsCheck(response);
 
        } else if (bulkRequestContent.getMethod().equals(SCIMConstants.OperationalConstants.PUT)) {
 
@@ -128,6 +144,7 @@ public class BulkRequestProcessor {
                    (resourceId, bulkRequestContent.getData(), userManager, null, null);
            bulkResponseContent = createBulkResponseContent
                    (response, SCIMConstants.OperationalConstants.PUT, bulkRequestContent);
+           errorsCheck(response);
 
        } else if (bulkRequestContent.getMethod().equals(SCIMConstants.OperationalConstants.PATCH)) {
 
@@ -136,12 +153,14 @@ public class BulkRequestProcessor {
                    (resourceId, bulkRequestContent.getData(), userManager, null, null);
            bulkResponseContent = createBulkResponseContent
                    (response, SCIMConstants.OperationalConstants.PATCH, bulkRequestContent);
+           errorsCheck(response);
 
        } else if (bulkRequestContent.getMethod().equals(SCIMConstants.OperationalConstants.DELETE)) {
            String resourceId = extractIDFromPath(bulkRequestContent.getPath());
            response = resourceManager.delete(resourceId, userManager);
            bulkResponseContent = createBulkResponseContent
                    (response, SCIMConstants.OperationalConstants.PATCH, bulkRequestContent);
+           errorsCheck(response);
        }
        return bulkResponseContent;
    }
@@ -170,5 +189,11 @@ public class BulkRequestProcessor {
 
     }
 
+    private void errorsCheck(SCIMResponse response) {
+        if (response.getResponseStatus() != 200 && response.getResponseStatus() != 201 &&
+                response.getResponseStatus() != 204 ) {
+            errors++;
+        }
+    }
 
 }
