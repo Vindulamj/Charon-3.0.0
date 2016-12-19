@@ -68,6 +68,8 @@ Currently following features are supported.
 #### /ResourceType Endpoint
 - [x] Get
 
+#### /Bulk Endpoint
+
 #####Following types of filters are supported.
 
 filter=userName eq "bjensen"
