@@ -18,6 +18,7 @@ package org.wso2.charon.deployment.provider.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.charon.deployment.provider.resources.GroupResource;
 import org.wso2.charon.deployment.provider.resources.UserResource;
 import org.wso2.msf4j.MicroservicesRunner;
 
@@ -31,7 +32,7 @@ public class ApplicationInitializer {
     public static void main(String[] args) {
         logger.info("SCIM micro service is starting up.....");
 
-        new MicroservicesRunner().deploy(new UserResource()).start();
+        new MicroservicesRunner().deploy(new UserResource(),new GroupResource()).start();
 
         logger.info("SCIM micro service is successfully started.");
     }

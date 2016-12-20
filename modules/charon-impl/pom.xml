@@ -88,6 +88,9 @@
         </build>
         <properties>
             <microservice.mainClass>org.wso2.charon.deployment.provider.impl.ApplicationInitializer</microservice.mainClass>
+            <carbon.component>
+                osgi.service; objectClass="org.wso2.msf4j.Microservice";serviceCount="2"
+            </carbon.component>
         </properties>
 
 </project>
