@@ -48,9 +48,9 @@ public class InMemroyUserManager implements UserManager {
     public User getUser(String id, Map<String, Boolean> map)
             throws CharonException, BadRequestException, NotFoundException {
        if (inMemoryUserList.get(id) != null) {
-           throw new NotFoundException("No user with the id : " + id);
-       } else {
            return inMemoryUserList.get(id);
+       } else {
+           throw new NotFoundException("No user with the id : " + id);
        }
     }
 
@@ -81,11 +81,13 @@ public class InMemroyUserManager implements UserManager {
 
     private List<Object> listUsers(Map<String, Boolean> requiredAttributes) {
         List<Object> userList = new ArrayList<>();
+        userList.add(0);
         for (User user : inMemoryUserList.values()) {
             userList.add(user);
             return userList;
         }
-        return null;
+        userList.set(0, userList.size()-1);
+        return userList;
 
     }
 
@@ -142,9 +144,9 @@ public class InMemroyUserManager implements UserManager {
     public Group getGroup(String id, Map<String, Boolean> map)
             throws NotImplementedException, BadRequestException, CharonException, NotFoundException {
         if (inMemoryGroupList.get(id) != null) {
-            throw new NotFoundException("No user with the id : " + id);
-        } else {
             return inMemoryGroupList.get(id);
+        } else {
+            throw new NotFoundException("No user with the id : " + id);
         }
     }
 
@@ -175,11 +177,14 @@ public class InMemroyUserManager implements UserManager {
 
     private List<Object> listGroups(Map<String, Boolean> requiredAttributes) {
         List<Object> groupList = new ArrayList<>();
+        groupList.add(0);
         for (Group group : inMemoryGroupList.values()) {
             groupList.add(group);
             return groupList;
         }
-        return null;
+        groupList.set(0, groupList.size()-1);
+        return groupList;
+
     }
 
     @Override
