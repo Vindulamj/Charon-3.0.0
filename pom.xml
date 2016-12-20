@@ -23,6 +23,8 @@
 
     <modules>
         <module>modules/charon-core</module>
+        <module>modules/charon-impl</module>
+        <module>modules/charon-utils</module>
     </modules>
 
     <dependencyManagement>
