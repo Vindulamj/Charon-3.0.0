@@ -25,11 +25,9 @@
             <artifactId>axiom-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>Charon</groupId>
-            <artifactId>org.charon</artifactId>
+            <groupId>org.wso2.charon</groupId>
+            <artifactId>org.wso2.charon.core</artifactId>
             <version>3.0.0</version>
-            <scope>system</scope>
-            <systemPath>/home/vindula/Desktop/C4/Final Pack/org.wso2.charon.core.v2-3.0.0.jar</systemPath>
         </dependency>
     </dependencies>
 

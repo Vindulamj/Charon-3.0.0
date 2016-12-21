@@ -49,10 +49,7 @@ public class ExcludedAttributesParamSample {
             //printing result from response
             System.out.println("Response Code : " + responseCode);
             System.out.println("Response Message : " + con.getResponseMessage());
-            ObjectMapper mapper = new ObjectMapper();
-            Object json = mapper.readValue(response.toString(), Object.class);
-            System.out.println("Response Content : " +
-                    mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json));;
+            System.out.println("Response Content : " + response.toString());
 
         } catch (ProtocolException e) {
             e.printStackTrace();
