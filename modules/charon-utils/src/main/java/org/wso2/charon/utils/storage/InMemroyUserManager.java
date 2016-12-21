@@ -40,8 +40,12 @@ public class InMemroyUserManager implements UserManager {
     @Override
     public User createUser(User user, Map<String, Boolean> map)
             throws CharonException, ConflictException, BadRequestException {
-        inMemoryUserList.put(user.getId(), user);
-        return user;
+        if (inMemoryUserList.get(user.getId()) != null) {
+            throw new ConflictException("User with the id : " + user.getId() + "already exists");
+        } else {
+            inMemoryUserList.put(user.getId(), user);
+            return user;
+        }
     }
 
     @Override
@@ -57,7 +61,7 @@ public class InMemroyUserManager implements UserManager {
     @Override
     public void deleteUser(String id)
             throws NotFoundException, CharonException, NotImplementedException, BadRequestException {
-        if (inMemoryUserList.get(id) != null) {
+        if (inMemoryUserList.get(id) == null) {
             throw new NotFoundException("No user with the id : " + id);
         } else {
             inMemoryUserList.remove(id);
@@ -82,9 +86,9 @@ public class InMemroyUserManager implements UserManager {
     private List<Object> listUsers(Map<String, Boolean> requiredAttributes) {
         List<Object> userList = new ArrayList<>();
         userList.add(0);
-        for (User user : inMemoryUserList.values()) {
-            userList.add(user);
-            return userList;
+        //first item should contain the number of total results
+        for (Map.Entry<String, User> entry : inMemoryUserList.entrySet()) {
+            userList.add(entry.getValue());
         }
         userList.set(0, userList.size()-1);
         return userList;
@@ -153,7 +157,7 @@ public class InMemroyUserManager implements UserManager {
     @Override
     public void deleteGroup(String id)
             throws NotFoundException, CharonException, NotImplementedException, BadRequestException {
-        if (inMemoryGroupList.get(id) != null) {
+        if (inMemoryGroupList.get(id) == null) {
             throw new NotFoundException("No user with the id : " + id);
         } else {
             inMemoryGroupList.remove(id);
@@ -177,10 +181,9 @@ public class InMemroyUserManager implements UserManager {
 
     private List<Object> listGroups(Map<String, Boolean> requiredAttributes) {
         List<Object> groupList = new ArrayList<>();
-        groupList.add(0);
+        groupList.add(0,0);
         for (Group group : inMemoryGroupList.values()) {
             groupList.add(group);
-            return groupList;
         }
         groupList.set(0, groupList.size()-1);
         return groupList;
