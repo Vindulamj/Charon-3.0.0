@@ -122,8 +122,13 @@ public class AttributeUtil {
             SimpleDateFormat sdf = new SimpleDateFormat(SCIMConstants.DATE_TIME_FORMAT);
             return sdf.parse(dateTimeString);
         } catch (ParseException e) {
-            throw new CharonException("Error in parsing date time. " +
-                    "Date time should adhere to the format: " + SCIMConstants.DATE_TIME_FORMAT);
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat(SCIMConstants.DATE_TIME_FORMAT2);
+                return sdf.parse(dateTimeString);
+            } catch (ParseException e1) {
+                throw new CharonException("Error in parsing date time. " +
+                        "Date time should adhere to the format: " + SCIMConstants.DATE_TIME_FORMAT, e1);
+            }
         }
     }
 

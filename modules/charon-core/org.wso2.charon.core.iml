@@ -2,12 +2,12 @@
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="Osmorc" name="OSGi">
-      <configuration manifestGenerationMode="OsmorcControlled" manifestLocation="" jarfileLocation="org.wso2.charon.core.v2-3.0.0.jar" outputPathType="CompilerOutputPath" bndFileLocation="" bundlorFileLocation="" bundleActivator="${bundle.activator}" bundleSymbolicName="org.wso2.charon.core.v2" bundleVersion="3.0.0" ignoreFilePattern="" useProjectDefaultManifestFileLocation="true" alwaysRebuildBundleJAR="false" doNotSynchronizeWithMaven="false">
+      <configuration manifestGenerationMode="OsmorcControlled" manifestLocation="" jarfileLocation="org.wso2.charon.core-3.0.0.jar" outputPathType="CompilerOutputPath" bndFileLocation="" bundlorFileLocation="" bundleActivator="${bundle.activator}" bundleSymbolicName="org.wso2.charon.core" bundleVersion="3.0.0" ignoreFilePattern="" useProjectDefaultManifestFileLocation="true" alwaysRebuildBundleJAR="false" doNotSynchronizeWithMaven="false">
         <additionalProperties>
           <property key="Bundle-Description" value="WSO2 Charon - SCIM Implementation" />
           <property key="Bundle-Vendor" value="WSO2" />
           <property key="Bundle-DocURL" value="http://www.wso2.org/" />
-          <property key="Bundle-Name" value="org.wso2.charon.core.v2" />
+          <property key="Bundle-Name" value="org.wso2.charon.core" />
           <property key="Export-Package" value="org.wso2.charon.core.*;version=3.0.0" />
           <property key="Import-Package" value="org.json.*,org.apache.commons.logging.*; version=&quot;[1.2,2.0)&quot;,org.apache.axiom.om.*; version=&quot;[1.2.11, 2.0.0)&quot;,javax.xml.namespace.*,javax.xml.stream.*,org.slf4j.*," />
           <property key="SCM-Revision" value="${buildNumber}" />
