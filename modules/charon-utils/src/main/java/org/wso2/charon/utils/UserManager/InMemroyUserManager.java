@@ -15,13 +15,14 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.charon.utils.storage;
+package org.wso2.charon.utils.UserManager;
 
 
 import org.wso2.charon.core.v2.exceptions.*;
 import org.wso2.charon.core.v2.extensions.UserManager;
 import org.wso2.charon.core.v2.objects.Group;
 import org.wso2.charon.core.v2.objects.User;
+import org.wso2.charon.core.v2.utils.CopyUtil;
 import org.wso2.charon.core.v2.utils.codeutils.Node;
 import org.wso2.charon.core.v2.utils.codeutils.SearchRequest;
 
@@ -44,7 +45,7 @@ public class InMemroyUserManager implements UserManager {
             throw new ConflictException("User with the id : " + user.getId() + "already exists");
         } else {
             inMemoryUserList.put(user.getId(), user);
-            return user;
+            return (User) CopyUtil.deepCopy(user);
         }
     }
 
@@ -52,7 +53,7 @@ public class InMemroyUserManager implements UserManager {
     public User getUser(String id, Map<String, Boolean> map)
             throws CharonException, BadRequestException, NotFoundException {
        if (inMemoryUserList.get(id) != null) {
-           return inMemoryUserList.get(id);
+           return (User) CopyUtil.deepCopy(inMemoryUserList.get(id));
        } else {
            throw new NotFoundException("No user with the id : " + id);
        }
@@ -91,7 +92,12 @@ public class InMemroyUserManager implements UserManager {
             userList.add(entry.getValue());
         }
         userList.set(0, userList.size()-1);
-        return userList;
+        try {
+            return (List<Object>) CopyUtil.deepCopy(userList);
+        } catch (CharonException e) {
+            e.printStackTrace();
+            return  null;
+        }
 
     }
 
@@ -107,7 +113,7 @@ public class InMemroyUserManager implements UserManager {
             throws NotImplementedException, CharonException, BadRequestException, NotFoundException {
        if (user.getId() != null) {
            inMemoryUserList.replace(user.getId(), user);
-           return user;
+           return (User) CopyUtil.deepCopy(user);
        } else {
            throw new NotFoundException("No user with the id : " + user.getId());
        }
@@ -141,14 +147,14 @@ public class InMemroyUserManager implements UserManager {
     public Group createGroup(Group group, Map<String, Boolean> map)
             throws CharonException, ConflictException, NotImplementedException, BadRequestException {
         inMemoryGroupList.put(group.getId(), group);
-        return group;
+        return (Group) CopyUtil.deepCopy(group);
     }
 
     @Override
     public Group getGroup(String id, Map<String, Boolean> map)
             throws NotImplementedException, BadRequestException, CharonException, NotFoundException {
         if (inMemoryGroupList.get(id) != null) {
-            return inMemoryGroupList.get(id);
+            return (Group) CopyUtil.deepCopy(inMemoryGroupList.get(id));
         } else {
             throw new NotFoundException("No user with the id : " + id);
         }
@@ -186,7 +192,12 @@ public class InMemroyUserManager implements UserManager {
             groupList.add(group);
         }
         groupList.set(0, groupList.size()-1);
-        return groupList;
+        try {
+            return (List<Object>) CopyUtil.deepCopy(groupList);
+        } catch (CharonException e) {
+            e.printStackTrace();
+            return null;
+        }
 
     }
 
@@ -195,7 +206,7 @@ public class InMemroyUserManager implements UserManager {
             throws NotImplementedException, BadRequestException, CharonException, NotFoundException {
         if (group.getId() != null) {
             inMemoryGroupList.replace(group.getId(), group);
-            return group;
+            return (Group) CopyUtil.deepCopy(group);
         } else {
             throw new NotFoundException("No user with the id : " + group.getId());
         }

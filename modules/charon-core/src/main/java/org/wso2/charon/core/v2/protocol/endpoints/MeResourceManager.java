@@ -121,7 +121,7 @@ public class MeResourceManager extends AbstractResourceManager {
             User createdUser;
 
             if (userManager != null) {
-            /*handover the SCIM User object to the user storage provided by the SP.
+            /*handover the SCIM User object to the user UserManager provided by the SP.
             need to send back the newly created user in the response payload*/
                 createdUser = userManager.createMe(user, requiredAttributes);
             } else {
@@ -171,7 +171,7 @@ public class MeResourceManager extends AbstractResourceManager {
         JSONEncoder encoder = null;
         try {
             if (userManager != null) {
-            /*handover the SCIM User object to the user storage provided by the SP for the delete operation*/
+            /*handover the SCIM User object to the user UserManager provided by the SP for the delete operation*/
                 userManager.deleteMe(userName);
                 //on successful deletion SCIMResponse only has 204 No Content status code.
                 return new SCIMResponse(ResponseCodeConstants.CODE_NO_CONTENT, null, null);

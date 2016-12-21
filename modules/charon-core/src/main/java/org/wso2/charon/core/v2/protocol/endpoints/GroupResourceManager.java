@@ -79,8 +79,8 @@ public class GroupResourceManager extends AbstractResourceManager {
                     (SCIMResourceTypeSchema)
                     CopyUtil.deepCopy(schema), attributes, excludeAttributes);
 
-            //API user should pass a UserManager storage to GroupResourceEndpoint.
-            //retrieve the group from the provided storage.
+            //API user should pass a UserManager UserManager to GroupResourceEndpoint.
+            //retrieve the group from the provided UserManager.
             Group group = ((UserManager) userManager).getGroup(id, requiredAttributes);
 
             //if group not found, return an error in relevant format.
@@ -109,7 +109,7 @@ public class GroupResourceManager extends AbstractResourceManager {
 
     /*
      * Create group in the service provider given the submitted payload that contains the SCIM group
-     * resource, format and the handler to storage.
+     * resource, format and the handler to UserManager.
      *
      * @param scimObjectString - Payload of HTTP request, which contains the SCIM object.
      * @param userManager
@@ -138,7 +138,7 @@ public class GroupResourceManager extends AbstractResourceManager {
             Group group = (Group) decoder.decodeResource(scimObjectString, schema, new Group());
             //validate decoded group
             ServerSideValidator.validateCreatedSCIMObject(group, SCIMSchemaDefinitions.SCIM_GROUP_SCHEMA);
-            //handover the SCIM User object to the group storage provided by the SP.
+            //handover the SCIM User object to the group UserManager provided by the SP.
             Group createdGroup;
             //need to send back the newly created group in the response payload
             createdGroup = ((UserManager) userManager).createGroup(group, requiredAttributes);
@@ -189,7 +189,7 @@ public class GroupResourceManager extends AbstractResourceManager {
         JSONEncoder encoder = null;
         try {
             if (userManager != null) {
-            /*handover the SCIM User object to the user storage provided by the SP for the delete operation*/
+            /*handover the SCIM User object to the user UserManager provided by the SP for the delete operation*/
                 userManager.deleteGroup(id);
                 //on successful deletion SCIMResponse only has 204 No Content status code.
                 return new SCIMResponse(ResponseCodeConstants.CODE_NO_CONTENT, null, null);
@@ -273,7 +273,7 @@ public class GroupResourceManager extends AbstractResourceManager {
 
             List<Object> returnedGroups;
             int totalResults = 0;
-            //API group should pass a UserManager storage to GroupResourceEndpoint.
+            //API group should pass a UserManager UserManager to GroupResourceEndpoint.
             if (userManager != null) {
                 List<Object> tempList = userManager.listGroupsWithGET(rootNode, startIndex, count,
                         sortBy, sortOrder, requiredAttributes);
@@ -387,7 +387,7 @@ public class GroupResourceManager extends AbstractResourceManager {
 
             List<Object> returnedGroups;
             int totalResults = 0;
-            //API user should pass a UserManager storage to UserResourceEndpoint.
+            //API user should pass a UserManager UserManager to UserResourceEndpoint.
             if (userManager != null) {
                 List<Object> tempList = userManager.listGroupsWithPost(searchRequest, requiredAttributes);
 

@@ -149,7 +149,7 @@ public class UserResourceManager extends AbstractResourceManager {
             User createdUser;
 
             if (userManager != null) {
-            /*handover the SCIM User object to the user storage provided by the SP.
+            /*handover the SCIM User object to the user UserManager provided by the SP.
             need to send back the newly created user in the response payload*/
                 createdUser = userManager.createUser(user, requiredAttributes);
             } else {
@@ -211,7 +211,7 @@ public class UserResourceManager extends AbstractResourceManager {
         JSONEncoder encoder = null;
         try {
             if (userManager != null) {
-            /*handover the SCIM User object to the user storage provided by the SP for the delete operation*/
+            /*handover the SCIM User object to the user UserManager provided by the SP for the delete operation*/
                 userManager.deleteUser(id);
                 //on successful deletion SCIMResponse only has 204 No Content status code.
                 return new SCIMResponse(ResponseCodeConstants.CODE_NO_CONTENT, null, null);
@@ -296,7 +296,7 @@ public class UserResourceManager extends AbstractResourceManager {
 
             List<Object> returnedUsers;
             int totalResults = 0;
-            //API user should pass a UserManager storage to UserResourceEndpoint.
+            //API user should pass a UserManager UserManager to UserResourceEndpoint.
             if (userManager != null) {
                 List<Object> tempList = userManager.listUsersWithGET(rootNode, startIndex, count,
                         sortBy, sortOrder, requiredAttributes);
@@ -402,7 +402,7 @@ public class UserResourceManager extends AbstractResourceManager {
 
             List<Object> returnedUsers;
             int totalResults = 0;
-            //API user should pass a UserManager storage to UserResourceEndpoint.
+            //API user should pass a UserManager UserManager to UserResourceEndpoint.
             if (userManager != null) {
                 List<Object> tempList = userManager.listUsersWithPost(searchRequest, requiredAttributes);
 

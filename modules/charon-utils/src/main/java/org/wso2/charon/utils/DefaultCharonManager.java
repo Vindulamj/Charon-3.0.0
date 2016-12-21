@@ -24,7 +24,7 @@ import org.wso2.charon.core.v2.exceptions.FormatNotSupportedException;
 import org.wso2.charon.core.v2.extensions.UserManager;
 import org.wso2.charon.core.v2.protocol.endpoints.AbstractResourceManager;
 import org.wso2.charon.core.v2.schema.SCIMConstants;
-import org.wso2.charon.utils.storage.InMemroyUserManager;
+import org.wso2.charon.utils.UserManager.InMemroyUserManager;
 
 import java.util.HashMap;
 import java.util.Map;
