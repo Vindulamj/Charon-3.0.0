@@ -1,10 +1,9 @@
-package org.wso2.charon.samples.user.sample06;
+package org.wso2.charon.samples.user.sample08;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -13,31 +12,26 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.Scanner;
 
-public class DeleteUserSample {
+public class ExcludedAttributesParamSample {
 
     public static void main(String[] args) {
-
         //get the id of the user
         Scanner reader = new Scanner(System.in);  // Reading from System.in
-        System.out.print("Enter the user ID : ");
-        String id = reader.next();
+        System.out.print("Enter comma separated excludedAttributes param list : ");;
+        String excludedAttributes = reader.next();
+
         try {
-            String url = "http://localhost:8080/scim/v2/Users/"  + id;;
+            String url = "http://localhost:8080/scim/v2/Users?excludedAttributes=" + excludedAttributes.trim();
             URL obj = new URL(url);
+
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
-            // Setting basic post request
-            con.setRequestMethod("DELETE");
-            con.setRequestProperty("Content-Type", "application/scim+json");
-
-
-            // Send post request
-            con.setDoOutput(true);
-
+            con.setRequestMethod("GET");
+            con.setRequestProperty("User-Agent", "Mozilla/5.0");
             int responseCode = con.getResponseCode();
 
             BufferedReader in;
-            if (responseCode == HttpURLConnection.HTTP_NO_CONTENT) { // success
+            if (responseCode == HttpURLConnection.HTTP_OK) { // success
                 in = new BufferedReader(new InputStreamReader(
                         con.getInputStream()));
             } else {
@@ -52,17 +46,13 @@ public class DeleteUserSample {
             }
             in.close();
 
-
             //printing result from response
             System.out.println("Response Code : " + responseCode);
             System.out.println("Response Message : " + con.getResponseMessage());
-            if (responseCode != HttpURLConnection.HTTP_NO_CONTENT) { // success
-                ObjectMapper mapper = new ObjectMapper();
-                Object json = mapper.readValue(response.toString(), Object.class);
-                System.out.println("Response Content : " +
-                        mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json));
-                ;
-            }
+            ObjectMapper mapper = new ObjectMapper();
+            Object json = mapper.readValue(response.toString(), Object.class);
+            System.out.println("Response Content : " +
+                    mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json));;
 
         } catch (ProtocolException e) {
             e.printStackTrace();
@@ -73,3 +63,4 @@ public class DeleteUserSample {
         }
     }
 }
+
