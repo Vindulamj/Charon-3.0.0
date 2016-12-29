@@ -1,4 +1,16 @@
-# Charon-3.0
+# WSO2 Charon - SCIM 2.0 Open Source Implementation 
+
+WSO2 Charon is an open source implementation of SCIM protocol which is an open standard for Identity Provisioning. Charon comes under Apache 2.0 license. It can be used by any one who wants to add SCIM-based provisioning support for their applications. WSO2 Charon is integrated with WSO2 Identity Server. 
+
+The following includes a brief introduction on each of the modules.
+
+**Charon-Core**: This is the API that exposes an implementation of the SCIM specification. It can be used by any SCIM service provider or client implementation to support SCIM operations/functionalities. In addition to that, it also allows room for extension points to be plugged in according to the particular server side/client side implementation like user storage.
+
+**Charon-Utils**: This contains a set of default implementations of the extension points. For example: SCIMUserManager. A particular implementation that uses charon-core as SCIM API can use these default implementations as building blocks.
+
+**Charon-Impl**: A reference implementation of SCIM service provider is shipped with this module. Currently it is WSO2 msf4j based micro service that enables the SCIM endpoints to be exposed. This is based on the above two modules: charon-core and charon-utils, and illustrates how any SCIM implementation can utilize the API and supporting module provided by Charon.
+
+**Charon-Samples**: This contains samples illustrating the SCIM use cases. Samples mainly contain the SCIM client side implementations which can be run against a SCIM server, and hence can also be referenced to get to know how the API provided by Charon can be used to implement SCIM client side.
 
 Currently following features are supported.
 
@@ -75,38 +87,8 @@ Currently following features are supported.
 - [x] Update with PUT
 - [x] Update with PATCH 
 
-#####Following types of filters are supported.
+Following features are being developed.
 
-filter=userName eq "bjensen"
-
-filter=name.familyName co "O'Malley"
-
-filter=userName sw "J"
-
-filter=urn:ietf:params:scim:schemas:core:2.0:User:userName sw "J"
-
-filter=title pr
-
-filter=meta.lastModified gt "2011-05-13T04:42:34Z"
-
-filter=meta.lastModified ge "2011-05-13T04:42:34Z"
-
-filter=meta.lastModified lt "2011-05-13T04:42:34Z"
-
-filter=meta.lastModified le "2011-05-13T04:42:34Z"
-
-filter=title pr and userType eq "Employee"
-
-filter=title pr or userType eq "Intern"
-
-filter=
- schemas eq "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User"
-
-filter=userType eq "Employee" and (emails co "example.com" or
-  emails.value co "example.org")
-
-filter=userType ne "Employee" and not (emails co "example.com" or
-  emails.value co "example.org")
-
-filter=userType eq "Employee" and (emails.type eq "work")
+- [ ] Resource versioning
+- [ ] Circular reference in /Bulk endpoint
 
