@@ -1,9 +1,8 @@
-****************************************************
-      Welcome to WSO2 Charon demo micro service
-****************************************************
 
-This demo micro service has been developed using WSO2
-Microservices Framework for Java (MSF4J).
+# Welcome to WSO2 Charon demo micro service
+
+
+This demo micro service has been developed using WSO2 Microservices Framework for Java (MSF4J).
 
 How setup the demo micro service
 --------------------------------
@@ -26,35 +25,23 @@ How to send requests
 Demo scim app supports User create, get, update, patch, list
 and Group create, get, update, patch and list.
 
-User create
------------
+**User create**
+```
+curl -v --data '{"schemas":[],"name"{"familyName":"jayawardana","givenName":"vindula"},"userName":"vindula","password":"vindula","emails:[{"primary":true,"value":"vindula_home.com","type":"home"},{"value":"vindula_work.com","type":"work"}]}' --header "Content-Type:application/scim+json" http://localhost:8080/scim/v2/Users
+```
 
-curl -v --data '{"schemas":[],"name":{"familyName":"jayawardana",
-"givenName":"vindula"},"userName":"vindula","password":"vindula",
-"emails":[{"primary":true,"value":"vindula_home.com","type":"home"},
-{"value":"vindula_work.com","type":"work"}]}' --header
-"Content-Type:application/scim+json"
-http://localhost:8080/scim/v2/Users
-
-User get
---------
-
+**User get**
+```
 curl -v http://localhost:8080/scim/v2/Users/b6de2019-d491-49ef
+```
+**Group create**
+```
+curl -v --data '{"displayName": "engineer","members":[{"value":"316214c0-dd7e-4dc3-bed8-e91227d32597","display": "vindula"}]}' --header "Content-Type:application/scim+json" http://localhost:8080/scim/v2/Groups
+```
+**Group get**
 
-Group create
-------------
-
-curl -v --data '{"displayName": "engineer","members":
-[{"value":"316214c0-dd7e-4dc3-bed8-e91227d32597","display": "vindula"}]}
-' --header "Content-Type:application/scim+json"
-http://localhost:8080/scim/v2/Groups
-
-Group get
----------
-
+```
 curl -v http://localhost:8080/scim/v2/Groups/b6de2019-d491-49ef
+```
+Likewise you can run the other commands according to the https://tools.ietf.org/html/rfc7644
 
-** Likewise you can run the other commands according to the
-   'https://tools.ietf.org/html/rfc7644'
-
-                           *******
