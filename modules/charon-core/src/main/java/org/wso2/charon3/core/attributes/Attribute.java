@@ -23,7 +23,9 @@ import java.io.Serializable;
 /**
  * Interface to represent Attribute defined in SCIM schema spec.
  */
-//Attribute is extended from Serializable as later in org.wso2.charon.core.util.CopyUtil, it need to be serialized.
+
+//Attribute is extended from Serializable as later in org.wso2.charon.core.util.CopyUtil,
+//it need to be serialized.
 public interface Attribute extends Serializable {
 
     public String getURI();
