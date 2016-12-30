@@ -23,7 +23,7 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>org.wso2.charon.impl</artifactId>
+    <artifactId>org.wso2.charon3.impl</artifactId>
     <name>WSO2 Charon - impl </name>
     <description>WSO2 Charon - SCIM Implementation</description>
     <packaging>jar</packaging>
@@ -42,12 +42,12 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.charon</groupId>
-            <artifactId>org.wso2.charon.core</artifactId>
+            <artifactId>org.wso2.charon3.core</artifactId>
             <version>3.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.wso2.charon</groupId>
-            <artifactId>org.wso2.charon.utils</artifactId>
+            <artifactId>org.wso2.charon3.utils</artifactId>
             <version>3.0.0</version>
         </dependency>
     </dependencies>
@@ -67,7 +67,7 @@
                         <!-- MainClass in mainfest make a executable jar -->
                         <archive>
                             <manifest>
-                                <mainClass>org.wso2.charon.deployment.provider.impl.ApplicationInitializer</mainClass>
+                                <mainClass>org.wso2.charon3.impl.provider.impl.ApplicationInitializer</mainClass>
                             </manifest>
                         </archive>
 
@@ -87,7 +87,7 @@
             </plugins>
         </build>
         <properties>
-            <microservice.mainClass>org.wso2.charon.deployment.provider.impl.ApplicationInitializer</microservice.mainClass>
+            <microservice.mainClass>org.wso2.charon3.impl.provider.impl.ApplicationInitializer</microservice.mainClass>
             <carbon.component>
                 osgi.service; objectClass="org.wso2.msf4j.Microservice";serviceCount="2"
             </carbon.component>

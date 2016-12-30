@@ -8,7 +8,7 @@ Microservices Framework for Java (MSF4J).
 How setup the demo micro service
 --------------------------------
 
-1. Run 'maven clean install' from the module directory.
+1. Run 'mave clean install' from the module directory.
 2. Inside the target directory, you can find
    org.wso2.charon.impl-3.0.0-jar-with-dependencies.jar
 3. From the target directory run
